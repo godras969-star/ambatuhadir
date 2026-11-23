@@ -91,12 +91,13 @@
       border-radius: 10px; padding: 10px 12px; margin-top: 10px; font-size: .88rem;
     }
 
-    /* Kamera */
+    /* Kamera & efek cermin untuk kamera depan */
     .kamera {
       position: relative; background: var(--navy); border-radius: 16px;
       overflow: hidden; margin-top: 10px; max-width: 420px; margin-inline: auto;
     }
     .kamera video { width: 100%; display: block; }
+    .kamera video.cermin { transform: scaleX(-1); }
     .bingkai {
       position: absolute; inset: 18% 18%; border: 3px solid var(--cyan);
       border-radius: 16px; pointer-events: none;
@@ -193,6 +194,7 @@
             <strong>Mahasiswa scan:</strong> Dosen menampilkan QR sesi di layar atau proyektor. Kamu memindai QR tersebut memakai kamera HP sendiri. QR sesi berganti otomatis setiap 30 detik.
           </div>
           <button type="button" id="btnMulaiScanMhs">Nyalakan kamera untuk scan QR Sesi</button>
+          <button type="button" class="sekunder hidden" id="btnTukarKameraMhs">Ganti kamera (Depan/Belakang)</button>
           <button type="button" class="sekunder hidden" id="btnStopScanMhs">Matikan kamera</button>
           <div class="kamera hidden" id="areaKameraMhs">
             <video id="videoMhs" playsinline muted></video>
@@ -272,6 +274,7 @@
             <!-- Area Dosen Scan -->
             <div id="areaDosenScan" class="hidden" style="margin-top:12px;">
               <button type="button" id="btnMulaiScanStaf">Nyalakan kamera pemindai</button>
+              <button type="button" class="sekunder hidden" id="btnTukarKameraStaf">Ganti kamera (Depan/Belakang)</button>
               <button type="button" class="sekunder hidden" id="btnStopScanStaf">Matikan kamera</button>
               <div class="kamera hidden" id="areaKameraStaf">
                 <video id="videoStaf" playsinline muted></video>
@@ -375,9 +378,9 @@
   </div>
 
   <script src="config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="[https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js](https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js)"></script>
+  <script src="[https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js](https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js)"></script>
+  <script src="[https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js](https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js)"></script>
   <script>
     const el = (id) => document.getElementById(id);
     let token = '';
@@ -394,6 +397,7 @@
     let jedaScan = false;
     let terakhirFrame = 0;
     let modeKamera = ''; // 'STAF' atau 'MHS'
+    let arahKamera = 'environment'; // 'environment' (belakang) atau 'user' (depan)
 
     try { token = sessionStorage.getItem('token') || ''; } catch (e) {}
 
@@ -701,7 +705,7 @@
       cekStatusSesiMK();
     });
 
-    // ---------- Kamera Pemindai QR (Dosen Scan & Mahasiswa Scan) ----------
+    // ---------- Kamera Pemindai QR (Dengan Efek Cermin pada Kamera Depan) ----------
 
     const canvasScan = document.createElement('canvas');
     const ctxScan = canvasScan.getContext('2d', { willReadFrequently: true });
@@ -714,30 +718,49 @@
       }
       try {
         streamKamera = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' } }, audio: false
+          video: { facingMode: { ideal: arahKamera } }, audio: false
         });
         const videoEl = mode === 'STAF' ? el('videoStaf') : el('videoMhs');
         videoEl.srcObject = streamKamera;
         await videoEl.play();
+
+        // Cek apakah kamera yang aktif adalah kamera depan ('user') / webcam laptop
+        const track = streamKamera.getVideoTracks()[0];
+        const settings = track && track.getSettings ? track.getSettings() : {};
+        const labelKamera = (track && track.label ? track.label : '').toLowerCase();
+        const adalahKameraDepan = settings.facingMode === 'user' ||
+          arahKamera === 'user' ||
+          (!settings.facingMode && (labelKamera.includes('front') || labelKamera.includes('user') || labelKamera.includes('webcam')));
+
+        videoEl.classList.toggle('cermin', adalahKameraDepan);
+
         modeKamera = mode;
         scanAktif = true;
         jedaScan = false;
 
+        const infoArah = adalahKameraDepan ? 'Kamera depan (mode cermin)' : 'Kamera belakang';
         if (mode === 'STAF') {
           el('areaKameraStaf').classList.remove('hidden');
+          el('btnTukarKameraStaf').classList.remove('hidden');
           el('btnStopScanStaf').classList.remove('hidden');
           el('btnMulaiScanStaf').classList.add('hidden');
-          pesan('pScanStaf', 'Kamera aktif. Arahkan ke QR pribadi mahasiswa.');
+          pesan('pScanStaf', infoArah + ' aktif. Arahkan ke QR pribadi mahasiswa.');
         } else {
           el('areaKameraMhs').classList.remove('hidden');
+          el('btnTukarKameraMhs').classList.remove('hidden');
           el('btnStopScanMhs').classList.remove('hidden');
           el('btnMulaiScanMhs').classList.add('hidden');
-          pesan('pScanMhs', 'Kamera aktif. Arahkan ke QR sesi di layar dosen.');
+          pesan('pScanMhs', infoArah + ' aktif. Arahkan ke QR sesi di layar dosen.');
         }
         requestAnimationFrame(loopPindai);
       } catch (err) {
         pesan(mode === 'STAF' ? 'pScanStaf' : 'pScanMhs', 'Gagal mengakses kamera: ' + err.message, 'err');
       }
+    }
+
+    function tukarKamera(mode) {
+      arahKamera = arahKamera === 'environment' ? 'user' : 'environment';
+      nyalakanKamera(mode);
     }
 
     function matikanSemuaKamera() {
@@ -746,11 +769,18 @@
         streamKamera.getTracks().forEach((t) => t.stop());
         streamKamera = null;
       }
-      ['videoStaf', 'videoMhs'].forEach((id) => { if (el(id)) el(id).srcObject = null; });
+      ['videoStaf', 'videoMhs'].forEach((id) => {
+        if (el(id)) {
+          el(id).srcObject = null;
+          el(id).classList.remove('cermin');
+        }
+      });
       el('areaKameraStaf').classList.add('hidden');
+      el('btnTukarKameraStaf').classList.add('hidden');
       el('btnStopScanStaf').classList.add('hidden');
       el('btnMulaiScanStaf').classList.remove('hidden');
       el('areaKameraMhs').classList.add('hidden');
+      el('btnTukarKameraMhs').classList.add('hidden');
       el('btnStopScanMhs').classList.add('hidden');
       el('btnMulaiScanMhs').classList.remove('hidden');
     }
@@ -798,8 +828,10 @@
     }
 
     el('btnMulaiScanStaf').addEventListener('click', () => nyalakanKamera('STAF'));
+    el('btnTukarKameraStaf').addEventListener('click', () => tukarKamera('STAF'));
     el('btnStopScanStaf').addEventListener('click', matikanSemuaKamera);
     el('btnMulaiScanMhs').addEventListener('click', () => nyalakanKamera('MHS'));
+    el('btnTukarKameraMhs').addEventListener('click', () => tukarKamera('MHS'));
     el('btnStopScanMhs').addEventListener('click', matikanSemuaKamera);
 
     // ---------- Rekap & Unduh Excel ----------
