@@ -8,7 +8,8 @@
   <style>
     :root {
       --navy: #0C193E; --biru: #1A76E5; --biru-tua: #164EC8; --cyan: #0EA4FC;
-      --biru-muda: #ACDBFB; --latar: #E1EDF9; --putih: #FFFFFF; --ok: #0B8A4B; --err: #C62828;
+      --biru-muda: #ACDBFB; --latar: #E1EDF9; --putih: #FFFFFF;
+      --ok: #0B8A4B; --warn: #B26A00; --err: #C62828;
     }
     * { box-sizing: border-box; }
     body {
@@ -16,49 +17,129 @@
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       background: linear-gradient(180deg, var(--latar), var(--putih));
     }
-    .wadah { max-width: 520px; margin: 0 auto; padding: 16px; }
-    header { text-align: center; padding: 8px 0; }
-    header img { width: 190px; max-width: 65%; height: auto; }
+    .wadah { max-width: 720px; margin: 0 auto; padding: 16px; }
+    header { text-align: center; padding: 8px 0 4px; }
+    header img { width: 185px; max-width: 60%; height: auto; }
+    .badge-peran {
+      display: inline-block; margin-top: 4px; padding: 4px 12px;
+      background: var(--biru-muda); color: var(--navy); border-radius: 999px;
+      font-size: .82rem; font-weight: 700;
+    }
     h2 { font-size: 1.05rem; margin: 0 0 10px; }
+    h3 { font-size: .95rem; margin: 14px 0 8px; }
     .kartu {
       background: var(--putih); border: 2px solid var(--biru-muda); border-radius: 20px;
       padding: 16px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(26, 118, 229, .12);
     }
+    .tabs {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px;
+    }
+    .tab {
+      flex: 1 0 auto; background: var(--putih); color: var(--biru-tua);
+      border: 2px solid var(--biru-muda); border-radius: 12px; padding: 9px 12px;
+      margin: 0; font-size: .88rem;
+    }
+    .tab.aktif {
+      background: linear-gradient(135deg, var(--cyan), var(--biru));
+      color: var(--putih); border-color: transparent;
+    }
     label { display: block; font-size: .88rem; font-weight: 600; margin: 10px 0 4px; }
-    input {
-      width: 100%; font: inherit; padding: 11px 12px; color: var(--navy);
+    input, select {
+      width: 100%; font: inherit; padding: 10px 12px; color: var(--navy);
       border: 2px solid var(--biru-muda); border-radius: 12px; background: var(--putih);
     }
-    input:focus, button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 1px; }
+    input:focus, select:focus, button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 1px; }
     button {
       font: inherit; font-weight: 600; color: var(--putih); cursor: pointer;
       background: linear-gradient(135deg, var(--cyan), var(--biru));
-      border: 0; border-radius: 14px; padding: 11px 16px; margin: 12px 8px 0 0;
+      border: 0; border-radius: 14px; padding: 10px 15px; margin: 10px 6px 0 0;
     }
     button.sekunder { background: var(--putih); color: var(--biru-tua); border: 2px solid var(--biru); }
-    button.kecil { padding: 6px 12px; margin: 0; font-size: .85rem; }
-    .pesan { min-height: 1.3em; margin: 10px 0 0; font-size: .9rem; }
+    button.bahaya { background: var(--err); color: var(--putih); }
+    button.kecil { padding: 6px 11px; margin: 2px 4px 2px 0; font-size: .82rem; border-radius: 10px; }
+    .pesan { min-height: 1.2em; margin: 8px 0 0; font-size: .9rem; }
     .pesan.err { color: var(--err); }
     .pesan.ok { color: var(--ok); }
     .qr { text-align: center; }
-    .qr img { width: 100%; max-width: 280px; image-rendering: pixelated; border-radius: 12px; border: 6px solid var(--putih); box-shadow: 0 0 0 2px var(--biru-muda); }
+    .qr img {
+      width: 100%; max-width: 260px; image-rendering: pixelated;
+      border-radius: 14px; border: 6px solid var(--putih); box-shadow: 0 0 0 2px var(--biru-muda);
+    }
     .nama { font-weight: 700; font-size: 1.1rem; margin: 0; }
-    .sub { margin: 2px 0 12px; opacity: .75; font-size: .9rem; }
+    .sub { margin: 2px 0 10px; opacity: .75; font-size: .88rem; }
     .hasil { background: var(--latar); border-radius: 12px; padding: 10px 12px; margin-top: 12px; word-break: break-all; }
     .hasil code { font-size: 1.15rem; font-weight: 700; }
-    .baris { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px dashed var(--biru-muda); }
-    .baris small { display: block; opacity: .7; }
-    label.cek { display: flex; align-items: center; gap: 8px; font-weight: 400; margin: 10px 0 0; cursor: pointer; }
+    .baris {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 8px 0; border-bottom: 1px dashed var(--biru-muda);
+    }
+    .baris small { display: block; opacity: .75; }
+    label.cek { display: flex; align-items: center; gap: 8px; font-weight: 400; margin: 8px 0 0; cursor: pointer; }
     label.cek input { width: auto; margin: 0; }
-    .hidden { display: none; }
+
+    /* Kotak metode scan + ikon info (i) */
+    .metode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .metode-item { display: flex; align-items: stretch; gap: 6px; }
+    .metode-item .btn-metode { flex: 1; margin: 0; padding: 11px 10px; font-size: .9rem; }
+    .btn-info {
+      width: 36px; margin: 0; padding: 0; border-radius: 12px;
+      background: var(--latar); color: var(--biru-tua); border: 2px solid var(--biru-muda);
+      font-weight: 800; font-style: italic;
+    }
+    .box-info {
+      background: var(--latar); border-left: 4px solid var(--biru);
+      border-radius: 10px; padding: 10px 12px; margin-top: 10px; font-size: .88rem;
+    }
+
+    /* Kamera */
+    .kamera {
+      position: relative; background: var(--navy); border-radius: 16px;
+      overflow: hidden; margin-top: 10px; max-width: 420px; margin-inline: auto;
+    }
+    .kamera video { width: 100%; display: block; }
+    .bingkai {
+      position: absolute; inset: 18% 18%; border: 3px solid var(--cyan);
+      border-radius: 16px; pointer-events: none;
+    }
+
+    /* Pill status & ringkasan */
+    .pill {
+      display: inline-block; padding: 2px 9px; border-radius: 999px;
+      font-size: .78rem; font-weight: 700;
+    }
+    .st-Hadir { background: #D7F5E5; color: var(--ok); }
+    .st-Terlambat { background: #FFF0D4; color: var(--warn); }
+    .st-Izin { background: #DCEEFF; color: var(--biru-tua); }
+    .st-Alpha { background: #FADBD8; color: var(--err); }
+    .st-Belum { background: #EEF2F7; color: #556; }
+
+    .grid-stat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }
+    .stat { background: var(--latar); border-radius: 12px; padding: 8px; text-align: center; }
+    .stat strong { display: block; font-size: 1.15rem; }
+    .stat small { font-size: .76rem; opacity: .8; }
+
+    .tabel-wrap { overflow-x: auto; margin-top: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    th, td { padding: 7px 8px; border-bottom: 1px solid var(--latar); text-align: left; white-space: nowrap; }
+    th { background: var(--latar); font-weight: 700; }
+
+    .daftar-cek {
+      max-height: 180px; overflow-y: auto; border: 2px solid var(--biru-muda);
+      border-radius: 12px; padding: 8px 10px; margin-top: 4px;
+    }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
   <div class="wadah">
-    <header><img src="logo.png" alt="Logo Ambatuhadir"></header>
+    <header>
+      <img src="logo.png" alt="Logo Ambatuhadir">
+      <div id="headerBadge" class="hidden"><span class="badge-peran" id="txtBadge"></span></div>
+    </header>
 
+    <!-- LOGIN -->
     <section class="kartu view" id="vLogin">
-      <h2>Masuk</h2>
+      <h2>Masuk ke Ambatuhadir</h2>
       <form id="fLogin">
         <label for="lUser">Username (NIM untuk mahasiswa)</label>
         <input id="lUser" autocomplete="username" autocapitalize="none" required>
@@ -70,6 +151,7 @@
       <p class="pesan" id="pLogin"></p>
     </section>
 
+    <!-- GANTI PASSWORD -->
     <section class="kartu view hidden" id="vGanti">
       <h2>Ganti password</h2>
       <p class="sub" id="infoGanti"></p>
@@ -87,61 +169,242 @@
       <p class="pesan" id="pGanti"></p>
     </section>
 
-    <section class="kartu view hidden" id="vMhs">
-      <div class="qr">
-        <p class="nama" id="mNama"></p>
-        <p class="sub" id="mNim"></p>
-        <img id="mQR" alt="QR Code pribadi">
-        <p class="sub">Tunjukkan QR ini ke Admin saat absensi.</p>
+    <!-- MODE MAHASISWA -->
+    <div class="view hidden" id="vMhs">
+      <div class="tabs">
+        <button class="tab aktif" data-tab="mhs" data-panel="mPanelQR">QR & Scan Sesi</button>
+        <button class="tab" data-tab="mhs" data-panel="mPanelRiwayat">Riwayat & Kehadiran</button>
       </div>
-      <button class="sekunder" id="btnGantiMhs">Ganti password</button>
-      <button class="sekunder" id="btnKeluarMhs">Keluar</button>
-    </section>
 
-    <div class="view hidden" id="vAdmin">
+      <div id="mPanelQR" class="panel-mhs">
+        <section class="kartu qr">
+          <p class="nama" id="mNama"></p>
+          <p class="sub" id="mNim"></p>
+          <img id="mQR" alt="QR Code pribadi">
+          <p class="sub">Tunjukkan QR pribadi ini ke Dosen saat metode <strong>Dosen scan</strong>.</p>
+        </section>
+
+        <section class="kartu">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <h2 style="margin:0;">Mahasiswa scan (Pindai QR Sesi)</h2>
+            <button type="button" class="btn-info" id="btnInfoMhsScan" title="Penjelasan">i</button>
+          </div>
+          <div class="box-info hidden" id="infoMhsScan">
+            <strong>Mahasiswa scan:</strong> Dosen menampilkan QR sesi di layar atau proyektor. Kamu memindai QR tersebut memakai kamera HP sendiri. QR sesi berganti otomatis setiap 30 detik.
+          </div>
+          <button type="button" id="btnMulaiScanMhs">Nyalakan kamera untuk scan QR Sesi</button>
+          <button type="button" class="sekunder hidden" id="btnStopScanMhs">Matikan kamera</button>
+          <div class="kamera hidden" id="areaKameraMhs">
+            <video id="videoMhs" playsinline muted></video>
+            <div class="bingkai"></div>
+          </div>
+          <p class="pesan" id="pScanMhs"></p>
+        </section>
+      </div>
+
+      <div id="mPanelRiwayat" class="panel-mhs hidden">
+        <section class="kartu">
+          <h2>Total Kehadiran (<span id="mPersen">100</span>%)</h2>
+          <div class="grid-stat">
+            <div class="stat"><strong id="stHadir">0</strong><small>Hadir</small></div>
+            <div class="stat"><strong id="stTerlambat">0</strong><small>Terlambat</small></div>
+            <div class="stat"><strong id="stIzin">0</strong><small>Izin</small></div>
+            <div class="stat"><strong id="stAlpha">0</strong><small>Alpha</small></div>
+          </div>
+          <h3>Riwayat Absensi</h3>
+          <div id="listRiwayatMhs"></div>
+          <p class="pesan" id="pRiwayatMhs"></p>
+        </section>
+      </div>
+
       <section class="kartu">
-        <h2>Tambah mahasiswa</h2>
-        <form id="fTambah">
-          <label for="tNim">NIM</label>
-          <input id="tNim" autocomplete="off" required>
-          <label for="tNama">Nama</label>
-          <input id="tNama" autocomplete="off" required>
-          <button type="submit">Tambah mahasiswa</button>
-        </form>
-        <p class="pesan" id="pTambah"></p>
-        <div class="hasil hidden" id="hasil">
-          <div id="hasilInfo"></div>
-          <button type="button" class="kecil" id="btnSalin">Salin password</button>
-        </div>
+        <button class="sekunder" id="btnGantiMhs">Ganti password</button>
+        <button class="sekunder" id="btnKeluarMhs">Keluar</button>
       </section>
+    </div>
+
+    <!-- MODE DOSEN & ADMIN (PANEL SESI + REKAP BERSAMA) -->
+    <div class="view hidden" id="vStaf">
+      <div class="tabs" id="stafTabs"></div>
+
+      <!-- TAB 1: SESI ABSENSI (DOSEN & ADMIN CADANGAN) -->
+      <div id="sPanelSesi" class="panel-staf">
+        <section class="kartu">
+          <h2>Sesi Perkuliahan</h2>
+          <label for="selMK">Pilih Mata Kuliah</label>
+          <select id="selMK"></select>
+          <p class="sub" id="infoPengampu"></p>
+
+          <!-- Jika belum ada sesi aktif -->
+          <div id="boxBukaSesi" class="hidden">
+            <p class="sub">Pertemuan berikutnya: <strong id="txtPertemuanBerikut">1</strong></p>
+            <label for="inpBatas">Batas toleransi terlambat (menit)</label>
+            <input id="inpBatas" type="number" min="0" max="180" value="15">
+            <button type="button" id="btnBukaSesi">Buka Sesi Absensi</button>
+          </div>
+
+          <!-- Jika sesi sedang aktif -->
+          <div id="boxSesiAktif" class="hidden">
+            <div class="hasil">
+              <strong id="judulSesiAktif"></strong>
+              <div class="sub" id="metaSesiAktif"></div>
+            </div>
+
+            <h3>Pilih Metode Absensi</h3>
+            <div class="metode-grid">
+              <div class="metode-item">
+                <button type="button" class="btn-metode" id="btnModeDosenScan">Dosen scan</button>
+                <button type="button" class="btn-info" data-info="infoDosenScan" title="Penjelasan">i</button>
+              </div>
+              <div class="metode-item">
+                <button type="button" class="btn-metode sekunder" id="btnModeMhsScan">Mahasiswa scan</button>
+                <button type="button" class="btn-info" data-info="infoMhsScanStaf" title="Penjelasan">i</button>
+              </div>
+            </div>
+
+            <div class="box-info hidden" id="infoDosenScan">
+              <strong>Dosen scan:</strong> Mahasiswa membuka QR pribadi di HP masing-masing, lalu kamu memindainya satu per satu memakai kamera perangkat ini.
+            </div>
+            <div class="box-info hidden" id="infoMhsScanStaf">
+              <strong>Mahasiswa scan:</strong> Tampilkan QR sesi di layar atau proyektor agar mahasiswa memindai dengan HP sendiri. QR sesi berganti otomatis setiap 30 detik.
+            </div>
+
+            <!-- Area Dosen Scan -->
+            <div id="areaDosenScan" class="hidden" style="margin-top:12px;">
+              <button type="button" id="btnMulaiScanStaf">Nyalakan kamera pemindai</button>
+              <button type="button" class="sekunder hidden" id="btnStopScanStaf">Matikan kamera</button>
+              <div class="kamera hidden" id="areaKameraStaf">
+                <video id="videoStaf" playsinline muted></video>
+                <div class="bingkai"></div>
+              </div>
+              <p class="pesan" id="pScanStaf"></p>
+            </div>
+
+            <!-- Area Mahasiswa Scan (QR Sesi 30 Detik) -->
+            <div id="areaQRSesi" class="qr hidden" style="margin-top:14px;">
+              <img id="imgQRSesi" alt="QR Sesi">
+              <p class="sub">QR berganti otomatis dalam <strong id="hitungMundurQR">30</strong> detik</p>
+            </div>
+
+            <h3>Daftar Hadir Sesi Berjalan (<span id="ringkasHadirSesi">0/0</span>)</h3>
+            <div id="listHadirSesi"></div>
+
+            <button type="button" class="bahaya" id="btnTutupSesi" style="margin-top:14px;">Tutup Sesi (Otomatis Alpha yang Belum Hadir)</button>
+          </div>
+          <p class="pesan" id="pSesi"></p>
+        </section>
+      </div>
+
+      <!-- TAB 2: REKAP & EXCEL -->
+      <div id="sPanelRekap" class="panel-staf hidden">
+        <section class="kartu">
+          <h2>Rekap Absensi & Unduh Excel</h2>
+          <label for="selMKRekap">Mata Kuliah</label>
+          <select id="selMKRekap"></select>
+          <button type="button" id="btnUnduhExcel">Unduh Excel (.xlsx)</button>
+          <div class="tabel-wrap" id="wadahTabelRekap"></div>
+          <p class="pesan" id="pRekap"></p>
+        </section>
+      </div>
+
+      <!-- TAB 3 (KHUSUS ADMIN): MATA KULIAH -->
+      <div id="sPanelMK" class="panel-staf hidden">
+        <section class="kartu">
+          <h2>Kelola Mata Kuliah & Peserta</h2>
+          <form id="fMK">
+            <label for="mkKode">Kode Mata Kuliah</label>
+            <input id="mkKode" placeholder="Contoh: IF101" required>
+            <label for="mkNama">Nama Mata Kuliah</label>
+            <input id="mkNama" placeholder="Contoh: Logika & Algoritma" required>
+            <label for="mkDosen">Dosen Pengampu</label>
+            <select id="mkDosen" required></select>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+              <label style="margin:0;">Peserta Mahasiswa</label>
+              <button type="button" class="sekunder kecil" id="btnPilihSemuaMhs">Pilih semua mahasiswa aktif</button>
+            </div>
+            <div class="daftar-cek" id="boxPesertaMK"></div>
+            <button type="submit">Simpan Mata Kuliah</button>
+          </form>
+          <p class="pesan" id="pMK"></p>
+        </section>
+
+        <section class="kartu">
+          <h2>Daftar Mata Kuliah</h2>
+          <div id="listMKAdmin"></div>
+        </section>
+      </div>
+
+      <!-- TAB 4 (KHUSUS ADMIN): AKUN DOSEN & MAHASISWA -->
+      <div id="sPanelAkun" class="panel-staf hidden">
+        <section class="kartu">
+          <h2>Tambah Akun Dosen / Mahasiswa</h2>
+          <form id="fTambahUser">
+            <label for="uPeran">Peran Akun</label>
+            <select id="uPeran">
+              <option value="MAHASISWA">Mahasiswa</option>
+              <option value="DOSEN">Dosen</option>
+            </select>
+            <label for="uUser" id="lblUUser">NIM Mahasiswa</label>
+            <input id="uUser" autocomplete="off" required>
+            <label for="uNama">Nama Lengkap</label>
+            <input id="uNama" autocomplete="off" required>
+            <button type="submit">Tambah Akun</button>
+          </form>
+          <p class="pesan" id="pTambahUser"></p>
+          <div class="hasil hidden" id="hasilUser">
+            <div id="hasilUserInfo"></div>
+            <button type="button" class="kecil" id="btnSalinPw">Salin password</button>
+          </div>
+        </section>
+
+        <section class="kartu">
+          <h2>Daftar Dosen</h2>
+          <div id="listDosen"></div>
+          <h2 style="margin-top:16px;">Daftar Mahasiswa</h2>
+          <div id="listMhs"></div>
+          <p class="pesan" id="pListUser"></p>
+        </section>
+      </div>
+
       <section class="kartu">
-        <h2>Daftar mahasiswa</h2>
-        <div id="daftar"></div>
-        <p class="pesan" id="pDaftar"></p>
-      </section>
-      <section class="kartu">
-        <p class="sub" id="aNama"></p>
-        <button class="sekunder" id="btnGantiAdm">Ganti password</button>
-        <button class="sekunder" id="btnKeluarAdm">Keluar</button>
+        <p class="sub" id="stafInfoAkun"></p>
+        <button class="sekunder" id="btnGantiStaf">Ganti password</button>
+        <button class="sekunder" id="btnKeluarStaf">Keluar</button>
       </section>
     </div>
   </div>
 
   <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script>
     const el = (id) => document.getElementById(id);
     let token = '';
     let profil = null;
+    let cacheMK = [];
+    let cacheUsers = { mahasiswa: [], dosen: [] };
+    let sesiAktifSaatIni = null;
+    let timerQRSesi = null;
+    let dataRekapTerakhir = null;
+
+    // State Kamera
+    let streamKamera = null;
+    let scanAktif = false;
+    let jedaScan = false;
+    let terakhirFrame = 0;
+    let modeKamera = ''; // 'STAF' atau 'MHS'
+
     try { token = sessionStorage.getItem('token') || ''; } catch (e) {}
 
     function tampil(id) {
+      matikanSemuaKamera();
+      hentikanTimerQR();
       document.querySelectorAll('.view').forEach((v) => v.classList.add('hidden'));
       el(id).classList.remove('hidden');
       sembunyikanPassword();
     }
 
-    // Kotak "Tampilkan password": ketuk untuk melihat isi kolom, dan otomatis kembali tersembunyi saat pindah halaman.
     function sembunyikanPassword() {
       ['lPass', 'gLama', 'gBaru', 'gUlang'].forEach((id) => { el(id).type = 'password'; });
       document.querySelectorAll('[data-lihat]').forEach((c) => { c.checked = false; });
@@ -165,10 +428,10 @@
           body: JSON.stringify(Object.assign({ aksi: aksi, token: token }, data || {}))
         });
         const j = await res.json();
-        if (j.sesiHabis) { keluarLokal('Sesi habis, silakan login lagi.'); }
+        if (j.sesiHabis) keluarLokal('Sesi habis, silakan login lagi.');
         return j;
       } catch (err) {
-        return { ok: false, pesan: 'Tidak bisa terhubung ke server. Periksa koneksi internet.' };
+        return { ok: false, pesan: 'Gagal terhubung ke server. Periksa internet.' };
       }
     }
 
@@ -176,88 +439,641 @@
       token = '';
       profil = null;
       try { sessionStorage.removeItem('token'); } catch (e) {}
+      el('headerBadge').classList.add('hidden');
       el('fLogin').reset();
       pesan('pLogin', info || '', info ? 'err' : '');
       tampil('vLogin');
     }
+
+    // ---------- Inisialisasi Profil & Mode ----------
 
     async function muat() {
       const j = await api('saya');
       if (!j.ok) { if (!j.sesiHabis) keluarLokal(j.pesan); return; }
       profil = j;
       if (j.wajibGanti) { bukaGanti(true); return; }
-      if (j.peran === 'ADMIN') {
-        el('aNama').textContent = 'Masuk sebagai ' + j.username + ' (Admin)';
-        tampil('vAdmin');
-        muatDaftar();
-      } else {
+
+      el('headerBadge').classList.remove('hidden');
+      el('txtBadge').textContent = 'MODE ' + j.peran + ' — ' + j.nama;
+
+      if (j.peran === 'MAHASISWA') {
         el('mNama').textContent = j.nama;
         el('mNim').textContent = 'NIM ' + j.username;
-        if (typeof qrcode !== 'function') {
-          el('mNim').textContent = 'Library QR gagal dimuat. Periksa koneksi internet.';
-        } else {
-          const qr = qrcode(0, 'M');
-          qr.addData(j.kodeQR);
-          qr.make();
-          el('mQR').src = qr.createDataURL(8, 2);
-        }
+        gambarQR(el('mQR'), j.kodeQR, 8);
         tampil('vMhs');
+        bukaTab('mhs', 'mPanelQR');
+      } else {
+        el('stafInfoAkun').textContent = 'Masuk sebagai ' + j.nama + ' (' + j.username + ' — ' + j.peran + ')';
+        susunTabStaf(j.peran);
+        tampil('vStaf');
+        await muatDataStaf();
       }
     }
 
-    function bukaGanti(wajib) {
-      el('fGanti').reset();
-      pesan('pGanti', '');
-      el('infoGanti').textContent = wajib
-        ? 'Password default harus diganti dulu sebelum kamu bisa melanjutkan.' : '';
-      el('btnBatalGanti').classList.toggle('hidden', !!wajib);
-      tampil('vGanti');
+    function susunTabStaf(peran) {
+      const daftarTab = [
+        { id: 'sPanelSesi', label: peran === 'DOSEN' ? 'Sesi Mengajar' : 'Sesi (Cadangan)' },
+        { id: 'sPanelRekap', label: 'Rekap & Excel' }
+      ];
+      if (peran === 'ADMIN') {
+        daftarTab.push({ id: 'sPanelMK', label: 'Mata Kuliah' });
+        daftarTab.push({ id: 'sPanelAkun', label: 'Akun Dosen & Mhs' });
+      }
+      const box = el('stafTabs');
+      box.textContent = '';
+      daftarTab.forEach((t, idx) => {
+        const b = document.createElement('button');
+        b.className = 'tab' + (idx === 0 ? ' aktif' : '');
+        b.dataset.tab = 'staf';
+        b.dataset.panel = t.id;
+        b.textContent = t.label;
+        b.addEventListener('click', () => bukaTab('staf', t.id));
+        box.appendChild(b);
+      });
+      bukaTab('staf', 'sPanelSesi');
     }
 
-    async function muatDaftar() {
-      const j = await api('daftar_mahasiswa');
-      const box = el('daftar');
+    function bukaTab(grup, panelId) {
+      matikanSemuaKamera();
+      document.querySelectorAll(`.tab[data-tab="${grup}"]`).forEach((t) => {
+        t.classList.toggle('aktif', t.dataset.panel === panelId);
+      });
+      const kelasPanel = grup === 'mhs' ? '.panel-mhs' : '.panel-staf';
+      document.querySelectorAll(kelasPanel).forEach((p) => {
+        p.classList.toggle('hidden', p.id !== panelId);
+      });
+      if (panelId === 'mPanelRiwayat') muatRiwayatMahasiswa();
+      if (panelId === 'sPanelRekap') muatRekapMK();
+    }
+
+    document.querySelectorAll('.tab[data-tab="mhs"]').forEach((t) => {
+      t.addEventListener('click', () => bukaTab('mhs', t.dataset.panel));
+    });
+
+    function gambarQR(imgEl, teks, skala) {
+      if (typeof qrcode !== 'function' || !teks) return;
+      const qr = qrcode(0, 'M');
+      qr.addData(teks);
+      qr.make();
+      imgEl.src = qr.createDataURL(skala || 8, 2);
+    }
+
+    // ---------- Data Staf (Dosen & Admin) ----------
+
+    async function muatDataStaf() {
+      const resMK = await api('daftar_mk');
+      cacheMK = resMK.ok ? resMK.daftar : [];
+
+      if (profil.peran === 'ADMIN') {
+        const resU = await api('daftar_pengguna');
+        if (resU.ok) {
+          cacheUsers = { mahasiswa: resU.mahasiswa, dosen: resU.dosen };
+          renderDaftarPengguna();
+          renderFormMK();
+        }
+      }
+      isiDropdownMK();
+    }
+
+    function isiDropdownMK() {
+      ['selMK', 'selMKRekap'].forEach((id) => {
+        const sel = el(id);
+        const lama = sel.value;
+        sel.textContent = '';
+        if (cacheMK.length === 0) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = profil.peran === 'ADMIN'
+            ? '(Belum ada mata kuliah — buat di tab Mata Kuliah)'
+            : '(Belum ada mata kuliah yang diampu)';
+          sel.appendChild(opt);
+        } else {
+          cacheMK.forEach((m) => {
+            const opt = document.createElement('option');
+            opt.value = m.kode;
+            opt.textContent = m.kode + ' — ' + m.nama + ' (' + m.peserta.length + ' mhs)';
+            sel.appendChild(opt);
+          });
+          if (lama && cacheMK.some((m) => m.kode === lama)) sel.value = lama;
+        }
+      });
+      cekStatusSesiMK();
+    }
+
+    el('selMK').addEventListener('change', cekStatusSesiMK);
+    el('selMKRekap').addEventListener('change', muatRekapMK);
+
+    // ---------- Sesi Absensi & Kedua Metode Scan ----------
+
+    async function cekStatusSesiMK() {
+      matikanSemuaKamera();
+      hentikanTimerQR();
+      const kode = el('selMK').value;
+      el('boxBukaSesi').classList.add('hidden');
+      el('boxSesiAktif').classList.add('hidden');
+      pesan('pSesi', '');
+      if (!kode) { el('infoPengampu').textContent = ''; return; }
+
+      const mk = cacheMK.find((x) => x.kode === kode);
+      el('infoPengampu').textContent = mk ? ('Dosen Pengampu: ' + mk.dosenNama) : '';
+
+      const j = await api('info_sesi_aktif', { kodeMK: kode });
+      if (!j.ok) { pesan('pSesi', j.pesan, 'err'); return; }
+
+      if (!j.aktif) {
+        sesiAktifSaatIni = null;
+        el('txtPertemuanBerikut').textContent = j.pertemuanBerikut;
+        el('boxBukaSesi').classList.remove('hidden');
+      } else {
+        tampilkanSesiAktif(j.aktif);
+      }
+    }
+
+    el('btnBukaSesi').addEventListener('click', async () => {
+      const kode = el('selMK').value;
+      if (!kode) return;
+      pesan('pSesi', 'Membuka sesi...');
+      const j = await api('buka_sesi', { kodeMK: kode, batasTerlambat: el('inpBatas').value });
+      if (!j.ok) { pesan('pSesi', j.pesan, 'err'); return; }
+      pesan('pSesi', '');
+      tampilkanSesiAktif(j.aktif);
+    });
+
+    function tampilkanSesiAktif(sesi) {
+      sesiAktifSaatIni = sesi;
+      el('boxBukaSesi').classList.add('hidden');
+      el('boxSesiAktif').classList.remove('hidden');
+      el('judulSesiAktif').textContent = sesi.kodeMK + ' — ' + sesi.namaMK + ' (Pertemuan ' + sesi.pertemuan + ')';
+      el('metaSesiAktif').textContent = 'Tanggal: ' + sesi.tanggal + ' | Toleransi terlambat: ' + sesi.batasTerlambat + ' menit';
+      renderDaftarHadirSesi(sesi.daftarHadir);
+      pilihMetodeStaf('DOSEN');
+    }
+
+    function renderDaftarHadirSesi(daftar) {
+      const box = el('listHadirSesi');
       box.textContent = '';
-      if (!j.ok) { pesan('pDaftar', j.pesan, 'err'); return; }
-      pesan('pDaftar', j.daftar.length ? '' : 'Belum ada mahasiswa. Tambahkan lewat formulir di atas.');
-      j.daftar.forEach((m) => {
+      let jumlahMasuk = 0;
+      daftar.forEach((m) => {
+        if (m.status !== 'Belum') jumlahMasuk++;
         const baris = document.createElement('div');
         baris.className = 'baris';
-        const info = document.createElement('div');
-        const nama = document.createElement('strong');
-        nama.textContent = m.nama;
-        const kecil = document.createElement('small');
-        kecil.textContent = 'NIM ' + m.nim + (m.belumGanti ? ' - belum ganti password' : '');
-        info.append(nama, kecil);
-        const tombol = document.createElement('button');
-        tombol.className = 'sekunder kecil';
-        tombol.textContent = 'Reset password';
-        tombol.addEventListener('click', () => resetPassword(m));
-        baris.append(info, tombol);
+        const kiri = document.createElement('div');
+        const nm = document.createElement('strong');
+        nm.textContent = m.nama;
+        const sm = document.createElement('small');
+        sm.textContent = 'NIM ' + m.nim + (m.metode ? ' • ' + m.metode : '');
+        kiri.append(nm, sm);
+
+        const pill = document.createElement('span');
+        pill.className = 'pill st-' + m.status;
+        pill.textContent = m.status;
+        baris.append(kiri, pill);
+        box.appendChild(baris);
+      });
+      el('ringkasHadirSesi').textContent = jumlahMasuk + '/' + daftar.length;
+    }
+
+    function pilihMetodeStaf(mode) {
+      matikanSemuaKamera();
+      hentikanTimerQR();
+      if (mode === 'DOSEN') {
+        el('btnModeDosenScan').classList.remove('sekunder');
+        el('btnModeMhsScan').classList.add('sekunder');
+        el('areaDosenScan').classList.remove('hidden');
+        el('areaQRSesi').classList.add('hidden');
+      } else {
+        el('btnModeMhsScan').classList.remove('sekunder');
+        el('btnModeDosenScan').classList.add('sekunder');
+        el('areaDosenScan').classList.add('hidden');
+        el('areaQRSesi').classList.remove('hidden');
+        mulaiRotasiQRSesi();
+      }
+    }
+
+    el('btnModeDosenScan').addEventListener('click', () => pilihMetodeStaf('DOSEN'));
+    el('btnModeMhsScan').addEventListener('click', () => pilihMetodeStaf('MHS'));
+
+    // Toggle info (i)
+    document.querySelectorAll('[data-info]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        el(btn.dataset.info).classList.toggle('hidden');
+      });
+    });
+    el('btnInfoMhsScan').addEventListener('click', () => {
+      el('infoMhsScan').classList.toggle('hidden');
+    });
+
+    // Rotasi QR Sesi otomatis tiap 30 detik & sinkronisasi daftar hadir
+    function mulaiRotasiQRSesi() {
+      if (!sesiAktifSaatIni) return;
+      gambarQR(el('imgQRSesi'), sesiAktifSaatIni.tokenQR, 9);
+      let sisa = sesiAktifSaatIni.sisaDetikQR || 30;
+      el('hitungMundurQR').textContent = sisa;
+
+      timerQRSesi = setInterval(async () => {
+        sisa--;
+        if (sisa <= 0) {
+          const j = await api('info_sesi_aktif', { kodeMK: sesiAktifSaatIni.kodeMK });
+          if (j.ok && j.aktif) {
+            sesiAktifSaatIni = j.aktif;
+            gambarQR(el('imgQRSesi'), sesiAktifSaatIni.tokenQR, 9);
+            renderDaftarHadirSesi(sesiAktifSaatIni.daftarHadir);
+            sisa = sesiAktifSaatIni.sisaDetikQR || 30;
+          } else {
+            sisa = 5;
+          }
+        }
+        el('hitungMundurQR').textContent = sisa;
+      }, 1000);
+    }
+
+    function hentikanTimerQR() {
+      if (timerQRSesi) { clearInterval(timerQRSesi); timerQRSesi = null; }
+    }
+
+    el('btnTutupSesi').addEventListener('click', async () => {
+      if (!sesiAktifSaatIni) return;
+      if (!confirm('Tutup sesi ini? Semua peserta yang belum absen otomatis tercatat Alpha.')) return;
+      pesan('pSesi', 'Menutup sesi...');
+      const j = await api('tutup_sesi', { kodeMK: sesiAktifSaatIni.kodeMK });
+      if (!j.ok) { pesan('pSesi', j.pesan, 'err'); return; }
+      pesan('pSesi', 'Sesi ditutup. ' + j.jumlahAlpha + ' mahasiswa tercatat Alpha.', 'ok');
+      cekStatusSesiMK();
+    });
+
+    // ---------- Kamera Pemindai QR (Dosen Scan & Mahasiswa Scan) ----------
+
+    const canvasScan = document.createElement('canvas');
+    const ctxScan = canvasScan.getContext('2d', { willReadFrequently: true });
+
+    async function nyalakanKamera(mode) {
+      matikanSemuaKamera();
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        pesan(mode === 'STAF' ? 'pScanStaf' : 'pScanMhs', 'Browser tidak mendukung kamera (pastikan HTTPS).', 'err');
+        return;
+      }
+      try {
+        streamKamera = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } }, audio: false
+        });
+        const videoEl = mode === 'STAF' ? el('videoStaf') : el('videoMhs');
+        videoEl.srcObject = streamKamera;
+        await videoEl.play();
+        modeKamera = mode;
+        scanAktif = true;
+        jedaScan = false;
+
+        if (mode === 'STAF') {
+          el('areaKameraStaf').classList.remove('hidden');
+          el('btnStopScanStaf').classList.remove('hidden');
+          el('btnMulaiScanStaf').classList.add('hidden');
+          pesan('pScanStaf', 'Kamera aktif. Arahkan ke QR pribadi mahasiswa.');
+        } else {
+          el('areaKameraMhs').classList.remove('hidden');
+          el('btnStopScanMhs').classList.remove('hidden');
+          el('btnMulaiScanMhs').classList.add('hidden');
+          pesan('pScanMhs', 'Kamera aktif. Arahkan ke QR sesi di layar dosen.');
+        }
+        requestAnimationFrame(loopPindai);
+      } catch (err) {
+        pesan(mode === 'STAF' ? 'pScanStaf' : 'pScanMhs', 'Gagal mengakses kamera: ' + err.message, 'err');
+      }
+    }
+
+    function matikanSemuaKamera() {
+      scanAktif = false;
+      if (streamKamera) {
+        streamKamera.getTracks().forEach((t) => t.stop());
+        streamKamera = null;
+      }
+      ['videoStaf', 'videoMhs'].forEach((id) => { if (el(id)) el(id).srcObject = null; });
+      el('areaKameraStaf').classList.add('hidden');
+      el('btnStopScanStaf').classList.add('hidden');
+      el('btnMulaiScanStaf').classList.remove('hidden');
+      el('areaKameraMhs').classList.add('hidden');
+      el('btnStopScanMhs').classList.add('hidden');
+      el('btnMulaiScanMhs').classList.remove('hidden');
+    }
+
+    function loopPindai(waktu) {
+      if (!scanAktif) return;
+      const videoEl = modeKamera === 'STAF' ? el('videoStaf') : el('videoMhs');
+      if (!jedaScan && videoEl.readyState === videoEl.HAVE_ENOUGH_DATA && waktu - terakhirFrame > 130) {
+        terakhirFrame = waktu;
+        const w = Math.min(videoEl.videoWidth, 640);
+        const h = Math.round(videoEl.videoHeight * w / videoEl.videoWidth);
+        canvasScan.width = w;
+        canvasScan.height = h;
+        ctxScan.drawImage(videoEl, 0, 0, w, h);
+        const img = ctxScan.getImageData(0, 0, w, h);
+        const kode = jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
+        if (kode && kode.data) prosesHasilQR(kode.data);
+      }
+      requestAnimationFrame(loopPindai);
+    }
+
+    async function prosesHasilQR(isi) {
+      jedaScan = true;
+      if (navigator.vibrate) navigator.vibrate(100);
+
+      if (modeKamera === 'STAF') {
+        pesan('pScanStaf', 'Memeriksa QR mahasiswa...');
+        const j = await api('dosen_scan', { kodeMK: sesiAktifSaatIni.kodeMK, kodeQR: isi });
+        pesan('pScanStaf', j.pesan, j.ok ? 'ok' : 'err');
+        if (j.ok) {
+          const info = await api('info_sesi_aktif', { kodeMK: sesiAktifSaatIni.kodeMK });
+          if (info.ok && info.aktif) renderDaftarHadirSesi(info.aktif.daftarHadir);
+        }
+        setTimeout(() => { jedaScan = false; }, 2200);
+      } else {
+        pesan('pScanMhs', 'Memverifikasi QR sesi...');
+        const j = await api('mahasiswa_scan', { isiQR: isi });
+        pesan('pScanMhs', j.pesan, j.ok ? 'ok' : 'err');
+        if (j.ok) {
+          matikanSemuaKamera();
+        } else {
+          setTimeout(() => { jedaScan = false; }, 2500);
+        }
+      }
+    }
+
+    el('btnMulaiScanStaf').addEventListener('click', () => nyalakanKamera('STAF'));
+    el('btnStopScanStaf').addEventListener('click', matikanSemuaKamera);
+    el('btnMulaiScanMhs').addEventListener('click', () => nyalakanKamera('MHS'));
+    el('btnStopScanMhs').addEventListener('click', matikanSemuaKamera);
+
+    // ---------- Rekap & Unduh Excel ----------
+
+    async function muatRekapMK() {
+      const kode = el('selMKRekap').value;
+      const wadah = el('wadahTabelRekap');
+      wadah.textContent = '';
+      dataRekapTerakhir = null;
+      if (!kode) return;
+
+      pesan('pRekap', 'Memuat rekap...');
+      const j = await api('rekap_mk', { kodeMK: kode });
+      if (!j.ok) { pesan('pRekap', j.pesan, 'err'); return; }
+      pesan('pRekap', '');
+      dataRekapTerakhir = j;
+
+      const tbl = document.createElement('table');
+      const thead = document.createElement('thead');
+      const trH = document.createElement('tr');
+      ['NIM', 'Nama', ...j.sesi.map((s) => 'P' + s.pertemuan), 'Hadir', 'Terlambat', 'Izin', 'Alpha', '%'].forEach((h) => {
+        const th = document.createElement('th');
+        th.textContent = h;
+        trH.appendChild(th);
+      });
+      thead.appendChild(trH);
+      tbl.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      j.rekap.forEach((r) => {
+        const tr = document.createElement('tr');
+        const selAwal = [r.nim, r.nama];
+        selAwal.forEach((v) => { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
+        j.sesi.forEach((s) => {
+          const td = document.createElement('td');
+          const st = r.perPertemuan['P' + s.pertemuan] || '-';
+          const sp = document.createElement('span');
+          sp.className = 'pill st-' + st;
+          sp.textContent = st;
+          td.appendChild(sp);
+          tr.appendChild(td);
+        });
+        [r.hadir, r.terlambat, r.izin, r.alpha, r.persen + '%'].forEach((v) => {
+          const td = document.createElement('td'); td.textContent = v; tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      tbl.appendChild(tbody);
+      wadah.appendChild(tbl);
+    }
+
+    el('btnUnduhExcel').addEventListener('click', () => {
+      if (!dataRekapTerakhir) { pesan('pRekap', 'Pilih mata kuliah terlebih dahulu.', 'err'); return; }
+      if (typeof XLSX === 'undefined') { pesan('pRekap', 'Library Excel gagal dimuat.', 'err'); return; }
+      const j = dataRekapTerakhir;
+      const header = ['NIM', 'Nama', ...j.sesi.map((s) => 'Pertemuan ' + s.pertemuan + ' (' + s.tanggal + ')'), 'Hadir', 'Terlambat', 'Izin', 'Alpha', 'Persentase (%)'];
+      const rows = j.rekap.map((r) => [
+        r.nim, r.nama,
+        ...j.sesi.map((s) => r.perPertemuan['P' + s.pertemuan] || '-'),
+        r.hadir, r.terlambat, r.izin, r.alpha, r.persen
+      ]);
+      const ws = XLSX.utils.aoa_to_sheet([
+        ['Rekap Absensi — ' + j.mk.kode + ' ' + j.mk.nama],
+        [],
+        header,
+        ...rows
+      ]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Rekap Absensi');
+      XLSX.writeFile(wb, 'Rekap_' + j.mk.kode + '_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+    });
+
+    // ---------- Riwayat Mahasiswa ----------
+
+    async function muatRiwayatMahasiswa() {
+      pesan('pRiwayatMhs', 'Memuat riwayat...');
+      const j = await api('riwayat_mahasiswa');
+      if (!j.ok) { pesan('pRiwayatMhs', j.pesan, 'err'); return; }
+      pesan('pRiwayatMhs', j.riwayat.length ? '' : 'Belum ada catatan absensi.');
+
+      el('mPersen').textContent = j.ringkasan.persen;
+      el('stHadir').textContent = j.ringkasan.hadir;
+      el('stTerlambat').textContent = j.ringkasan.terlambat;
+      el('stIzin').textContent = j.ringkasan.izin;
+      el('stAlpha').textContent = j.ringkasan.alpha;
+
+      const box = el('listRiwayatMhs');
+      box.textContent = '';
+      j.riwayat.forEach((r) => {
+        const baris = document.createElement('div');
+        baris.className = 'baris';
+        const kiri = document.createElement('div');
+        const jdl = document.createElement('strong');
+        jdl.textContent = r.namaMK + ' — Pertemuan ' + r.pertemuan;
+        const sm = document.createElement('small');
+        sm.textContent = r.waktu.slice(0, 16).replace('T', ' ') + ' • ' + r.metode;
+        kiri.append(jdl, sm);
+
+        const pill = document.createElement('span');
+        pill.className = 'pill st-' + r.status;
+        pill.textContent = r.status;
+        baris.append(kiri, pill);
         box.appendChild(baris);
       });
     }
 
-    function tampilHasil(judul, username, pw) {
-      el('hasilInfo').textContent = '';
+    // ---------- Admin: Kelola Mata Kuliah & Akun ----------
+
+    function renderFormMK() {
+      const selDosen = el('mkDosen');
+      selDosen.textContent = '';
+      const dosenAktif = cacheUsers.dosen.filter((d) => d.status !== 'NONAKTIF');
+      if (dosenAktif.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = '(Tambahkan akun Dosen terlebih dahulu di tab Akun)';
+        selDosen.appendChild(opt);
+      } else {
+        dosenAktif.forEach((d) => {
+          const opt = document.createElement('option');
+          opt.value = d.username;
+          opt.textContent = d.nama + ' (' + d.username + ')';
+          selDosen.appendChild(opt);
+        });
+      }
+
+      const boxP = el('boxPesertaMK');
+      boxP.textContent = '';
+      cacheUsers.mahasiswa.filter((m) => m.status !== 'NONAKTIF').forEach((m) => {
+        const lbl = document.createElement('label');
+        lbl.className = 'cek';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.value = m.username;
+        lbl.append(cb, document.createTextNode(' ' + m.nama + ' (' + m.username + ')'));
+        boxP.appendChild(lbl);
+      });
+
+      const listMK = el('listMKAdmin');
+      listMK.textContent = '';
+      cacheMK.forEach((m) => {
+        const baris = document.createElement('div');
+        baris.className = 'baris';
+        const info = document.createElement('div');
+        const st = document.createElement('strong');
+        st.textContent = m.kode + ' — ' + m.nama;
+        const sm = document.createElement('small');
+        sm.textContent = 'Dosen: ' + m.dosenNama + ' • ' + m.peserta.length + ' mahasiswa';
+        info.append(st, sm);
+        const btnEdit = document.createElement('button');
+        btnEdit.className = 'sekunder kecil';
+        btnEdit.textContent = 'Edit';
+        btnEdit.addEventListener('click', () => {
+          el('mkKode').value = m.kode;
+          el('mkNama').value = m.nama;
+          el('mkDosen').value = m.dosenUsername;
+          el('boxPesertaMK').querySelectorAll('input').forEach((cb) => {
+            cb.checked = m.peserta.includes(cb.value);
+          });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        baris.append(info, btnEdit);
+        listMK.appendChild(baris);
+      });
+    }
+
+    el('btnPilihSemuaMhs').addEventListener('click', () => {
+      el('boxPesertaMK').querySelectorAll('input').forEach((cb) => { cb.checked = true; });
+    });
+
+    el('fMK').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const peserta = Array.from(el('boxPesertaMK').querySelectorAll('input:checked')).map((c) => c.value);
+      pesan('pMK', 'Menyimpan mata kuliah...');
+      const j = await api('simpan_mk', {
+        kode: el('mkKode').value, nama: el('mkNama').value, dosen: el('mkDosen').value, peserta: peserta
+      });
+      if (!j.ok) { pesan('pMK', j.pesan, 'err'); return; }
+      pesan('pMK', 'Mata kuliah ' + j.kode + ' tersimpan (' + j.jumlahPeserta + ' peserta).', 'ok');
+      el('fMK').reset();
+      await muatDataStaf();
+    });
+
+    el('uPeran').addEventListener('change', () => {
+      el('lblUUser').textContent = el('uPeran').value === 'MAHASISWA' ? 'NIM Mahasiswa' : 'Username Dosen';
+    });
+
+    el('fTambahUser').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      pesan('pTambahUser', 'Menyimpan akun...');
+      el('hasilUser').classList.add('hidden');
+      const j = await api('tambah_pengguna', {
+        peran: el('uPeran').value, username: el('uUser').value, nama: el('uNama').value
+      });
+      if (!j.ok) { pesan('pTambahUser', j.pesan, 'err'); return; }
+      pesan('pTambahUser', '');
+      tampilHasilUser(j.peran + ' ' + j.nama + ' ditambahkan. Username:', j.username, j.passwordDefault);
+      el('fTambahUser').reset();
+      el('lblUUser').textContent = 'NIM Mahasiswa';
+      await muatDataStaf();
+    });
+
+    function tampilHasilUser(judul, username, pw) {
+      el('hasilUserInfo').textContent = '';
       const t = document.createElement('div');
       t.textContent = judul + ' ' + username + '. Password default:';
       const c = document.createElement('code');
       c.textContent = pw;
       const p = document.createElement('div');
       p.className = 'sub';
-      p.textContent = 'Catat sekarang. Password ini tidak akan ditampilkan lagi.';
-      el('hasilInfo').append(t, c, p);
-      el('hasil').classList.remove('hidden');
+      p.textContent = 'Catat sekarang. Password hanya ditampilkan satu kali.';
+      el('hasilUserInfo').append(t, c, p);
+      el('hasilUser').classList.remove('hidden');
     }
 
-    async function resetPassword(m) {
-      if (!confirm('Reset password ' + m.nama + '? Password lamanya tidak berlaku lagi.')) return;
-      const j = await api('reset_password', { nim: m.nim });
-      if (!j.ok) { pesan('pDaftar', j.pesan, 'err'); return; }
-      tampilHasil('Password direset untuk', j.username, j.passwordDefault);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      muatDaftar();
+    el('btnSalinPw').addEventListener('click', () => {
+      const pw = el('hasilUserInfo').querySelector('code').textContent;
+      if (navigator.clipboard) navigator.clipboard.writeText(pw);
+      el('btnSalinPw').textContent = 'Tersalin';
+      setTimeout(() => { el('btnSalinPw').textContent = 'Salin password'; }, 1500);
+    });
+
+    function renderDaftarPengguna() {
+      const renderList = (boxId, arr) => {
+        const box = el(boxId);
+        box.textContent = '';
+        arr.forEach((u) => {
+          const baris = document.createElement('div');
+          baris.className = 'baris';
+          const info = document.createElement('div');
+          const nm = document.createElement('strong');
+          nm.textContent = u.nama + (u.status === 'NONAKTIF' ? ' [NONAKTIF]' : '');
+          const sm = document.createElement('small');
+          sm.textContent = u.username + (u.belumGanti ? ' • belum ganti password' : '');
+          info.append(nm, sm);
+
+          const aksiBox = document.createElement('div');
+          const bReset = document.createElement('button');
+          bReset.className = 'sekunder kecil';
+          bReset.textContent = 'Reset PW';
+          bReset.addEventListener('click', async () => {
+            if (!confirm('Reset password ' + u.nama + '?')) return;
+            const j = await api('reset_password', { username: u.username });
+            if (!j.ok) { pesan('pListUser', j.pesan, 'err'); return; }
+            tampilHasilUser('Password direset untuk', j.username, j.passwordDefault);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            muatDataStaf();
+          });
+
+          const bStatus = document.createElement('button');
+          bStatus.className = 'sekunder kecil';
+          bStatus.textContent = u.status === 'NONAKTIF' ? 'Aktifkan' : 'Nonaktifkan';
+          bStatus.addEventListener('click', async () => {
+            const j = await api('toggle_status_user', { username: u.username });
+            if (j.ok) muatDataStaf();
+          });
+
+          aksiBox.append(bReset, bStatus);
+          baris.append(info, aksiBox);
+          box.appendChild(baris);
+        });
+      };
+      renderList('listDosen', cacheUsers.dosen);
+      renderList('listMhs', cacheUsers.mahasiswa);
+    }
+
+    // ---------- Auth & Ganti Password ----------
+
+    function bukaGanti(wajib) {
+      el('fGanti').reset();
+      pesan('pGanti', '');
+      el('infoGanti').textContent = wajib ? 'Password default harus diganti dulu sebelum melanjutkan.' : '';
+      el('btnBatalGanti').classList.toggle('hidden', !!wajib);
+      tampil('vGanti');
     }
 
     el('fLogin').addEventListener('submit', async (e) => {
@@ -284,30 +1100,11 @@
       muat();
     });
 
-    el('fTambah').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      pesan('pTambah', 'Menyimpan...');
-      el('hasil').classList.add('hidden');
-      const j = await api('tambah_mahasiswa', { nim: el('tNim').value, nama: el('tNama').value });
-      if (!j.ok) { pesan('pTambah', j.pesan, 'err'); return; }
-      pesan('pTambah', '');
-      tampilHasil('Mahasiswa ' + j.nama + ' ditambahkan. Username:', j.username, j.passwordDefault);
-      el('fTambah').reset();
-      muatDaftar();
-    });
-
-    el('btnSalin').addEventListener('click', () => {
-      const pw = el('hasilInfo').querySelector('code').textContent;
-      if (navigator.clipboard) navigator.clipboard.writeText(pw);
-      el('btnSalin').textContent = 'Tersalin';
-      setTimeout(() => { el('btnSalin').textContent = 'Salin password'; }, 1500);
-    });
-
     async function keluar() { await api('logout'); keluarLokal(''); }
     el('btnKeluarMhs').addEventListener('click', keluar);
-    el('btnKeluarAdm').addEventListener('click', keluar);
+    el('btnKeluarStaf').addEventListener('click', keluar);
     el('btnGantiMhs').addEventListener('click', () => bukaGanti(false));
-    el('btnGantiAdm').addEventListener('click', () => bukaGanti(false));
+    el('btnGantiStaf').addEventListener('click', () => bukaGanti(false));
     el('btnBatalGanti').addEventListener('click', muat);
 
     if (token) muat(); else tampil('vLogin');
