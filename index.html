@@ -3,280 +3,298 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ambatuhadir - Uji Kamera</title>
+  <title>Ambatuhadir</title>
   <link rel="icon" href="logo.png">
   <style>
     :root {
-      --navy: #0C193E;
-      --biru: #1A76E5;
-      --biru-tua: #164EC8;
-      --cyan: #0EA4FC;
-      --biru-muda: #ACDBFB;
-      --latar: #E1EDF9;
-      --putih: #FFFFFF;
-      --ok: #0B8A4B;
-      --err: #C62828;
+      --navy: #0C193E; --biru: #1A76E5; --biru-tua: #164EC8; --cyan: #0EA4FC;
+      --biru-muda: #ACDBFB; --latar: #E1EDF9; --putih: #FFFFFF; --ok: #0B8A4B; --err: #C62828;
     }
     * { box-sizing: border-box; }
     body {
-      margin: 0;
+      margin: 0; min-height: 100vh; color: var(--navy);
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       background: linear-gradient(180deg, var(--latar), var(--putih));
-      color: var(--navy);
-      min-height: 100vh;
     }
     .wadah { max-width: 520px; margin: 0 auto; padding: 16px; }
-    header { text-align: center; padding: 8px 0 4px; }
-    header img { width: 200px; max-width: 70%; height: auto; }
-    h1 { font-size: 1.15rem; margin: 4px 0 2px; }
-    .sub { margin: 0 0 12px; font-size: .9rem; opacity: .75; }
+    header { text-align: center; padding: 8px 0; }
+    header img { width: 190px; max-width: 65%; height: auto; }
+    h2 { font-size: 1.05rem; margin: 0 0 10px; }
     .kartu {
-      background: var(--putih);
-      border: 2px solid var(--biru-muda);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 6px 18px rgba(26, 118, 229, .12);
+      background: var(--putih); border: 2px solid var(--biru-muda); border-radius: 20px;
+      padding: 16px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(26, 118, 229, .12);
     }
-    .kartu h2 { font-size: 1rem; margin: 0 0 10px; }
+    label { display: block; font-size: .88rem; font-weight: 600; margin: 10px 0 4px; }
+    input {
+      width: 100%; font: inherit; padding: 11px 12px; color: var(--navy);
+      border: 2px solid var(--biru-muda); border-radius: 12px; background: var(--putih);
+    }
+    input:focus, button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 1px; }
     button {
-      font: inherit;
-      font-weight: 600;
-      color: var(--putih);
+      font: inherit; font-weight: 600; color: var(--putih); cursor: pointer;
       background: linear-gradient(135deg, var(--cyan), var(--biru));
-      border: 0;
-      border-radius: 14px;
-      padding: 12px 16px;
-      margin: 4px 6px 4px 0;
-      cursor: pointer;
+      border: 0; border-radius: 14px; padding: 11px 16px; margin: 12px 8px 0 0;
     }
     button.sekunder { background: var(--putih); color: var(--biru-tua); border: 2px solid var(--biru); }
-    ul.cek { list-style: none; padding: 0; margin: 0; }
-    ul.cek li { padding: 4px 0; font-size: .92rem; }
-    .ok { color: var(--ok); }
-    .err { color: var(--err); }
-    .kamera {
-      position: relative;
-      background: var(--navy);
-      border-radius: 20px;
-      overflow: hidden;
-      margin-top: 10px;
-      display: none;
-    }
-    .kamera video { width: 100%; display: block; }
-    .bingkai {
-      position: absolute; inset: 18% 18%;
-      border: 3px solid var(--cyan);
-      border-radius: 18px;
-      pointer-events: none;
-    }
-    #hasil {
-      word-break: break-all;
-      background: var(--latar);
-      border-radius: 12px;
-      padding: 10px 12px;
-      min-height: 2.6em;
-    }
-    #log { max-height: 220px; overflow-y: auto; font-size: .85rem; line-height: 1.5; }
-    #log div { padding: 2px 0; border-bottom: 1px dashed var(--latar); }
+    button.kecil { padding: 6px 12px; margin: 0; font-size: .85rem; }
+    .pesan { min-height: 1.3em; margin: 10px 0 0; font-size: .9rem; }
+    .pesan.err { color: var(--err); }
+    .pesan.ok { color: var(--ok); }
+    .qr { text-align: center; }
+    .qr img { width: 100%; max-width: 280px; image-rendering: pixelated; border-radius: 12px; border: 6px solid var(--putih); box-shadow: 0 0 0 2px var(--biru-muda); }
+    .nama { font-weight: 700; font-size: 1.1rem; margin: 0; }
+    .sub { margin: 2px 0 12px; opacity: .75; font-size: .9rem; }
+    .hasil { background: var(--latar); border-radius: 12px; padding: 10px 12px; margin-top: 12px; word-break: break-all; }
+    .hasil code { font-size: 1.15rem; font-weight: 700; }
+    .baris { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px dashed var(--biru-muda); }
+    .baris small { display: block; opacity: .7; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <div class="wadah">
-    <header>
-      <img src="logo.png" alt="Logo Ambatuhadir">
-      <h1>Halaman Uji Kamera</h1>
-      <p class="sub">Versi uji. Memeriksa kamera, pemindaian QR, dan koneksi ke Spreadsheet.</p>
-    </header>
+    <header><img src="logo.png" alt="Logo Ambatuhadir"></header>
 
-    <section class="kartu">
-      <h2>1. Pemeriksaan otomatis</h2>
-      <ul class="cek" id="cek"></ul>
-      <button class="sekunder" id="btnPing">Tes koneksi ke Apps Script</button>
+    <section class="kartu view" id="vLogin">
+      <h2>Masuk</h2>
+      <form id="fLogin">
+        <label for="lUser">Username (NIM untuk mahasiswa)</label>
+        <input id="lUser" autocomplete="username" autocapitalize="none" required>
+        <label for="lPass">Password</label>
+        <input id="lPass" type="password" autocomplete="current-password" required>
+        <button type="submit">Masuk</button>
+      </form>
+      <p class="pesan" id="pLogin"></p>
     </section>
 
-    <section class="kartu">
-      <h2>2. Kamera dan pemindai QR</h2>
-      <button id="btnMulai">Nyalakan kamera</button>
-      <button class="sekunder" id="btnStop">Matikan</button>
-      <div class="kamera" id="areaKamera">
-        <video id="video" playsinline muted></video>
-        <div class="bingkai"></div>
+    <section class="kartu view hidden" id="vGanti">
+      <h2>Ganti password</h2>
+      <p class="sub" id="infoGanti"></p>
+      <form id="fGanti">
+        <label for="gLama">Password lama</label>
+        <input id="gLama" type="password" autocomplete="current-password" required>
+        <label for="gBaru">Password baru (minimal 8 karakter)</label>
+        <input id="gBaru" type="password" autocomplete="new-password" minlength="8" required>
+        <label for="gUlang">Ulangi password baru</label>
+        <input id="gUlang" type="password" autocomplete="new-password" minlength="8" required>
+        <button type="submit">Simpan password</button>
+        <button type="button" class="sekunder" id="btnBatalGanti">Batal</button>
+      </form>
+      <p class="pesan" id="pGanti"></p>
+    </section>
+
+    <section class="kartu view hidden" id="vMhs">
+      <div class="qr">
+        <p class="nama" id="mNama"></p>
+        <p class="sub" id="mNim"></p>
+        <img id="mQR" alt="QR Code pribadi">
+        <p class="sub">Tunjukkan QR ini ke Admin saat absensi.</p>
       </div>
-      <p style="margin:12px 0 4px;"><strong>Hasil pindai terakhir:</strong></p>
-      <div id="hasil">(belum ada)</div>
+      <button class="sekunder" id="btnGantiMhs">Ganti password</button>
+      <button class="sekunder" id="btnKeluarMhs">Keluar</button>
     </section>
 
-    <section class="kartu">
-      <h2>3. Catatan kejadian</h2>
-      <div id="log"></div>
-    </section>
+    <div class="view hidden" id="vAdmin">
+      <section class="kartu">
+        <h2>Tambah mahasiswa</h2>
+        <form id="fTambah">
+          <label for="tNim">NIM</label>
+          <input id="tNim" autocomplete="off" required>
+          <label for="tNama">Nama</label>
+          <input id="tNama" autocomplete="off" required>
+          <button type="submit">Tambah mahasiswa</button>
+        </form>
+        <p class="pesan" id="pTambah"></p>
+        <div class="hasil hidden" id="hasil">
+          <div id="hasilInfo"></div>
+          <button type="button" class="kecil" id="btnSalin">Salin password</button>
+        </div>
+      </section>
+      <section class="kartu">
+        <h2>Daftar mahasiswa</h2>
+        <div id="daftar"></div>
+        <p class="pesan" id="pDaftar"></p>
+      </section>
+      <section class="kartu">
+        <p class="sub" id="aNama"></p>
+        <button class="sekunder" id="btnGantiAdm">Ganti password</button>
+        <button class="sekunder" id="btnKeluarAdm">Keluar</button>
+      </section>
+    </div>
   </div>
 
   <script src="config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
   <script>
     const el = (id) => document.getElementById(id);
-    const video = el('video');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    let token = '';
+    let profil = null;
+    try { token = sessionStorage.getItem('token') || ''; } catch (e) {}
 
-    let stream = null;
-    let aktif = false;
-    let jeda = false;
-    let terakhirScan = 0;
-
-    function log(pesan, tipe) {
-      const baris = document.createElement('div');
-      const jam = new Date().toLocaleTimeString('id-ID');
-      baris.textContent = jam + '  ' + pesan;
-      if (tipe) baris.className = tipe;
-      el('log').prepend(baris);
+    function tampil(id) {
+      document.querySelectorAll('.view').forEach((v) => v.classList.add('hidden'));
+      el(id).classList.remove('hidden');
     }
 
-    function urlTerisi() {
-      return typeof CONFIG !== 'undefined' &&
-        CONFIG.URL_API.indexOf('https://script.google.com/') === 0;
+    function pesan(id, teks, tipe) {
+      el(id).textContent = teks || '';
+      el(id).className = 'pesan' + (tipe ? ' ' + tipe : '');
     }
 
-    function periksaLingkungan() {
-      const daftar = [
-        [location.protocol === 'https:' || location.hostname === 'localhost',
-          'Alamat memakai HTTPS', 'Alamat TIDAK memakai HTTPS (kamera akan diblokir)'],
-        [window.self === window.top,
-          'Halaman tidak berada di dalam iframe', 'Halaman berada di dalam iframe (kamera bisa diblokir)'],
-        [!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
-          'Browser mendukung akses kamera', 'Browser tidak menyediakan akses kamera'],
-        [typeof jsQR === 'function',
-          'Library pemindai QR (jsQR) termuat', 'Library jsQR gagal dimuat (cek koneksi internet)'],
-        [urlTerisi(),
-          'URL_API di config.js sudah terisi', 'URL_API di config.js belum diisi']
-      ];
-      const ul = el('cek');
-      daftar.forEach(([lulus, teksOk, teksGagal]) => {
-        const li = document.createElement('li');
-        li.className = lulus ? 'ok' : 'err';
-        li.textContent = (lulus ? '\u2714 ' : '\u2716 ') + (lulus ? teksOk : teksGagal);
-        ul.appendChild(li);
-      });
-    }
-
-    function pesanErrorKamera(err) {
-      switch (err.name) {
-        case 'NotAllowedError':
-          return 'Izin kamera ditolak. Izinkan kamera lewat ikon di sebelah alamat web, lalu muat ulang halaman. Jika halaman berada di dalam iframe, izin bisa diblokir oleh iframe.';
-        case 'NotFoundError':
-          return 'Kamera tidak ditemukan di perangkat ini.';
-        case 'NotReadableError':
-          return 'Kamera sedang dipakai aplikasi lain. Tutup aplikasi itu lalu coba lagi.';
-        default:
-          return 'Kamera gagal dinyalakan: ' + err.name + ' - ' + err.message;
-      }
-    }
-
-    async function nyalakanKamera() {
-      if (aktif) return;
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        log('Browser tidak menyediakan akses kamera (biasanya karena bukan HTTPS).', 'err');
-        return;
-      }
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' } },
-          audio: false
-        });
-        video.srcObject = stream;
-        await video.play();
-        el('areaKamera').style.display = 'block';
-        aktif = true;
-        jeda = false;
-        log('Kamera aktif. Arahkan ke QR Code.', 'ok');
-        requestAnimationFrame(pindai);
-      } catch (err) {
-        log(pesanErrorKamera(err), 'err');
-      }
-    }
-
-    function matikanKamera() {
-      aktif = false;
-      if (stream) {
-        stream.getTracks().forEach((t) => t.stop());
-        stream = null;
-      }
-      video.srcObject = null;
-      el('areaKamera').style.display = 'none';
-      log('Kamera dimatikan.');
-    }
-
-    function pindai(waktu) {
-      if (!aktif) return;
-      if (!jeda && video.readyState === video.HAVE_ENOUGH_DATA && waktu - terakhirScan > 120) {
-        terakhirScan = waktu;
-        const lebar = Math.min(video.videoWidth, 640);
-        const tinggi = Math.round(video.videoHeight * lebar / video.videoWidth);
-        canvas.width = lebar;
-        canvas.height = tinggi;
-        ctx.drawImage(video, 0, 0, lebar, tinggi);
-        const gambar = ctx.getImageData(0, 0, lebar, tinggi);
-        const kode = jsQR(gambar.data, lebar, tinggi, { inversionAttempts: 'dontInvert' });
-        if (kode && kode.data) tanganiHasil(kode.data);
-      }
-      requestAnimationFrame(pindai);
-    }
-
-    async function tanganiHasil(isi) {
-      jeda = true;
-      el('hasil').textContent = isi;
-      log('QR terbaca: ' + isi, 'ok');
-      if (navigator.vibrate) navigator.vibrate(100);
-      await kirim(isi);
-      setTimeout(() => { jeda = false; }, 3000);
-    }
-
-    async function kirim(isi) {
-      if (!urlTerisi()) {
-        log('Tidak dikirim: URL_API di config.js belum diisi.', 'err');
-        return;
-      }
-      log('Mengirim ke Spreadsheet...');
-      const mulai = performance.now();
+    async function api(aksi, data) {
       try {
         const res = await fetch(CONFIG.URL_API, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ aksi: 'tes_scan', isi: isi, perangkat: navigator.userAgent })
+          body: JSON.stringify(Object.assign({ aksi: aksi, token: token }, data || {}))
         });
-        const data = await res.json();
-        const ms = Math.round(performance.now() - mulai);
-        if (data.ok) {
-          log('Terkirim dalam ' + ms + ' ms. ' + data.pesan, 'ok');
-        } else {
-          log('Server menolak: ' + data.pesan, 'err');
-        }
+        const j = await res.json();
+        if (j.sesiHabis) { keluarLokal('Sesi habis, silakan login lagi.'); }
+        return j;
       } catch (err) {
-        log('Gagal mengirim: ' + err.message + '. Periksa URL /exec dan pengaturan deploy "Anyone".', 'err');
+        return { ok: false, pesan: 'Tidak bisa terhubung ke server. Periksa koneksi internet.' };
       }
     }
 
-    async function tesKoneksi() {
-      if (!urlTerisi()) {
-        log('URL_API di config.js belum diisi.', 'err');
+    function keluarLokal(info) {
+      token = '';
+      profil = null;
+      try { sessionStorage.removeItem('token'); } catch (e) {}
+      el('fLogin').reset();
+      pesan('pLogin', info || '', info ? 'err' : '');
+      tampil('vLogin');
+    }
+
+    async function muat() {
+      const j = await api('saya');
+      if (!j.ok) { if (!j.sesiHabis) keluarLokal(j.pesan); return; }
+      profil = j;
+      if (j.wajibGanti) { bukaGanti(true); return; }
+      if (j.peran === 'ADMIN') {
+        el('aNama').textContent = 'Masuk sebagai ' + j.username + ' (Admin)';
+        tampil('vAdmin');
+        muatDaftar();
+      } else {
+        el('mNama').textContent = j.nama;
+        el('mNim').textContent = 'NIM ' + j.username;
+        if (typeof qrcode !== 'function') {
+          el('mNim').textContent = 'Library QR gagal dimuat. Periksa koneksi internet.';
+        } else {
+          const qr = qrcode(0, 'M');
+          qr.addData(j.kodeQR);
+          qr.make();
+          el('mQR').src = qr.createDataURL(8, 2);
+        }
+        tampil('vMhs');
+      }
+    }
+
+    function bukaGanti(wajib) {
+      el('fGanti').reset();
+      pesan('pGanti', '');
+      el('infoGanti').textContent = wajib
+        ? 'Password default harus diganti dulu sebelum kamu bisa melanjutkan.' : '';
+      el('btnBatalGanti').classList.toggle('hidden', !!wajib);
+      tampil('vGanti');
+    }
+
+    async function muatDaftar() {
+      const j = await api('daftar_mahasiswa');
+      const box = el('daftar');
+      box.textContent = '';
+      if (!j.ok) { pesan('pDaftar', j.pesan, 'err'); return; }
+      pesan('pDaftar', j.daftar.length ? '' : 'Belum ada mahasiswa. Tambahkan lewat formulir di atas.');
+      j.daftar.forEach((m) => {
+        const baris = document.createElement('div');
+        baris.className = 'baris';
+        const info = document.createElement('div');
+        const nama = document.createElement('strong');
+        nama.textContent = m.nama;
+        const kecil = document.createElement('small');
+        kecil.textContent = 'NIM ' + m.nim + (m.belumGanti ? ' - belum ganti password' : '');
+        info.append(nama, kecil);
+        const tombol = document.createElement('button');
+        tombol.className = 'sekunder kecil';
+        tombol.textContent = 'Reset password';
+        tombol.addEventListener('click', () => resetPassword(m));
+        baris.append(info, tombol);
+        box.appendChild(baris);
+      });
+    }
+
+    function tampilHasil(judul, username, pw) {
+      el('hasilInfo').textContent = '';
+      const t = document.createElement('div');
+      t.textContent = judul + ' ' + username + '. Password default:';
+      const c = document.createElement('code');
+      c.textContent = pw;
+      const p = document.createElement('div');
+      p.className = 'sub';
+      p.textContent = 'Catat sekarang. Password ini tidak akan ditampilkan lagi.';
+      el('hasilInfo').append(t, c, p);
+      el('hasil').classList.remove('hidden');
+    }
+
+    async function resetPassword(m) {
+      if (!confirm('Reset password ' + m.nama + '? Password lamanya tidak berlaku lagi.')) return;
+      const j = await api('reset_password', { nim: m.nim });
+      if (!j.ok) { pesan('pDaftar', j.pesan, 'err'); return; }
+      tampilHasil('Password direset untuk', j.username, j.passwordDefault);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      muatDaftar();
+    }
+
+    el('fLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      pesan('pLogin', 'Memeriksa...');
+      const j = await api('login', { username: el('lUser').value, password: el('lPass').value });
+      if (!j.ok) { pesan('pLogin', j.pesan, 'err'); return; }
+      token = j.token;
+      try { sessionStorage.setItem('token', token); } catch (err) {}
+      el('fLogin').reset();
+      pesan('pLogin', '');
+      muat();
+    });
+
+    el('fGanti').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (el('gBaru').value !== el('gUlang').value) {
+        pesan('pGanti', 'Password baru dan ulangannya tidak sama.', 'err');
         return;
       }
-      log('Menghubungi Apps Script...');
-      try {
-        const res = await fetch(CONFIG.URL_API);
-        const data = await res.json();
-        log('Apps Script menjawab: ' + data.pesan, data.ok ? 'ok' : 'err');
-      } catch (err) {
-        log('Gagal terhubung: ' + err.message, 'err');
-      }
-    }
+      pesan('pGanti', 'Menyimpan...');
+      const j = await api('ganti_password', { lama: el('gLama').value, baru: el('gBaru').value });
+      if (!j.ok) { pesan('pGanti', j.pesan, 'err'); return; }
+      muat();
+    });
 
-    el('btnMulai').addEventListener('click', nyalakanKamera);
-    el('btnStop').addEventListener('click', matikanKamera);
-    el('btnPing').addEventListener('click', tesKoneksi);
-    periksaLingkungan();
+    el('fTambah').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      pesan('pTambah', 'Menyimpan...');
+      el('hasil').classList.add('hidden');
+      const j = await api('tambah_mahasiswa', { nim: el('tNim').value, nama: el('tNama').value });
+      if (!j.ok) { pesan('pTambah', j.pesan, 'err'); return; }
+      pesan('pTambah', '');
+      tampilHasil('Mahasiswa ' + j.nama + ' ditambahkan. Username:', j.username, j.passwordDefault);
+      el('fTambah').reset();
+      muatDaftar();
+    });
+
+    el('btnSalin').addEventListener('click', () => {
+      const pw = el('hasilInfo').querySelector('code').textContent;
+      if (navigator.clipboard) navigator.clipboard.writeText(pw);
+      el('btnSalin').textContent = 'Tersalin';
+      setTimeout(() => { el('btnSalin').textContent = 'Salin password'; }, 1500);
+    });
+
+    async function keluar() { await api('logout'); keluarLokal(''); }
+    el('btnKeluarMhs').addEventListener('click', keluar);
+    el('btnKeluarAdm').addEventListener('click', keluar);
+    el('btnGantiMhs').addEventListener('click', () => bukaGanti(false));
+    el('btnGantiAdm').addEventListener('click', () => bukaGanti(false));
+    el('btnBatalGanti').addEventListener('click', muat);
+
+    if (token) muat(); else tampil('vLogin');
   </script>
 </body>
 </html>
