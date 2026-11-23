@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ambatuhadir - Uji Kamera</title>
+  <link rel="icon" href="logo.png">
+  <style>
+    :root {
+      --navy: #0C193E;
+      --biru: #1A76E5;
+      --biru-tua: #164EC8;
+      --cyan: #0EA4FC;
+      --biru-muda: #ACDBFB;
+      --latar: #E1EDF9;
+      --putih: #FFFFFF;
+      --ok: #0B8A4B;
+      --err: #C62828;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(180deg, var(--latar), var(--putih));
+      color: var(--navy);
+      min-height: 100vh;
+    }
+    .wadah { max-width: 520px; margin: 0 auto; padding: 16px; }
+    header { text-align: center; padding: 8px 0 4px; }
+    header img { width: 200px; max-width: 70%; height: auto; }
+    h1 { font-size: 1.15rem; margin: 4px 0 2px; }
+    .sub { margin: 0 0 12px; font-size: .9rem; opacity: .75; }
+    .kartu {
+      background: var(--putih);
+      border: 2px solid var(--biru-muda);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(26, 118, 229, .12);
+    }
+    .kartu h2 { font-size: 1rem; margin: 0 0 10px; }
+    button {
+      font: inherit;
+      font-weight: 600;
+      color: var(--putih);
+      background: linear-gradient(135deg, var(--cyan), var(--biru));
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin: 4px 6px 4px 0;
+      cursor: pointer;
+    }
+    button.sekunder { background: var(--putih); color: var(--biru-tua); border: 2px solid var(--biru); }
+    ul.cek { list-style: none; padding: 0; margin: 0; }
+    ul.cek li { padding: 4px 0; font-size: .92rem; }
+    .ok { color: var(--ok); }
+    .err { color: var(--err); }
+    .kamera {
+      position: relative;
+      background: var(--navy);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 10px;
+      display: none;
+    }
+    .kamera video { width: 100%; display: block; }
+    .bingkai {
+      position: absolute; inset: 18% 18%;
+      border: 3px solid var(--cyan);
+      border-radius: 18px;
+      pointer-events: none;
+    }
+    #hasil {
+      word-break: break-all;
+      background: var(--latar);
+      border-radius: 12px;
+      padding: 10px 12px;
+      min-height: 2.6em;
+    }
+    #log { max-height: 220px; overflow-y: auto; font-size: .85rem; line-height: 1.5; }
+    #log div { padding: 2px 0; border-bottom: 1px dashed var(--latar); }
+  </style>
+</head>
+<body>
+  <div class="wadah">
+    <header>
+      <img src="logo.png" alt="Logo Ambatuhadir">
+      <h1>Halaman Uji Kamera</h1>
+      <p class="sub">Versi uji. Memeriksa kamera, pemindaian QR, dan koneksi ke Spreadsheet.</p>
+    </header>
+
+    <section class="kartu">
+      <h2>1. Pemeriksaan otomatis</h2>
+      <ul class="cek" id="cek"></ul>
+      <button class="sekunder" id="btnPing">Tes koneksi ke Apps Script</button>
+    </section>
+
+    <section class="kartu">
+      <h2>2. Kamera dan pemindai QR</h2>
+      <button id="btnMulai">Nyalakan kamera</button>
+      <button class="sekunder" id="btnStop">Matikan</button>
+      <div class="kamera" id="areaKamera">
+        <video id="video" playsinline muted></video>
+        <div class="bingkai"></div>
+      </div>
+      <p style="margin:12px 0 4px;"><strong>Hasil pindai terakhir:</strong></p>
+      <div id="hasil">(belum ada)</div>
+    </section>
+
+    <section class="kartu">
+      <h2>3. Catatan kejadian</h2>
+      <div id="log"></div>
+    </section>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script>
+    const el = (id) => document.getElementById(id);
+    const video = el('video');
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    let stream = null;
+    let aktif = false;
+    let jeda = false;
+    let terakhirScan = 0;
+
+    function log(pesan, tipe) {
+      const baris = document.createElement('div');
+      const jam = new Date().toLocaleTimeString('id-ID');
+      baris.textContent = jam + '  ' + pesan;
+      if (tipe) baris.className = tipe;
+      el('log').prepend(baris);
+    }
+
+    function urlTerisi() {
+      return typeof CONFIG !== 'undefined' &&
+        CONFIG.URL_API.indexOf('https://script.google.com/') === 0;
+    }
+
+    function periksaLingkungan() {
+      const daftar = [
+        [location.protocol === 'https:' || location.hostname === 'localhost',
+          'Alamat memakai HTTPS', 'Alamat TIDAK memakai HTTPS (kamera akan diblokir)'],
+        [window.self === window.top,
+          'Halaman tidak berada di dalam iframe', 'Halaman berada di dalam iframe (kamera bisa diblokir)'],
+        [!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+          'Browser mendukung akses kamera', 'Browser tidak menyediakan akses kamera'],
+        [typeof jsQR === 'function',
+          'Library pemindai QR (jsQR) termuat', 'Library jsQR gagal dimuat (cek koneksi internet)'],
+        [urlTerisi(),
+          'URL_API di config.js sudah terisi', 'URL_API di config.js belum diisi']
+      ];
+      const ul = el('cek');
+      daftar.forEach(([lulus, teksOk, teksGagal]) => {
+        const li = document.createElement('li');
+        li.className = lulus ? 'ok' : 'err';
+        li.textContent = (lulus ? '\u2714 ' : '\u2716 ') + (lulus ? teksOk : teksGagal);
+        ul.appendChild(li);
+      });
+    }
+
+    function pesanErrorKamera(err) {
+      switch (err.name) {
+        case 'NotAllowedError':
+          return 'Izin kamera ditolak. Izinkan kamera lewat ikon di sebelah alamat web, lalu muat ulang halaman. Jika halaman berada di dalam iframe, izin bisa diblokir oleh iframe.';
+        case 'NotFoundError':
+          return 'Kamera tidak ditemukan di perangkat ini.';
+        case 'NotReadableError':
+          return 'Kamera sedang dipakai aplikasi lain. Tutup aplikasi itu lalu coba lagi.';
+        default:
+          return 'Kamera gagal dinyalakan: ' + err.name + ' - ' + err.message;
+      }
+    }
+
+    async function nyalakanKamera() {
+      if (aktif) return;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        log('Browser tidak menyediakan akses kamera (biasanya karena bukan HTTPS).', 'err');
+        return;
+      }
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } },
+          audio: false
+        });
+        video.srcObject = stream;
+        await video.play();
+        el('areaKamera').style.display = 'block';
+        aktif = true;
+        jeda = false;
+        log('Kamera aktif. Arahkan ke QR Code.', 'ok');
+        requestAnimationFrame(pindai);
+      } catch (err) {
+        log(pesanErrorKamera(err), 'err');
+      }
+    }
+
+    function matikanKamera() {
+      aktif = false;
+      if (stream) {
+        stream.getTracks().forEach((t) => t.stop());
+        stream = null;
+      }
+      video.srcObject = null;
+      el('areaKamera').style.display = 'none';
+      log('Kamera dimatikan.');
+    }
+
+    function pindai(waktu) {
+      if (!aktif) return;
+      if (!jeda && video.readyState === video.HAVE_ENOUGH_DATA && waktu - terakhirScan > 120) {
+        terakhirScan = waktu;
+        const lebar = Math.min(video.videoWidth, 640);
+        const tinggi = Math.round(video.videoHeight * lebar / video.videoWidth);
+        canvas.width = lebar;
+        canvas.height = tinggi;
+        ctx.drawImage(video, 0, 0, lebar, tinggi);
+        const gambar = ctx.getImageData(0, 0, lebar, tinggi);
+        const kode = jsQR(gambar.data, lebar, tinggi, { inversionAttempts: 'dontInvert' });
+        if (kode && kode.data) tanganiHasil(kode.data);
+      }
+      requestAnimationFrame(pindai);
+    }
+
+    async function tanganiHasil(isi) {
+      jeda = true;
+      el('hasil').textContent = isi;
+      log('QR terbaca: ' + isi, 'ok');
+      if (navigator.vibrate) navigator.vibrate(100);
+      await kirim(isi);
+      setTimeout(() => { jeda = false; }, 3000);
+    }
+
+    async function kirim(isi) {
+      if (!urlTerisi()) {
+        log('Tidak dikirim: URL_API di config.js belum diisi.', 'err');
+        return;
+      }
+      log('Mengirim ke Spreadsheet...');
+      const mulai = performance.now();
+      try {
+        const res = await fetch(CONFIG.URL_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ aksi: 'tes_scan', isi: isi, perangkat: navigator.userAgent })
+        });
+        const data = await res.json();
+        const ms = Math.round(performance.now() - mulai);
+        if (data.ok) {
+          log('Terkirim dalam ' + ms + ' ms. ' + data.pesan, 'ok');
+        } else {
+          log('Server menolak: ' + data.pesan, 'err');
+        }
+      } catch (err) {
+        log('Gagal mengirim: ' + err.message + '. Periksa URL /exec dan pengaturan deploy "Anyone".', 'err');
+      }
+    }
+
+    async function tesKoneksi() {
+      if (!urlTerisi()) {
+        log('URL_API di config.js belum diisi.', 'err');
+        return;
+      }
+      log('Menghubungi Apps Script...');
+      try {
+        const res = await fetch(CONFIG.URL_API);
+        const data = await res.json();
+        log('Apps Script menjawab: ' + data.pesan, data.ok ? 'ok' : 'err');
+      } catch (err) {
+        log('Gagal terhubung: ' + err.message, 'err');
+      }
+    }
+
+    el('btnMulai').addEventListener('click', nyalakanKamera);
+    el('btnStop').addEventListener('click', matikanKamera);
+    el('btnPing').addEventListener('click', tesKoneksi);
+    periksaLingkungan();
+  </script>
+</body>
+</html>
