@@ -71,7 +71,7 @@
     }
 
     html {
-      background: #3F86F5;
+      background: #E8EBF0;
       scroll-padding-top: calc(var(--atas) + 92px);
     }
 
@@ -94,11 +94,7 @@
       z-index: -1;
       pointer-events: none;
       overflow: hidden;
-      background:
-        radial-gradient(60% 50% at 10% 6%, rgba(0, 177, 252, 0.60), transparent 70%),
-        radial-gradient(56% 56% at 94% 96%, rgba(0, 86, 251, 0.62), transparent 72%),
-        radial-gradient(38% 34% at 82% 18%, rgba(196, 238, 255, 0.45), transparent 66%),
-        linear-gradient(152deg, #74BDFF 0%, #4C98FC 46%, #2C6EF2 100%);
+      background: linear-gradient(160deg, #EEF0F4 0%, #E7EAF0 100%);
     }
 
     .latar-kanvas .bg-hp { display: none; }
@@ -467,6 +463,11 @@
       border: 1px solid rgba(255, 255, 255, 0.55);
     }
 
+    #boxSesiAktif .hasil {
+      word-break: normal;
+      overflow-wrap: anywhere;
+    }
+
     .hasil code {
       display: inline-block;
       margin-top: 4px;
@@ -811,7 +812,19 @@
       color: var(--ink);
     }
 
+    .logo-fallback {
+      min-width: 0;
+    }
+
+    .logo-fallback > span:last-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .logo-fallback-ik {
+      flex: none;
       width: 36px;
       height: 36px;
       border-radius: 12px;
@@ -1188,7 +1201,7 @@
       top: 0;
       height: calc(var(--atas) + 84px);
       opacity: 0;
-      background: linear-gradient(180deg, rgba(218, 232, 253, 0.86), rgba(218, 232, 253, 0));
+      background: linear-gradient(180deg, rgba(232, 235, 240, 0.88), rgba(232, 235, 240, 0));
       -webkit-mask-image: linear-gradient(180deg, #000 42%, transparent);
       mask-image: linear-gradient(180deg, #000 42%, transparent);
     }
@@ -1201,7 +1214,7 @@
       bottom: 0;
       height: calc(var(--tinggi-nav) + var(--bawah) + 40px);
       display: none;
-      background: linear-gradient(0deg, rgba(214, 230, 252, 0.88), rgba(214, 230, 252, 0));
+      background: linear-gradient(0deg, rgba(232, 235, 240, 0.9), rgba(232, 235, 240, 0));
       -webkit-mask-image: linear-gradient(0deg, #000 45%, transparent);
       mask-image: linear-gradient(0deg, #000 45%, transparent);
     }
@@ -1346,6 +1359,15 @@
 
       header {
         padding: 8px 12px 8px 14px;
+        gap: 8px;
+      }
+
+      header > :first-child {
+        min-width: 0;
+      }
+
+      .jam-kartu {
+        padding: 6px 10px;
       }
     }
 
@@ -1809,17 +1831,48 @@
       margin: 8px 0 0;
       text-align: center;
       font-size: 0.74rem;
-      color: rgba(251, 252, 253, 0.92);
+      color: var(--ink-subtle);
     }
 
     .atribusi a {
-      color: #FBFCFD;
+      color: var(--primary);
       font-weight: 700;
       text-decoration: none;
     }
 
     body.dalam .atribusi {
       display: block;
+    }
+
+
+    /* Timer batas tepat waktu sesi absen */
+    .timer-sesi {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: var(--info-bg);
+      color: var(--primary);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .timer-sesi strong {
+      font-size: 1.05rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timer-sesi.habis {
+      background: var(--warn-bg);
+      color: var(--warn);
+    }
+
+    .timer-sesi.habis strong {
+      font-size: 0.9rem;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1841,10 +1894,10 @@
         <filter id="bgEmboss" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
           <feGaussianBlur in="SourceAlpha" stdDeviation="13" result="b"/>
           <feOffset in="b" dx="13" dy="17" result="d"/>
-          <feFlood flood-color="#0028A6" flood-opacity="0.46"/>
+          <feFlood flood-color="#34467A" flood-opacity="0.30"/>
           <feComposite in2="d" operator="in" result="gelap"/>
           <feOffset in="b" dx="-11" dy="-13" result="l"/>
-          <feFlood flood-color="#E6F7FF" flood-opacity="0.62"/>
+          <feFlood flood-color="#FFFFFF" flood-opacity="0.95"/>
           <feComposite in2="l" operator="in" result="terang"/>
           <feMerge>
             <feMergeNode in="gelap"/>
@@ -1868,7 +1921,7 @@
 
         <!-- Titik halus yang memudar ke arah dalam -->
         <pattern id="bgTitik" width="24" height="24" patternUnits="userSpaceOnUse">
-          <circle cx="4" cy="4" r="1.7" fill="#EAF8FF" fill-opacity="0.55"/>
+          <circle cx="4" cy="4" r="1.6" fill="#0056FB" fill-opacity="0.30"/>
         </pattern>
         <linearGradient id="bgPudar" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stop-color="#fff" stop-opacity="1"/>
@@ -1905,7 +1958,7 @@
       </g>
 
       <!-- Garis tipis pembatas cahaya di atas pita -->
-      <g fill="none" stroke="#EAF8FF" stroke-opacity="0.5" stroke-width="1.6" stroke-linecap="round">
+      <g fill="none" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.6" stroke-linecap="round">
         <path d="M-140,206 C160,26 420,406 770,236 S1260,-4 1600,166"/>
         <path d="M-140,640 C250,480 520,850 910,680 S1290,450 1600,600"/>
       </g>
@@ -1925,7 +1978,7 @@
         <circle cx="610" cy="620" r="52" fill="url(#bgDisc)"/>
         <circle cx="-8" cy="500" r="40" fill="url(#bgDisc)"/>
       </g>
-      <g fill="none" stroke="#EAF8FF" stroke-opacity="0.5" stroke-width="1.4" stroke-linecap="round">
+      <g fill="none" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.4" stroke-linecap="round">
         <path d="M-80,118 C100,8 230,218 400,118 S560,28 700,98"/>
         <path d="M-80,1032 C110,922 250,1142 420,1032 S580,942 700,1002"/>
       </g>
@@ -2234,6 +2287,7 @@
                 <strong id="judulSesiAktif"></strong>
                 <div class="sub" id="metaSesiAktif"></div>
               </div>
+              <div class="timer-sesi hidden" id="timerSesi" role="timer"><span id="tsLabel"></span><strong id="tsWaktu"></strong></div>
 
               <h3>Pilih Metode Absensi</h3>
               <div class="metode-grid">
@@ -3471,6 +3525,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       if (id !== 'vVerif' && id !== 'vLupa') hentikanTimerKirim();
       matikanSemuaKamera();
       hentikanTimerQR();
+      hentikanTimerBatas();
       document.body.classList.toggle('dalam', id === 'vMhs' || id === 'vStaf');
       document.querySelectorAll('.view').forEach((v) => v.classList.add('hidden'));
       el(id).classList.remove('hidden');
@@ -3700,6 +3755,8 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     async function cekStatusSesiMK() {
       matikanSemuaKamera();
       hentikanTimerQR();
+      hentikanTimerBatas();
+      el('timerSesi').classList.add('hidden');
       const kode = el('selMK').value;
       el('boxBukaSesi').classList.add('hidden');
       el('boxSesiAktif').classList.add('hidden');
@@ -3731,12 +3788,76 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       tampilkanSesiAktif(j.aktif);
     });
 
+
+    // ---------- Format tanggal & timer batas sesi ----------
+
+    const BULAN_SINGKAT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+    // Terima 'yyyy-MM-dd', ISO, atau teks Date panjang dari Apps Script. Hasil: '24 Nov 2026'.
+    function fmtTgl(v) {
+      const t = String(v == null ? '' : v).trim();
+      if (!t) return '';
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
+      if (m) return Number(m[3]) + ' ' + BULAN_SINGKAT[Number(m[2]) - 1] + ' ' + m[1];
+      // Teks Date panjang dari Apps Script: 'Tue Nov 24 2026 00:00:00 GMT+0700 (...)'. Tanggalnya sudah benar, jangan dikonversi zona waktu.
+      const p = /^[A-Za-z]{3}\s+([A-Za-z]{3})\s+(\d{1,2})\s+(\d{4})/.exec(t);
+      if (p) {
+        const bln = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'].indexOf(p[1].toLowerCase());
+        if (bln >= 0) return Number(p[2]) + ' ' + BULAN_SINGKAT[bln] + ' ' + p[3];
+      }
+      const d = new Date(t);
+      if (isNaN(d.getTime())) return t;
+      return d.getDate() + ' ' + BULAN_SINGKAT[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    function msWaktu(v) {
+      const d = new Date(String(v || '').replace(/\s*\(.*\)\s*$/, ''));
+      return d.getTime();
+    }
+
+    function fmtDurasi(detik) {
+      const j = Math.floor(detik / 3600), m = Math.floor((detik % 3600) / 60), s = detik % 60;
+      const dua = (n) => String(n).padStart(2, '0');
+      return (j > 0 ? j + ':' + dua(m) : dua(m)) + ':' + dua(s);
+    }
+
+    let timerBatas = null;
+    function hentikanTimerBatas() {
+      if (timerBatas) { clearInterval(timerBatas); timerBatas = null; }
+    }
+
+    function mulaiTimerBatas(sesi) {
+      hentikanTimerBatas();
+      const box = el('timerSesi');
+      const buka = msWaktu(sesi.dibukaPada);
+      if (isNaN(buka)) { box.classList.add('hidden'); return; }
+      const akhir = buka + (Number(sesi.batasTerlambat) || 0) * 60000;
+      const tik = () => {
+        const sisa = Math.ceil((akhir - Date.now()) / 1000);
+        box.classList.remove('hidden');
+        if (sisa > 0) {
+          box.classList.remove('habis');
+          el('tsLabel').textContent = 'Sisa waktu absen tepat waktu';
+          el('tsWaktu').textContent = fmtDurasi(sisa);
+        } else {
+          box.classList.add('habis');
+          el('tsLabel').textContent = 'Batas waktu telah lewat';
+          el('tsWaktu').textContent = 'Absen kini dicatat Terlambat';
+        }
+      };
+      tik();
+      timerBatas = setInterval(tik, 1000);
+    }
+
     function tampilkanSesiAktif(sesi) {
       sesiAktifSaatIni = sesi;
       el('boxBukaSesi').classList.add('hidden');
       el('boxSesiAktif').classList.remove('hidden');
       el('judulSesiAktif').textContent = sesi.kodeMK + ' — ' + sesi.namaMK + ' (Pertemuan ' + sesi.pertemuan + ')';
-      el('metaSesiAktif').textContent = 'Tanggal: ' + sesi.tanggal + ' | Toleransi terlambat: ' + sesi.batasTerlambat + ' menit';
+      const mkSesi = cacheMK.find((m) => String(m.kode).toUpperCase() === String(sesi.kodeMK).toUpperCase());
+      const jam = mkSesi && mkSesi.jamMulai ? ' • Jam kuliah ' + mkSesi.jamMulai + '–' + mkSesi.jamSelesai : '';
+      el('metaSesiAktif').textContent = fmtTgl(sesi.tanggal) + jam + ' • Toleransi terlambat ' + sesi.batasTerlambat + ' menit';
+      mulaiTimerBatas(sesi);
       renderDaftarHadirSesi(sesi.daftarHadir);
       pilihMetodeStaf('DOSEN');
     }
@@ -4025,7 +4146,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       if (!dataRekapTerakhir) { pesan('pRekap', 'Pilih mata kuliah terlebih dahulu.', 'err'); return; }
       if (typeof XLSX === 'undefined') { pesan('pRekap', 'Library Excel gagal dimuat.', 'err'); return; }
       const j = dataRekapTerakhir;
-      const header = ['NIM', 'Nama', ...j.sesi.map((s) => 'Pertemuan ' + s.pertemuan + ' (' + s.tanggal + ')'), 'Hadir', 'Terlambat', 'Izin', 'Alpha', 'Persentase (%)'];
+      const header = ['NIM', 'Nama', ...j.sesi.map((s) => 'Pertemuan ' + s.pertemuan + ' (' + fmtTgl(s.tanggal) + ')'), 'Hadir', 'Terlambat', 'Izin', 'Alpha', 'Persentase (%)'];
       const rows = j.rekap.map((r) => [
         r.nim, r.nama,
         ...j.sesi.map((s) => r.perPertemuan['P' + s.pertemuan] || '-'),
@@ -4123,7 +4244,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       el('sdMhs').textContent = peserta.size;
       const box = el('sdListHariIni');
       box.textContent = '';
-      bagianJadwal(box, NAMA_HARI[hariIniNomor] ? NAMA_HARI[hariIniNomor] + ', ' + tanggalHariIni : 'Hari ini', hariIni, 'Tidak ada kuliah terjadwal hari ini.', true);
+      bagianJadwal(box, NAMA_HARI[hariIniNomor] ? NAMA_HARI[hariIniNomor] + ', ' + fmtTgl(tanggalHariIni) : 'Hari ini', hariIni, 'Tidak ada kuliah terjadwal hari ini.', true);
       const j = await api('daftar_pengajuan', { filter: 'MENUNGGU' });
       const n = j.ok ? j.jumlahMenunggu : 0;
       el('sdMenunggu').textContent = n;
@@ -4490,7 +4611,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       const lain = j.daftar.filter((m) => m.hari && m.hari !== j.hariIni)
         .sort((a, b) => (a.hari - b.hari) || urutJam(a, b));
       const tanpa = j.daftar.filter((m) => !m.hari);
-      bagianJadwal(box, 'Kuliah hari ini — ' + NAMA_HARI[j.hariIni] + ', ' + j.tanggal, hariIni, 'Tidak ada kuliah terjadwal hari ini.', true);
+      bagianJadwal(box, 'Kuliah hari ini — ' + NAMA_HARI[j.hariIni] + ', ' + fmtTgl(j.tanggal), hariIni, 'Tidak ada kuliah terjadwal hari ini.', true);
       if (lain.length) bagianJadwal(box, 'Jadwal mata kuliah lainnya', lain, '', false);
       if (tanpa.length) bagianJadwal(box, 'Belum dijadwalkan', tanpa, '', false);
     }
@@ -4533,7 +4654,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         j.koreksi.forEach((k) => {
           const o = document.createElement('option');
           o.value = k.idSesi;
-          o.textContent = k.kodeMK + ' — ' + k.namaMK + ', Pertemuan ' + k.pertemuan + ' (' + k.tanggal + ') • tercatat ' + k.status;
+          o.textContent = k.kodeMK + ' — ' + k.namaMK + ', Pertemuan ' + k.pertemuan + ' (' + fmtTgl(k.tanggal) + ') • tercatat ' + k.status;
           selKo.appendChild(o);
         });
       }
@@ -4575,8 +4696,8 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         jdl.textContent = (p.jenis === 'IZIN' ? 'Izin' : 'Koreksi') + ' • ' + p.kodeMK + ' ' + p.namaMK;
         const sm = document.createElement('small');
         sm.textContent = p.jenis === 'IZIN'
-          ? 'Pertemuan tanggal ' + p.tanggal
-          : 'Pertemuan ' + p.pertemuan + ' (' + p.tanggal + ') • ' + p.statusAwal + ' → ' + p.statusTarget;
+          ? 'Pertemuan tanggal ' + fmtTgl(p.tanggal)
+          : 'Pertemuan ' + p.pertemuan + ' (' + fmtTgl(p.tanggal) + ') • ' + p.statusAwal + ' → ' + p.statusTarget;
         kiri.append(jdl, sm);
         atas.append(kiri, buatPill(p.status, 'st-' + p.status));
         item.appendChild(atas);
@@ -4645,8 +4766,8 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         sm.textContent = (p.jenis === 'IZIN' ? 'Izin' : 'Koreksi') + ' • ' + p.kodeMK + ' ' + p.namaMK;
         const sm2 = document.createElement('small');
         sm2.textContent = p.jenis === 'IZIN'
-          ? 'Pertemuan tanggal ' + p.tanggal
-          : 'Pertemuan ' + p.pertemuan + ' (' + p.tanggal + ') • ' + p.statusAwal + ' → ' + p.statusTarget;
+          ? 'Pertemuan tanggal ' + fmtTgl(p.tanggal)
+          : 'Pertemuan ' + p.pertemuan + ' (' + fmtTgl(p.tanggal) + ') • ' + p.statusAwal + ' → ' + p.statusTarget;
         kiri.append(jdl, sm, sm2);
         atas.append(kiri, buatPill(p.status, 'st-' + p.status));
         item.appendChild(atas);
@@ -4748,7 +4869,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       selesai.forEach((s) => {
         const o = document.createElement('option');
         o.value = s.idSesi;
-        o.textContent = 'Pertemuan ' + s.pertemuan + ' (' + s.tanggal + ')';
+        o.textContent = 'Pertemuan ' + s.pertemuan + ' (' + fmtTgl(s.tanggal) + ')';
         selS.appendChild(o);
       });
       if (pilihSesi && selesai.some((s) => s.idSesi === pilihSesi)) selS.value = pilihSesi;
