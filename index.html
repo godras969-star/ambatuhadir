@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#DCE8FD" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0B1228" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" id="metaTema" content="#DCE8FD">
   <meta name="color-scheme" content="light dark">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,6 +16,46 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    /* Tema: terang / gelap. Pilihan manual disimpan di localStorage ('tema').
+       Belum pernah memilih: ikut pengaturan HP. */
+    (function () {
+      var R = document.documentElement;
+      var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+      function tersimpan() { try { var t = localStorage.getItem('tema'); return (t === 'gelap' || t === 'terang') ? t : ''; } catch (e) { return ''; } }
+      function aktif() { return R.getAttribute('data-tema') || (mq && mq.matches ? 'gelap' : 'terang'); }
+      function sinkron() {
+        var g = aktif() === 'gelap';
+        var m = document.getElementById('metaTema');
+        if (m) m.setAttribute('content', g ? '#0B1228' : '#DCE8FD');
+        var tb = document.querySelectorAll('.sakelar-tema');
+        for (var i = 0; i < tb.length; i++) {
+          tb[i].setAttribute('aria-checked', g ? 'true' : 'false');
+          tb[i].setAttribute('title', g ? 'Mode gelap: aktif' : 'Mode gelap: mati');
+        }
+      }
+      var t0 = tersimpan();
+      if (t0) R.setAttribute('data-tema', t0);
+      window.ubahTema = function () {
+        var baru = aktif() === 'gelap' ? 'terang' : 'gelap';
+        R.classList.add('ganti-tema');
+        R.setAttribute('data-tema', baru);
+        try { localStorage.setItem('tema', baru); } catch (e) {}
+        sinkron();
+        setTimeout(function () { R.classList.remove('ganti-tema'); }, 450);
+      };
+      document.addEventListener('DOMContentLoaded', function () {
+        var tb = document.querySelectorAll('.sakelar-tema');
+        for (var i = 0; i < tb.length; i++) tb[i].addEventListener('click', window.ubahTema);
+        sinkron();
+      });
+      if (mq) {
+        var ikut = function () { if (!tersimpan()) sinkron(); };
+        if (mq.addEventListener) mq.addEventListener('change', ikut); else if (mq.addListener) mq.addListener(ikut);
+      }
+      sinkron();
+    })();
+  </script>
   <style>
     /* ==========================================================
        AMBATUHADIR — Refined Soft Neumorphism
@@ -1948,8 +1987,9 @@
        MODE GELAP — otomatis mengikuti pengaturan HP/browser.
        Aksen biru (#0056FB, #00B1FC) dan gradien tombol tetap sama.
        ========================================================== */
+    /* Mode gelap otomatis: hanya bila belum memilih manual */
     @media (prefers-color-scheme: dark) {
-      :root {
+      :root:not([data-tema]) {
         color-scheme: dark;
         --primary: #5C9DFF;
         --primary-deep: #8DBBFF;
@@ -1998,17 +2038,165 @@
         --garis-pita: #5C9BFF; --garis-pita-op: 0.35;
       }
 
-      select {
+      :root:not([data-tema]) select {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235C9DFF' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
       }
 
-      /* Logo bertulisan navy: beri alas terang agar tetap terbaca */
-      header img,
-      .logo-ubin img {
-        background: #EEF4FF;
-        border-radius: 14px;
-        padding: 6px 10px;
+      /* Logo bertulisan navy: balik terang-gelapnya, tanpa alas/latar */
+      :root:not([data-tema]) header img,
+      :root:not([data-tema]) .logo-ubin img {
+      filter: invert(1) hue-rotate(180deg) brightness(1.08) saturate(1.1);
       }
+    }
+
+    /* Mode gelap manual (tombol) */
+    :root[data-tema="gelap"] {
+      color-scheme: dark;
+      --primary: #5C9DFF;
+      --primary-deep: #8DBBFF;
+
+      --nm-bg: #101A38;
+      --nm-surface: linear-gradient(145deg, rgba(30, 44, 86, 0.96), rgba(20, 31, 64, 0.94));
+      --nm-surface-flat: #17224A;
+      --nm-inset-bg: #0C1430;
+      --nm-light: rgba(86, 118, 200, 0.16);
+      --nm-shadow: rgba(1, 4, 16, 0.78);
+      --nm-shadow-soft: rgba(1, 4, 16, 0.55);
+
+      --ink: #E7EEFF;
+      --ink-muted: #A6B6DA;
+      --ink-subtle: #7487B0;
+      --line: rgba(140, 165, 225, 0.20);
+      --rim: rgba(255, 255, 255, 0.08);
+
+      --ok: #3DD598;
+      --ok-bg: rgba(61, 213, 152, 0.14);
+      --warn: #FFB547;
+      --warn-bg: rgba(255, 181, 71, 0.14);
+      --err: #FF6B78;
+      --err-bg: rgba(255, 107, 120, 0.14);
+      --info-bg: rgba(92, 157, 255, 0.16);
+
+      --shadow-cta: 0 8px 20px -4px rgba(0, 86, 251, 0.5), -4px -4px 10px var(--nm-light);
+      --fokus: 0 0 0 3px rgba(0, 177, 252, 0.42);
+
+      --halaman: #070C1F;
+      --halaman-rgb: 7, 12, 31;
+      --latar-a: #0B1228;
+      --latar-b: #070C1F;
+      --tepi: rgba(255, 255, 255, 0.07);
+      --fokus-bg: #131E42;
+      --opsi-bg: #121B3C;
+      --hover-tab: rgba(92, 157, 255, 0.12);
+      --overlay: rgba(2, 6, 20, 0.62);
+      --kamera-tepi: rgba(120, 160, 240, 0.35);
+
+      --tb1: #2F6BE0; --tb2: #2557C4; --tb3: #1B43A0;
+      --ta1: #2A62D4; --ta2: #173B8F;
+      --dc1: #3C7CF0; --dc2: #1C48A8;
+      --emb-g: #000A24; --emb-g-op: 0.65;
+      --emb-t: #4F7DFF; --emb-t-op: 0.22;
+      --garis-pita: #5C9BFF; --garis-pita-op: 0.35;
+    }
+
+    :root[data-tema="gelap"] select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235C9DFF' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    }
+
+    :root[data-tema="gelap"] header img,
+    :root[data-tema="gelap"] .logo-ubin img {
+    filter: invert(1) hue-rotate(180deg) brightness(1.08) saturate(1.1);
+    }
+
+    /* Transisi halus saat tema diganti */
+    :root.ganti-tema *,
+    :root.ganti-tema *::before,
+    :root.ganti-tema *::after {
+      transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, fill 0.35s ease, stroke 0.35s ease !important;
+    }
+
+    /* Sakelar mode gelap (on/off) */
+    button.sakelar-tema {
+      all: unset;
+      box-sizing: border-box;
+      position: relative;
+      flex: none;
+      width: 64px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan-halus);
+      border: 1px solid var(--rim);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button.sakelar-tema:focus-visible {
+      box-shadow: var(--tekan-halus), var(--fokus);
+    }
+
+    .sakelar-tema .st-ik {
+      position: absolute;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      margin-top: -8px;
+      display: block;
+      color: var(--ink-subtle);
+      pointer-events: none;
+    }
+
+    .sakelar-tema .st-ik svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .sakelar-tema .st-matahari { left: 9px; }
+    .sakelar-tema .st-bulan { right: 9px; }
+
+    .sakelar-tema .st-kenop {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--grad);
+      box-shadow: 0 3px 8px rgba(0, 86, 251, 0.45);
+      transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
+      pointer-events: none;
+    }
+
+    .sakelar-tema[aria-checked="true"] .st-kenop {
+      transform: translateX(30px);
+    }
+
+    /* Warna ikon yang tertutup kenop jadi putih */
+    .sakelar-tema[aria-checked="false"] .st-matahari { color: #fff; }
+    .sakelar-tema[aria-checked="true"] .st-bulan { color: #fff; }
+
+    .profil-bar .sakelar-tema {
+      margin-left: auto;
+      margin-right: 2px;
+    }
+
+    /* Di halaman sebelum masuk: sakelar melayang di pojok kanan atas */
+    button.sakelar-tema.di-login {
+      position: fixed;
+      top: calc(var(--atas) + 14px);
+      right: 16px;
+      z-index: 50;
+      display: none;
+    }
+
+    body:not(.dalam) button.sakelar-tema.di-login {
+      display: block;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -2154,7 +2342,10 @@
         <strong id="pbNama"></strong>
         <span class="badge-peran" id="txtBadge"></span>
       </div>
+      <button type="button" class="sakelar-tema" role="switch" aria-checked="false" aria-label="Mode gelap"><span class="st-ik st-matahari"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="st-ik st-bulan"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span class="st-kenop"></span></button>
     </div>
+
+    <button type="button" class="sakelar-tema di-login" role="switch" aria-checked="false" aria-label="Mode gelap"><span class="st-ik st-matahari"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="st-ik st-bulan"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span class="st-kenop"></span></button>
 
     <!-- MERK (logo tengah, hanya di halaman sebelum masuk) -->
     <div class="auth-brand"><div class="logo-ubin"><img src="logo.png" alt="Logo Ambatuhadir" onerror="this.outerHTML='<div class=\'logo-fallback\'><span class=\'logo-fallback-ik\'><svg width=\'22\' height=\'22\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2.4\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><rect x=\'3\' y=\'3\' width=\'7\' height=\'7\' rx=\'1\'/><rect x=\'14\' y=\'3\' width=\'7\' height=\'7\' rx=\'1\'/><rect x=\'3\' y=\'14\' width=\'7\' height=\'7\' rx=\'1\'/><path d=\'M14 14h3v3h-3zM20 14v0M17 20h4M20 17v3\'/></svg></span><span>Ambatuhadir</span></div>'"></div></div>
