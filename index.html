@@ -293,6 +293,31 @@
     .avatar { background: var(--putih); color: var(--biru-tua); box-shadow: 0 4px 12px rgba(6, 28, 90, .3); }
     .bar-proses::before { background: linear-gradient(90deg, transparent, var(--putih), #BFE6FF, transparent); }
     .profil-bar { margin: 12px 4px 14px; }
+    #vDaftar, #vVerif, #vLupa { max-width: 420px; margin: 14px auto; }
+    button.tautan { background: none; color: var(--biru-tua); border: 0; padding: 4px 0; margin: 12px 16px 0 0; font-size: .9rem; text-decoration: underline; border-radius: 6px; }
+    button.tautan:disabled { opacity: .5; }
+    .baris-aksi { display: flex; flex-wrap: wrap; align-items: center; }
+
+    button.ik-btn.sandi { width: 56px; }
+    button.ik-btn.sandi svg { width: 38px; height: 26px; }
+    button.ik-btn svg .bintang { stroke-width: 1.1; }
+    .cuaca-kartu { display: flex; align-items: center; gap: 8px; padding: 3px 12px 3px 8px; border-radius: 12px; background: var(--latar); }
+    .cw-ik svg { width: 32px; height: 32px; display: block; }
+    .cw-teks { display: flex; flex-direction: column; line-height: 1.15; }
+    .cw-teks strong { font-size: 1.05rem; color: var(--biru-tua); }
+    .cw-teks small { font-size: .7rem; font-weight: 600; color: #4A5A7A; white-space: nowrap; }
+    .cw-mini { font-size: .7rem; font-weight: 600; color: #4A5A7A; align-items: center; gap: 3px; }
+    .cw-mini svg { width: 15px; height: 15px; display: block; }
+    @media (max-width: 559px) {
+      .cuaca-kartu { display: none !important; }
+      #hdTgl { display: none; }
+      .cw-mini:not(.hidden) { display: flex; }
+      button.ik-btn.sandi { width: 50px; }
+    }
+    @media (min-width: 560px) { .cw-mini { display: none !important; } }
+    .atribusi { display: none; margin: 4px 0 90px; text-align: center; font-size: .72rem; color: rgba(255, 255, 255, .8); }
+    .atribusi a { color: var(--putih); }
+    body.dalam .atribusi { display: block; }
   </style>
 </head>
 <body>
@@ -301,8 +326,9 @@
     <header>
       <img src="logo.png" alt="Logo Ambatuhadir">
       <div class="hd-kanan">
-        <div class="jam-kartu"><strong id="hdJam">--:--</strong><small id="hdTgl"></small></div>
-        <button type="button" class="ik-btn sekunder" id="hdGanti" title="Ganti password" aria-label="Ganti password"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
+        <div class="cuaca-kartu hidden" id="hdCuaca"><span class="cw-ik" id="cwIkon"></span><div class="cw-teks"><strong id="cwSuhu">--°</strong><small id="cwKet"></small></div></div>
+        <div class="jam-kartu"><strong id="hdJam">--:--</strong><small id="hdTgl"></small><span class="cw-mini hidden" id="cwMini"></span></div>
+        <button type="button" class="ik-btn sandi sekunder" id="hdGanti" title="Ganti password" aria-label="Ganti password"><svg viewBox="0 -2 40 28"><rect x="3" y="10" width="34" height="14" rx="4"/><path d="M12 10V7a8 8 0 0 1 16 0v3"/><path class="bintang" d="M6.6 17L11.0 17M7.7 15.1L9.9 18.9M7.7 18.9L9.9 15.1M12.2 17L16.6 17M13.3 15.1L15.5 18.9M13.3 18.9L15.5 15.1M17.8 17L22.2 17M18.9 15.1L21.1 18.9M18.9 18.9L21.1 15.1M23.4 17L27.8 17M24.5 15.1L26.7 18.9M24.5 18.9L26.7 15.1M29.0 17L33.4 17M30.1 15.1L32.3 18.9M30.1 18.9L32.3 15.1"/></svg></button>
         <button type="button" class="ik-btn sekunder keluar" id="hdKeluar" title="Keluar" aria-label="Keluar"><svg viewBox="0 0 24 24"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3"/><path d="M16 8l4 4-4 4"/><path d="M20 12H9"/></svg></button>
       </div>
     </header>
@@ -327,6 +353,10 @@
         <input id="lPass" type="password" autocomplete="current-password" required>
         <label class="cek"><input type="checkbox" data-lihat="lPass"> Tampilkan password</label>
         <button type="submit" id="btnMasuk">Masuk</button>
+        <div class="baris-aksi">
+          <button type="button" class="tautan" id="btnKeDaftar">Belum punya akun? Daftar</button>
+          <button type="button" class="tautan" id="btnKeLupa">Lupa password?</button>
+        </div>
       </form>
       <p class="pesan" id="pLogin"></p>
     </section>
@@ -347,6 +377,65 @@
         <button type="button" class="sekunder" id="btnBatalGanti">Batal</button>
       </form>
       <p class="pesan" id="pGanti"></p>
+    </section>
+
+    <!-- DAFTAR -->
+    <section class="kartu view hidden" id="vDaftar">
+      <h2>Daftar akun mahasiswa</h2>
+      <form id="fDaftar">
+        <label for="dftNama">Nama lengkap</label>
+        <input id="dftNama" autocomplete="name" maxlength="80" required>
+        <label for="dftNim">NIM</label>
+        <input id="dftNim" autocomplete="off" autocapitalize="none" maxlength="20" required>
+        <label for="dftKelas">Kelas</label>
+        <select id="dftKelas" required></select>
+        <label for="dftEmail">Email (untuk kode verifikasi)</label>
+        <input id="dftEmail" type="email" autocomplete="email" maxlength="100" required>
+        <label for="dftPw">Password (minimal 8 karakter)</label>
+        <input id="dftPw" type="password" autocomplete="new-password" minlength="8" maxlength="100" required>
+        <label class="cek"><input type="checkbox" data-lihat="dftPw"> Tampilkan password</label>
+        <button type="submit" id="btnKirimKode">Kirim kode verifikasi</button>
+        <div class="baris-aksi"><button type="button" class="tautan" id="btnDaftarKeMasuk">Sudah punya akun? Masuk</button></div>
+      </form>
+      <p class="pesan" id="pDaftar"></p>
+    </section>
+
+    <!-- VERIFIKASI KODE PENDAFTARAN -->
+    <section class="kartu view hidden" id="vVerif">
+      <h2>Masukkan kode verifikasi</h2>
+      <p class="sub" id="infoVerif"></p>
+      <form id="fVerif">
+        <label for="vfKode">Kode 6 angka</label>
+        <input id="vfKode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" pattern="[0-9]{6}" required>
+        <button type="submit" id="btnVerif">Verifikasi dan masuk</button>
+        <button type="button" class="sekunder" id="btnKirimUlang">Kirim ulang kode</button>
+        <div class="baris-aksi"><button type="button" class="tautan" id="btnUbahData">Ubah data pendaftaran</button></div>
+      </form>
+      <p class="pesan" id="pVerif"></p>
+    </section>
+
+    <!-- LUPA PASSWORD -->
+    <section class="kartu view hidden" id="vLupa">
+      <h2>Lupa password</h2>
+      <form id="fLupa1">
+        <p class="sub">Masukkan email yang kamu pakai saat mendaftar. Kode 6 angka akan dikirim ke email itu.</p>
+        <label for="lpEmail">Email akun</label>
+        <input id="lpEmail" type="email" autocomplete="email" maxlength="100" required>
+        <button type="submit" id="btnLupaKirim">Kirim kode</button>
+        <div class="baris-aksi"><button type="button" class="tautan" id="btnLupaKeMasuk">Kembali ke Masuk</button></div>
+      </form>
+      <form id="fLupa2" class="hidden">
+        <p class="sub" id="infoLupa"></p>
+        <label for="lpKode">Kode 6 angka</label>
+        <input id="lpKode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" pattern="[0-9]{6}" required>
+        <label for="lpBaru">Password baru (minimal 8 karakter)</label>
+        <input id="lpBaru" type="password" autocomplete="new-password" minlength="8" maxlength="100" required>
+        <label class="cek"><input type="checkbox" data-lihat="lpBaru"> Tampilkan password</label>
+        <button type="submit" id="btnLupaReset">Simpan password baru</button>
+        <button type="button" class="sekunder" id="btnLupaUlang">Kirim ulang kode</button>
+        <div class="baris-aksi"><button type="button" class="tautan" id="btnLupaBatal">Batal</button></div>
+      </form>
+      <p class="pesan" id="pLupa"></p>
     </section>
 
     <!-- MODE MAHASISWA -->
@@ -470,10 +559,6 @@
         </section>
       </div>
 
-      <section class="kartu">
-        <button class="sekunder" id="btnGantiMhs">Ganti password</button>
-        <button class="sekunder" id="btnKeluarMhs">Keluar</button>
-      </section>
       </div>
     </div>
 
@@ -624,10 +709,27 @@
         </section>
       </div>
 
+      <!-- TAB (KHUSUS ADMIN): KELAS -->
+      <div id="sPanelKelas" class="panel-staf hidden">
+        <section class="kartu">
+          <h2>Tambah Kelas</h2>
+          <form id="fKelas">
+            <label for="klKodeBaru">Kode / Nomor Kelas</label>
+            <input id="klKodeBaru" maxlength="20" autocomplete="off" placeholder="Contoh: 17.1B.01" required>
+            <button type="submit">Tambah Kelas</button>
+          </form>
+          <p class="pesan" id="pKelas"></p>
+        </section>
+        <section class="kartu">
+          <h2>Daftar Kelas</h2>
+          <div id="listKelas"></div>
+        </section>
+      </div>
+
       <!-- TAB 3 (KHUSUS ADMIN): MATA KULIAH -->
       <div id="sPanelMK" class="panel-staf hidden">
         <section class="kartu">
-          <h2>Kelola Mata Kuliah & Peserta</h2>
+          <h2>Kelola Mata Kuliah</h2>
           <form id="fMK">
             <label for="mkKode">Kode Mata Kuliah</label>
             <input id="mkKode" placeholder="Contoh: IF101" required>
@@ -658,11 +760,8 @@
             </div>
             <label for="mkRuang">Ruangan</label>
             <input id="mkRuang" maxlength="40" placeholder="Contoh: Lab 2">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
-              <label style="margin:0;">Peserta Mahasiswa</label>
-              <button type="button" class="sekunder kecil" id="btnPilihSemuaMhs">Pilih semua mahasiswa aktif</button>
-            </div>
-            <div class="daftar-cek" id="boxPesertaMK"></div>
+            <label>Kelas (peserta = semua mahasiswa kelas yang dipilih)</label>
+            <div class="daftar-cek" id="boxKelasMK"></div>
             <button type="submit">Simpan Mata Kuliah</button>
           </form>
           <p class="pesan" id="pMK"></p>
@@ -677,17 +776,15 @@
       <!-- TAB 4 (KHUSUS ADMIN): AKUN DOSEN & MAHASISWA -->
       <div id="sPanelAkun" class="panel-staf hidden">
         <section class="kartu">
-          <h2>Tambah Akun Dosen / Mahasiswa</h2>
+          <h2>Tambah Akun Dosen</h2>
+          <p class="sub">Akun mahasiswa dibuat sendiri oleh mahasiswa lewat halaman Daftar.</p>
           <form id="fTambahUser">
-            <label for="uPeran">Peran Akun</label>
-            <select id="uPeran">
-              <option value="MAHASISWA">Mahasiswa</option>
-              <option value="DOSEN">Dosen</option>
-            </select>
-            <label for="uUser" id="lblUUser">NIM Mahasiswa</label>
+            <label for="uUser">Username Dosen</label>
             <input id="uUser" autocomplete="off" required>
             <label for="uNama">Nama Lengkap</label>
             <input id="uNama" autocomplete="off" required>
+            <label for="uEmail">Email (opsional, dipakai untuk Lupa password)</label>
+            <input id="uEmail" type="email" autocomplete="off" maxlength="100">
             <button type="submit">Tambah Akun</button>
           </form>
           <p class="pesan" id="pTambahUser"></p>
@@ -706,13 +803,9 @@
         </section>
       </div>
 
-      <section class="kartu">
-        <p class="sub" id="stafInfoAkun"></p>
-        <button class="sekunder" id="btnGantiStaf">Ganti password</button>
-        <button class="sekunder" id="btnKeluarStaf">Keluar</button>
-      </section>
       </div>
     </div>
+    <p class="atribusi">Data cuaca oleh <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a></p>
   </div>
 
   <script src="config.js"></script>
@@ -1631,6 +1724,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     let profil = null;
     let cacheMK = [];
     let cacheUsers = { mahasiswa: [], dosen: [] };
+    let cacheKelas = [];
     let sesiAktifSaatIni = null;
     let timerQRSesi = null;
     let dataRekapTerakhir = null;
@@ -1672,7 +1766,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       mPanelDash: ['dash', 'Dashboard'], mPanelQR: ['qr', 'QR'], mPanelRiwayat: ['riwayat', 'Riwayat'],
       mPanelJadwal: ['jadwal', 'Jadwal'], mPanelPengajuan: ['izin', 'Izin'],
       sPanelDash: ['dash', 'Dashboard'], sPanelSesi: ['sesi', 'Sesi'], sPanelRekap: ['rekap', 'Rekap'],
-      sPanelJadwal: ['jadwal', 'Jadwal'], sPanelPengajuan: ['izin', 'Izin'], sPanelMK: ['mk', 'MK'], sPanelAkun: ['akun', 'Akun']
+      sPanelJadwal: ['jadwal', 'Jadwal'], sPanelPengajuan: ['izin', 'Izin'], sPanelKelas: ['topi', 'Kelas'], sPanelMK: ['mk', 'MK'], sPanelAkun: ['akun', 'Akun']
     };
     function hiasiTab(btn, label) {
       const info = TAB_IKON[btn.dataset.panel] || ['dash', label];
@@ -1692,6 +1786,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     document.querySelectorAll('.tab[data-tab="mhs"]').forEach((b) => hiasiTab(b, b.textContent));
 
     function tampil(id) {
+      if (id !== 'vVerif' && id !== 'vLupa') hentikanTimerKirim();
       matikanSemuaKamera();
       hentikanTimerQR();
       document.body.classList.toggle('dalam', id === 'vMhs' || id === 'vStaf');
@@ -1701,7 +1796,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     }
 
     function sembunyikanPassword() {
-      ['lPass', 'gLama', 'gBaru', 'gUlang'].forEach((id) => { el(id).type = 'password'; });
+      ['lPass', 'gLama', 'gBaru', 'gUlang', 'dftPw', 'lpBaru'].forEach((id) => { el(id).type = 'password'; });
       document.querySelectorAll('[data-lihat]').forEach((c) => { c.checked = false; });
     }
     document.querySelectorAll('[data-lihat]').forEach((c) => {
@@ -1782,7 +1877,6 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         bukaTab('mhs', 'mPanelDash', true);
         tampil('vMhs');
       } else {
-        el('stafInfoAkun').textContent = 'Masuk sebagai ' + j.nama + ' (' + j.username + ' — ' + j.peran + ')';
         susunTabStaf(j.peran);
         await muatDataStaf();
         el('sdNama').textContent = j.nama;
@@ -1796,12 +1890,13 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     function susunTabStaf(peran) {
       const daftarTab = [
         { id: 'sPanelDash', label: 'Dashboard' },
-        { id: 'sPanelSesi', label: peran === 'DOSEN' ? 'Sesi Mengajar' : 'Sesi (Cadangan)' },
         { id: 'sPanelRekap', label: 'Rekap & Excel' },
         { id: 'sPanelJadwal', label: 'Jadwal' },
         { id: 'sPanelPengajuan', label: 'Izin & Koreksi' }
       ];
+      if (peran === 'DOSEN') daftarTab.splice(1, 0, { id: 'sPanelSesi', label: 'Sesi Mengajar' });
       if (peran === 'ADMIN') {
+        daftarTab.push({ id: 'sPanelKelas', label: 'Kelas' });
         daftarTab.push({ id: 'sPanelMK', label: 'Mata Kuliah' });
         daftarTab.push({ id: 'sPanelAkun', label: 'Akun Dosen & Mhs' });
       }
@@ -1836,6 +1931,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       if (panelId === 'sPanelJadwal') muatJadwal('staf');
       if (panelId === 'mPanelPengajuan') muatPengajuanMhs();
       if (panelId === 'sPanelPengajuan') { muatPengajuanStaf(); isiKoreksiLangsung(); }
+      if (panelId === 'sPanelKelas' || panelId === 'sPanelMK' || panelId === 'sPanelAkun') muatDataStaf();
     }
 
     document.querySelectorAll('.tab[data-tab="mhs"]').forEach((t) => {
@@ -1877,12 +1973,13 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       tanggalHariIni = resMK.ok ? (resMK.tanggal || '') : '';
 
       if (profil.peran === 'ADMIN') {
+        const resK = await api('daftar_kelas');
+        if (resK.ok) cacheKelas = resK.kelas;
         const resU = await api('daftar_pengguna');
-        if (resU.ok) {
-          cacheUsers = { mahasiswa: resU.mahasiswa, dosen: resU.dosen };
-          renderDaftarPengguna();
-          renderFormMK();
-        }
+        if (resU.ok) cacheUsers = { mahasiswa: resU.mahasiswa, dosen: resU.dosen };
+        renderKelasAdmin();
+        renderDaftarPengguna();
+        renderFormMK();
       }
       isiDropdownMK();
     }
@@ -2384,6 +2481,64 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
 
     // ---------- Admin: Kelola Mata Kuliah & Akun ----------
 
+    function renderKelasAdmin() {
+      const box = el('listKelas');
+      box.textContent = '';
+      if (cacheKelas.length === 0) {
+        const kosong = document.createElement('p');
+        kosong.className = 'sub';
+        kosong.textContent = 'Belum ada kelas.';
+        box.appendChild(kosong);
+      }
+      cacheKelas.forEach((k) => {
+        const baris = document.createElement('div');
+        baris.className = 'baris';
+        const info = document.createElement('div');
+        const st = document.createElement('strong');
+        st.textContent = k.kode;
+        const sm = document.createElement('small');
+        sm.textContent = k.jumlahMhs + ' mahasiswa • ' + k.jumlahMK + ' mata kuliah';
+        info.append(st, sm);
+        const aksiBox = document.createElement('div');
+        const bUbah = document.createElement('button');
+        bUbah.className = 'sekunder kecil';
+        bUbah.textContent = 'Ubah';
+        bUbah.addEventListener('click', async () => {
+          const baru = prompt('Kode kelas baru untuk ' + k.kode + ':', k.kode);
+          if (baru === null || !baru.trim() || baru.trim().toUpperCase() === k.kode) return;
+          pesan('pKelas', 'Menyimpan...');
+          const j = await api('simpan_kelas', { lama: k.kode, kode: baru });
+          if (!j.ok) { pesan('pKelas', j.pesan, 'err'); return; }
+          pesan('pKelas', 'Kelas diubah menjadi ' + j.kode + '.', 'ok');
+          await muatDataStaf();
+        });
+        const bHapus = document.createElement('button');
+        bHapus.className = 'sekunder kecil';
+        bHapus.textContent = 'Hapus';
+        bHapus.addEventListener('click', async () => {
+          if (!confirm('Hapus kelas ' + k.kode + '?')) return;
+          pesan('pKelas', 'Menghapus...');
+          const j = await api('hapus_kelas', { kode: k.kode });
+          if (!j.ok) { pesan('pKelas', j.pesan, 'err'); return; }
+          pesan('pKelas', 'Kelas ' + k.kode + ' dihapus.', 'ok');
+          await muatDataStaf();
+        });
+        aksiBox.append(bUbah, bHapus);
+        baris.append(info, aksiBox);
+        box.appendChild(baris);
+      });
+    }
+
+    el('fKelas').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      pesan('pKelas', 'Menyimpan...');
+      const j = await api('simpan_kelas', { kode: el('klKodeBaru').value });
+      if (!j.ok) { pesan('pKelas', j.pesan, 'err'); return; }
+      pesan('pKelas', 'Kelas ' + j.kode + ' ditambahkan.', 'ok');
+      el('fKelas').reset();
+      await muatDataStaf();
+    });
+
     function renderFormMK() {
       const selDosen = el('mkDosen');
       selDosen.textContent = '';
@@ -2402,16 +2557,22 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         });
       }
 
-      const boxP = el('boxPesertaMK');
-      boxP.textContent = '';
-      cacheUsers.mahasiswa.filter((m) => m.status !== 'NONAKTIF').forEach((m) => {
+      const boxK = el('boxKelasMK');
+      boxK.textContent = '';
+      if (cacheKelas.length === 0) {
+        const kosong = document.createElement('p');
+        kosong.className = 'sub';
+        kosong.textContent = 'Belum ada kelas. Buat kelas dulu di tab Kelas.';
+        boxK.appendChild(kosong);
+      }
+      cacheKelas.forEach((k) => {
         const lbl = document.createElement('label');
         lbl.className = 'cek';
         const cb = document.createElement('input');
         cb.type = 'checkbox';
-        cb.value = m.username;
-        lbl.append(cb, document.createTextNode(' ' + m.nama + ' (' + m.username + ')'));
-        boxP.appendChild(lbl);
+        cb.value = k.kode;
+        lbl.append(cb, document.createTextNode(' ' + k.kode + ' (' + k.jumlahMhs + ' mahasiswa)'));
+        boxK.appendChild(lbl);
       });
 
       const listMK = el('listMKAdmin');
@@ -2423,7 +2584,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         const st = document.createElement('strong');
         st.textContent = m.kode + ' — ' + m.nama;
         const sm = document.createElement('small');
-        sm.textContent = 'Dosen: ' + m.dosenNama + ' • ' + m.peserta.length + ' mahasiswa • ' + teksJadwal(m);
+        sm.textContent = 'Dosen: ' + m.dosenNama + ' • Kelas: ' + ((m.kelas && m.kelas.length) ? m.kelas.join(', ') : '(belum diatur)') + ' • ' + m.peserta.length + ' mahasiswa • ' + teksJadwal(m);
         info.append(st, sm);
         const btnEdit = document.createElement('button');
         btnEdit.className = 'sekunder kecil';
@@ -2436,8 +2597,8 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
           el('mkJamMulai').value = m.jamMulai || '';
           el('mkJamSelesai').value = m.jamSelesai || '';
           el('mkRuang').value = m.ruangan || '';
-          el('boxPesertaMK').querySelectorAll('input').forEach((cb) => {
-            cb.checked = m.peserta.includes(cb.value);
+          el('boxKelasMK').querySelectorAll('input').forEach((cb) => {
+            cb.checked = (m.kelas || []).includes(cb.value);
           });
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
@@ -2446,16 +2607,12 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       });
     }
 
-    el('btnPilihSemuaMhs').addEventListener('click', () => {
-      el('boxPesertaMK').querySelectorAll('input').forEach((cb) => { cb.checked = true; });
-    });
-
     el('fMK').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const peserta = Array.from(el('boxPesertaMK').querySelectorAll('input:checked')).map((c) => c.value);
+      const kelas = Array.from(el('boxKelasMK').querySelectorAll('input:checked')).map((c) => c.value);
       pesan('pMK', 'Menyimpan mata kuliah...');
       const j = await api('simpan_mk', {
-        kode: el('mkKode').value, nama: el('mkNama').value, dosen: el('mkDosen').value, peserta: peserta,
+        kode: el('mkKode').value, nama: el('mkNama').value, dosen: el('mkDosen').value, kelas: kelas,
         hari: el('mkHari').value, jamMulai: el('mkJamMulai').value, jamSelesai: el('mkJamSelesai').value, ruangan: el('mkRuang').value
       });
       if (!j.ok) { pesan('pMK', j.pesan, 'err'); return; }
@@ -2464,22 +2621,17 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       await muatDataStaf();
     });
 
-    el('uPeran').addEventListener('change', () => {
-      el('lblUUser').textContent = el('uPeran').value === 'MAHASISWA' ? 'NIM Mahasiswa' : 'Username Dosen';
-    });
-
     el('fTambahUser').addEventListener('submit', async (e) => {
       e.preventDefault();
       pesan('pTambahUser', 'Menyimpan akun...');
       el('hasilUser').classList.add('hidden');
       const j = await api('tambah_pengguna', {
-        peran: el('uPeran').value, username: el('uUser').value, nama: el('uNama').value
+        peran: 'DOSEN', username: el('uUser').value, nama: el('uNama').value, email: el('uEmail').value
       });
       if (!j.ok) { pesan('pTambahUser', j.pesan, 'err'); return; }
       pesan('pTambahUser', '');
       tampilHasilUser(j.peran + ' ' + j.nama + ' ditambahkan. Username:', j.username, j.passwordDefault);
       el('fTambahUser').reset();
-      el('lblUUser').textContent = 'NIM Mahasiswa';
       await muatDataStaf();
     });
 
@@ -2514,7 +2666,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
           const nm = document.createElement('strong');
           nm.textContent = u.nama + (u.status === 'NONAKTIF' ? ' [NONAKTIF]' : '');
           const sm = document.createElement('small');
-          sm.textContent = u.username + (u.belumGanti ? ' • belum ganti password' : '');
+          sm.textContent = u.username + (u.kelas ? ' • ' + u.kelas : '') + (u.email ? ' • ' + u.email : '') + (u.belumGanti ? ' • belum ganti password' : '');
           info.append(nm, sm);
 
           const aksiBox = document.createElement('div');
@@ -2947,10 +3099,6 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     });
 
     async function keluar() { await api('logout'); keluarLokal(''); }
-    el('btnKeluarMhs').addEventListener('click', keluar);
-    el('btnKeluarStaf').addEventListener('click', keluar);
-    el('btnGantiMhs').addEventListener('click', () => bukaGanti(false));
-    el('btnGantiStaf').addEventListener('click', () => bukaGanti(false));
     el('hdGanti').addEventListener('click', () => bukaGanti(false));
     el('hdKeluar').addEventListener('click', keluar);
 
@@ -2963,7 +3111,243 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     }
     perbaruiJam();
     setInterval(perbaruiJam, 15000);
+
+    // ---------- Cuaca saat ini (Open-Meteo, tanpa API key) ----------
+
+    const LOKASI_CUACA = { nama: 'Depok', lat: -6.4025, lon: 106.7942 };
+    const CW = {
+      awan: '<path d="M10 25h13a5 5 0 0 0 .8-9.9A7 7 0 0 0 10.3 13.6 5.7 5.7 0 0 0 10 25z" fill="#9DB7E3"/>',
+      matahari: '<circle cx="16" cy="16" r="6" fill="#FFB020"/><g stroke="#FFB020" stroke-width="2" stroke-linecap="round"><path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.8 6.8l2.1 2.1M23.1 23.1l2.1 2.1M6.8 25.2l2.1-2.1M23.1 8.9l2.1-2.1"/></g>',
+      bulan: '<path d="M22.5 22A10 10 0 0 1 11 9.5 10 10 0 1 0 22.5 22z" fill="#7C9AE0"/>',
+      kecil: '<g transform="translate(-1 -3) scale(.6)"><circle cx="16" cy="16" r="6" fill="#FFB020"/><g stroke="#FFB020" stroke-width="2.4" stroke-linecap="round"><path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.8 6.8l2.1 2.1M23.1 23.1l2.1 2.1M6.8 25.2l2.1-2.1M23.1 8.9l2.1-2.1"/></g></g>',
+      hujan: '<g stroke="#2F7BEA" stroke-width="2" stroke-linecap="round"><path d="M11 24.5l-1.3 3M16 24.5l-1.3 3M21 24.5l-1.3 3"/></g>',
+      petir: '<path d="M17.5 20l-4.5 6.5h3.2L15 31l5-7h-3.3z" fill="#FFC83D"/>',
+      kabut: '<g stroke="#9DB7E3" stroke-width="2.2" stroke-linecap="round"><path d="M7 14h18M5 19h20M8 24h16"/></g>'
+    };
+    function ikonCuaca(kode, siang) {
+      let isi;
+      if (kode === 0) isi = siang ? CW.matahari : CW.bulan;
+      else if (kode <= 2) isi = (siang ? CW.kecil : CW.bulan) + '<g transform="translate(3 -1)">' + CW.awan + '</g>';
+      else if (kode === 3) isi = CW.awan;
+      else if (kode === 45 || kode === 48) isi = CW.kabut;
+      else if (kode >= 95) isi = '<g transform="translate(0 -4)">' + CW.awan + '</g>' + CW.petir;
+      else if ((kode >= 51 && kode <= 67) || (kode >= 80 && kode <= 82)) isi = '<g transform="translate(0 -4)">' + CW.awan + '</g>' + CW.hujan;
+      else isi = CW.awan;
+      return '<svg viewBox="0 0 32 32" aria-hidden="true">' + isi + '</svg>';
+    }
+    function ketCuaca(kode) {
+      if (kode === 0) return 'Cerah';
+      if (kode === 1) return 'Cerah berawan';
+      if (kode === 2) return 'Berawan sebagian';
+      if (kode === 3) return 'Berawan';
+      if (kode === 45 || kode === 48) return 'Berkabut';
+      if (kode >= 51 && kode <= 57) return 'Gerimis';
+      if ((kode >= 61 && kode <= 67) || (kode >= 80 && kode <= 82)) return 'Hujan';
+      if (kode >= 95) return 'Badai petir';
+      return 'Berawan';
+    }
+    async function muatCuaca() {
+      try {
+        const u = 'https://api.open-meteo.com/v1/forecast?latitude=' + LOKASI_CUACA.lat + '&longitude=' + LOKASI_CUACA.lon +
+          '&current=temperature_2m,weather_code,is_day&timezone=auto';
+        const res = await fetch(u);
+        const c = (await res.json()).current;
+        if (!c) throw new Error('kosong');
+        const suhu = Math.round(c.temperature_2m) + '°C';
+        const ikon = ikonCuaca(c.weather_code, c.is_day === 1);
+        const ket = ketCuaca(c.weather_code);
+        el('cwIkon').innerHTML = ikon;
+        el('cwSuhu').textContent = suhu;
+        el('cwKet').textContent = ket + ' • ' + LOKASI_CUACA.nama;
+        el('cwMini').innerHTML = ikon + suhu;
+        el('hdCuaca').title = el('cwMini').title = ket + ' di ' + LOKASI_CUACA.nama;
+        el('hdCuaca').classList.remove('hidden');
+        el('cwMini').classList.remove('hidden');
+      } catch (e) {
+        el('hdCuaca').classList.add('hidden');
+        el('cwMini').classList.add('hidden');
+      }
+    }
+    muatCuaca();
+    setInterval(muatCuaca, 15 * 60 * 1000);
     el('btnBatalGanti').addEventListener('click', muat);
+
+    // ---------- Daftar (sign up) & Lupa password ----------
+
+    let timerKirim = null;
+    let nimPendaftaran = '';
+    let emailLupa = '';
+
+    function hentikanTimerKirim() {
+      if (timerKirim) { clearInterval(timerKirim); timerKirim = null; }
+    }
+
+    // Tombol "Kirim ulang" dikunci 60 detik setelah kode dikirim.
+    function mulaiJedaKirim(tombol) {
+      hentikanTimerKirim();
+      let sisa = 60;
+      tombol.disabled = true;
+      tombol.textContent = 'Kirim ulang kode (' + sisa + ')';
+      timerKirim = setInterval(() => {
+        sisa -= 1;
+        if (sisa <= 0) {
+          hentikanTimerKirim();
+          tombol.disabled = false;
+          tombol.textContent = 'Kirim ulang kode';
+        } else {
+          tombol.textContent = 'Kirim ulang kode (' + sisa + ')';
+        }
+      }, 1000);
+    }
+
+    function tombolSibuk(tombol, teks) {
+      const lama = tombol.textContent;
+      tombol.disabled = true;
+      tombol.textContent = '';
+      const sp = document.createElement('span');
+      sp.className = 'spin-kecil';
+      tombol.append(sp, document.createTextNode(teks));
+      return () => { tombol.disabled = false; tombol.textContent = lama; };
+    }
+
+    async function bukaDaftar() {
+      el('fDaftar').reset();
+      pesan('pDaftar', '');
+      tampil('vDaftar');
+      const sel = el('dftKelas');
+      sel.textContent = '';
+      const dasar = document.createElement('option');
+      dasar.value = '';
+      dasar.textContent = 'Memuat daftar kelas...';
+      sel.appendChild(dasar);
+      const j = await api('daftar_kelas_publik');
+      sel.textContent = '';
+      const awal = document.createElement('option');
+      awal.value = '';
+      if (!j.ok || j.kelas.length === 0) {
+        awal.textContent = j.ok ? '(Belum ada kelas. Hubungi Admin)' : '(Gagal memuat kelas)';
+        sel.appendChild(awal);
+        pesan('pDaftar', j.ok ? 'Admin belum membuat kelas, jadi pendaftaran belum bisa dilakukan.' : j.pesan, 'err');
+        return;
+      }
+      awal.textContent = '(Pilih kelas)';
+      sel.appendChild(awal);
+      j.kelas.forEach((k) => {
+        const o = document.createElement('option');
+        o.value = k;
+        o.textContent = k;
+        sel.appendChild(o);
+      });
+    }
+
+    function kembaliKeMasuk(info, tipe) {
+      el('fLogin').reset();
+      pesan('pLogin', info || '', info ? (tipe || '') : '');
+      tampil('vLogin');
+    }
+
+    el('btnKeDaftar').addEventListener('click', bukaDaftar);
+    el('btnDaftarKeMasuk').addEventListener('click', () => kembaliKeMasuk(''));
+
+    el('fDaftar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!el('dftKelas').value) { pesan('pDaftar', 'Pilih kelas dulu.', 'err'); return; }
+      pesan('pDaftar', '');
+      const selesai = tombolSibuk(el('btnKirimKode'), 'Mengirim kode...');
+      const j = await api('daftar_kirim', {
+        nama: el('dftNama').value, nim: el('dftNim').value, kelas: el('dftKelas').value,
+        email: el('dftEmail').value, password: el('dftPw').value
+      });
+      selesai();
+      if (!j.ok) { pesan('pDaftar', j.pesan, 'err'); return; }
+      nimPendaftaran = el('dftNim').value.trim().toLowerCase();
+      el('infoVerif').textContent = 'Kode 6 angka dikirim ke ' + j.email + '. Berlaku 10 menit. Cek juga folder spam.';
+      el('fVerif').reset();
+      pesan('pVerif', '');
+      tampil('vVerif');
+      el('btnKirimUlang').textContent = 'Kirim ulang kode';
+      mulaiJedaKirim(el('btnKirimUlang'));
+      el('vfKode').focus();
+    });
+
+    el('fVerif').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      pesan('pVerif', '');
+      const selesai = tombolSibuk(el('btnVerif'), 'Memeriksa kode...');
+      const j = await api('daftar_verifikasi', { nim: nimPendaftaran, kode: el('vfKode').value });
+      if (!j.ok) { selesai(); pesan('pVerif', j.pesan, 'err'); return; }
+      token = j.token;
+      try { sessionStorage.setItem('token', token); } catch (err) {}
+      tandaiAktif();
+      tampil('vMuat');
+      el('fDaftar').reset();
+      el('fLogin').reset();
+      selesai();
+      muat();
+    });
+
+    el('btnKirimUlang').addEventListener('click', async () => {
+      pesan('pVerif', 'Mengirim ulang kode...');
+      el('btnKirimUlang').disabled = true;
+      const j = await api('daftar_kirim_ulang', { nim: nimPendaftaran });
+      if (!j.ok) {
+        pesan('pVerif', j.pesan, 'err');
+        el('btnKirimUlang').disabled = false;
+        return;
+      }
+      pesan('pVerif', 'Kode baru sudah dikirim ke ' + j.email + '.', 'ok');
+      mulaiJedaKirim(el('btnKirimUlang'));
+    });
+
+    el('btnUbahData').addEventListener('click', () => { pesan('pDaftar', ''); tampil('vDaftar'); });
+
+    function bukaLupa() {
+      el('fLupa1').reset();
+      el('fLupa2').reset();
+      el('fLupa1').classList.remove('hidden');
+      el('fLupa2').classList.add('hidden');
+      pesan('pLupa', '');
+      tampil('vLupa');
+    }
+
+    el('btnKeLupa').addEventListener('click', bukaLupa);
+    el('btnLupaKeMasuk').addEventListener('click', () => kembaliKeMasuk(''));
+    el('btnLupaBatal').addEventListener('click', () => kembaliKeMasuk(''));
+
+    el('fLupa1').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      pesan('pLupa', '');
+      const selesai = tombolSibuk(el('btnLupaKirim'), 'Mengirim kode...');
+      const j = await api('lupa_kirim', { email: el('lpEmail').value });
+      selesai();
+      if (!j.ok) { pesan('pLupa', j.pesan, 'err'); return; }
+      emailLupa = el('lpEmail').value.trim().toLowerCase();
+      el('infoLupa').textContent = 'Jika email ' + emailLupa + ' terdaftar, kode 6 angka sudah dikirim. Berlaku 10 menit. Cek juga folder spam.';
+      el('fLupa1').classList.add('hidden');
+      el('fLupa2').classList.remove('hidden');
+      el('btnLupaUlang').textContent = 'Kirim ulang kode';
+      mulaiJedaKirim(el('btnLupaUlang'));
+      el('lpKode').focus();
+    });
+
+    el('fLupa2').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      pesan('pLupa', '');
+      const selesai = tombolSibuk(el('btnLupaReset'), 'Menyimpan...');
+      const j = await api('lupa_reset', { email: emailLupa, kode: el('lpKode').value, baru: el('lpBaru').value });
+      selesai();
+      if (!j.ok) { pesan('pLupa', j.pesan, 'err'); return; }
+      kembaliKeMasuk('Password berhasil diganti. Silakan masuk dengan password baru.', 'ok');
+    });
+
+    el('btnLupaUlang').addEventListener('click', async () => {
+      pesan('pLupa', 'Mengirim ulang kode...');
+      el('btnLupaUlang').disabled = true;
+      const j = await api('lupa_kirim', { email: emailLupa });
+      if (!j.ok) { pesan('pLupa', j.pesan, 'err'); el('btnLupaUlang').disabled = false; return; }
+      pesan('pLupa', 'Permintaan kode baru dikirim.', 'ok');
+      mulaiJedaKirim(el('btnLupaUlang'));
+    });
 
     // ---------- Header (logo) menyembunyikan diri saat scroll ke bawah ----------
 
