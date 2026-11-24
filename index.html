@@ -214,15 +214,60 @@
     .ks.klik { cursor: pointer; }
     th { background: transparent; color: #4A5A7A; font-size: .78rem; }
     td, th { border-bottom: 1px solid var(--garis); }
+
+    /* ===== Animasi proses, header auto-sembunyi, bar profil ===== */
+    header { transition: transform .4s cubic-bezier(.4, 0, .2, 1), opacity .3s ease; }
+    body.header-turun header { transform: translateY(-110%); opacity: 0; pointer-events: none; }
+    .tabs, .tab { transition: top .4s cubic-bezier(.4, 0, .2, 1), background .2s, color .2s; }
+    @media (min-width: 860px) { body.header-turun .tabs { top: 16px; } }
+
+    .profil-bar { display: none; align-items: center; gap: 12px; margin: 4px 0 14px; }
+    body.dalam .profil-bar { display: flex; }
+    .profil-bar.hidden { display: none !important; }
+    .avatar {
+      flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+      font-weight: 800; font-size: 1.15rem; color: var(--putih);
+      background: linear-gradient(135deg, var(--cyan), var(--biru)); box-shadow: 0 4px 12px rgba(26, 118, 229, .3);
+    }
+    .profil-teks { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; }
+    .profil-teks strong { font-size: 1.02rem; max-width: 70vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .profil-bar .badge-peran { margin: 0; padding: 2px 10px; font-size: .74rem; max-width: none; }
+
+    .bar-proses {
+      position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 100; overflow: hidden;
+      opacity: 0; transition: opacity .25s; pointer-events: none;
+    }
+    .bar-proses.aktif { opacity: 1; }
+    .bar-proses::before {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 40%; border-radius: 3px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--biru), transparent);
+      animation: geser 1.1s ease-in-out infinite;
+    }
+    @keyframes geser { from { left: -40%; } to { left: 100%; } }
+    .spin-kecil {
+      display: inline-block; width: 15px; height: 15px; margin-right: 8px; vertical-align: -3px; border-radius: 50%;
+      border: 2.5px solid var(--biru-muda); border-top-color: var(--biru); animation: putar .7s linear infinite;
+    }
+    button .spin-kecil { border-color: rgba(255, 255, 255, .45); border-top-color: var(--putih); }
+    .pesan.proses { color: var(--biru-tua); display: flex; align-items: center; }
+    .pesan.proses .spin-kecil { flex: none; }
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
+  <div class="bar-proses" id="barProses"></div>
   <div class="wadah">
     <header>
       <img src="logo.png" alt="Logo Ambatuhadir">
-      <div id="headerBadge" class="hidden"><span class="badge-peran" id="txtBadge"></span></div>
     </header>
+
+    <div class="profil-bar hidden" id="headerBadge">
+      <span class="avatar" id="pbAvatar"></span>
+      <div class="profil-teks">
+        <strong id="pbNama"></strong>
+        <span class="badge-peran" id="txtBadge"></span>
+      </div>
+    </div>
 
     <!-- LOGIN -->
     <section class="kartu view hidden" id="vMuat"><div class="spinner"></div><p class="sub" style="margin:0;">Memuat...</p></section>
@@ -1620,11 +1665,27 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     });
 
     function pesan(id, teks, tipe) {
-      el(id).textContent = teks || '';
-      el(id).className = 'pesan' + (tipe ? ' ' + tipe : '');
+      const p = el(id);
+      p.textContent = '';
+      p.className = 'pesan' + (tipe ? ' ' + tipe : '');
+      // Teks berakhiran "..." = sedang diproses: tampilkan spinner berputar.
+      if (teks && !tipe && /\.\.\.$/.test(teks)) {
+        const s = document.createElement('span');
+        s.className = 'spin-kecil';
+        p.classList.add('proses');
+        p.appendChild(s);
+      }
+      p.appendChild(document.createTextNode(teks || ''));
+    }
+
+    let permintaanJalan = 0;
+    function barProses(delta) {
+      permintaanJalan = Math.max(0, permintaanJalan + delta);
+      el('barProses').classList.toggle('aktif', permintaanJalan > 0);
     }
 
     async function api(aksi, data) {
+      barProses(1);
       try {
         const res = await fetch(CONFIG.URL_API, {
           method: 'POST',
@@ -1636,6 +1697,8 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         return j;
       } catch (err) {
         return { ok: false, pesan: 'Gagal terhubung ke server. Periksa internet.' };
+      } finally {
+        barProses(-1);
       }
     }
 
@@ -1658,7 +1721,9 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       if (j.wajibGanti) { bukaGanti(true); return; }
 
       el('headerBadge').classList.remove('hidden');
-      el('txtBadge').textContent = 'MODE ' + j.peran + ' — ' + j.nama;
+      el('pbNama').textContent = j.nama;
+      el('pbAvatar').textContent = (j.nama || '?').trim().charAt(0).toUpperCase();
+      el('txtBadge').textContent = j.peran === 'ADMIN' ? 'Mode Admin' : (j.peran === 'DOSEN' ? 'Dosen' : 'Mahasiswa');
 
       if (j.peran === 'MAHASISWA') {
         el('mNama').textContent = j.nama;
@@ -1716,7 +1781,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       document.querySelectorAll(kelasPanel).forEach((p) => {
         p.classList.toggle('hidden', p.id !== panelId);
       });
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       if (tanpaMuat) return;
       if (panelId === 'mPanelRiwayat' || panelId === 'mPanelDash') muatRiwayatMahasiswa();
       if (panelId === 'sPanelDash') muatDashStaf();
@@ -2804,7 +2869,10 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       e.preventDefault();
       const tombol = el('btnMasuk');
       tombol.disabled = true;
-      tombol.textContent = 'Memeriksa...';
+      tombol.textContent = '';
+      const sp = document.createElement('span');
+      sp.className = 'spin-kecil';
+      tombol.append(sp, document.createTextNode('Memeriksa...'));
       pesan('pLogin', '');
       const j = await api('login', { username: el('lUser').value, password: el('lPass').value });
       tombol.disabled = false;
@@ -2838,6 +2906,17 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     el('btnGantiMhs').addEventListener('click', () => bukaGanti(false));
     el('btnGantiStaf').addEventListener('click', () => bukaGanti(false));
     el('btnBatalGanti').addEventListener('click', muat);
+
+    // ---------- Header (logo) menyembunyikan diri saat scroll ke bawah ----------
+
+    let yTerakhir = 0;
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY, d = y - yTerakhir;
+      if (y < 30) document.body.classList.remove('header-turun');
+      else if (d > 8) document.body.classList.add('header-turun');
+      else if (d < -8) document.body.classList.remove('header-turun');
+      yTerakhir = y;
+    }, { passive: true });
 
     // ---------- Batas tanpa aktivitas ----------
 
