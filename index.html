@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#EEF3FA">
+  <meta name="theme-color" content="#DCE8FD">
   <title>Ambatuhadir</title>
   <link rel="icon" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,13 +23,13 @@
       --pure: #FFFFFF;
 
       /* Permukaan & Bayangan Neumorphism */
-      --nm-bg: #EEF3FA;
-      --nm-surface: linear-gradient(145deg, #F7FAFE, #E6EDF7);
-      --nm-surface-flat: #EFF4FB;
-      --nm-inset-bg: #E9EFF8;
-      --nm-light: rgba(255, 255, 255, 0.96);
-      --nm-shadow: rgba(173, 189, 214, 0.58);
-      --nm-shadow-soft: rgba(173, 189, 214, 0.42);
+      --nm-bg: #DCE8FD;
+      --nm-surface: linear-gradient(145deg, rgba(251, 252, 253, 0.95), rgba(230, 240, 253, 0.92));
+      --nm-surface-flat: #EBF2FE;
+      --nm-inset-bg: #E4EEFC;
+      --nm-light: rgba(255, 255, 255, 0.94);
+      --nm-shadow: rgba(136, 165, 214, 0.54);
+      --nm-shadow-soft: rgba(136, 165, 214, 0.38);
 
       /* Tipografi & Garis */
       --ink: #0D1B3E;
@@ -81,22 +81,30 @@
       min-height: 100dvh;
       color: var(--ink);
       font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: var(--nm-bg);
+      background: linear-gradient(135deg, #D5E4FC 0%, #E7F0FE 46%, #CCE0FC 100%);
       overflow-x: hidden;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Cahaya ambient halus di latar (bersih, modern, tidak ramai) */
-    body::before {
-      content: "";
+    /* Kanvas Latar Belakang Berpola Biru Kobalt, Sian & Putih Neumorphic */
+    .latar-kanvas {
       position: fixed;
       inset: 0;
       z-index: -1;
       pointer-events: none;
+      overflow: hidden;
       background:
-        radial-gradient(60% 45% at 6% 0%, rgba(0, 177, 252, 0.09), transparent 70%),
-        radial-gradient(55% 45% at 96% 100%, rgba(0, 86, 251, 0.08), transparent 70%);
+        radial-gradient(62% 52% at 8% 6%, rgba(0, 177, 252, 0.24), transparent 68%),
+        radial-gradient(58% 54% at 94% 92%, rgba(0, 86, 251, 0.22), transparent 70%),
+        radial-gradient(45% 40% at 84% 14%, rgba(251, 252, 253, 0.85), transparent 65%),
+        linear-gradient(140deg, #D4E4FC 0%, #E6EFFD 50%, #C7DCFB 100%);
+    }
+
+    .latar-kanvas svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
     .wadah {
@@ -1173,7 +1181,7 @@
       top: 0;
       height: calc(var(--atas) + 84px);
       opacity: 0;
-      background: linear-gradient(180deg, rgba(238, 243, 250, 0.86), rgba(238, 243, 250, 0));
+      background: linear-gradient(180deg, rgba(218, 232, 253, 0.86), rgba(218, 232, 253, 0));
       -webkit-mask-image: linear-gradient(180deg, #000 42%, transparent);
       mask-image: linear-gradient(180deg, #000 42%, transparent);
     }
@@ -1186,7 +1194,7 @@
       bottom: 0;
       height: calc(var(--tinggi-nav) + var(--bawah) + 40px);
       display: none;
-      background: linear-gradient(0deg, rgba(238, 243, 250, 0.88), rgba(238, 243, 250, 0));
+      background: linear-gradient(0deg, rgba(214, 230, 252, 0.88), rgba(214, 230, 252, 0));
       -webkit-mask-image: linear-gradient(0deg, #000 45%, transparent);
       mask-image: linear-gradient(0deg, #000 45%, transparent);
     }
@@ -1817,6 +1825,77 @@
 </head>
 <body>
   <div class="bar-proses" id="barProses"></div>
+
+  <!-- Latar belakang pola gelombang pita, cincin orbital & matriks titik -->
+  <div class="latar-kanvas" aria-hidden="true">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Gradien gelombang utama -->
+        <linearGradient id="bgWaveA" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0056FB" stop-opacity="0.18"/>
+          <stop offset="55%" stop-color="#00B1FC" stop-opacity="0.14"/>
+          <stop offset="100%" stop-color="#FBFCFD" stop-opacity="0.45"/>
+        </linearGradient>
+        <linearGradient id="bgWaveB" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#00B1FC" stop-opacity="0.22"/>
+          <stop offset="50%" stop-color="#0056FB" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#FBFCFD" stop-opacity="0.05"/>
+        </linearGradient>
+        <linearGradient id="bgRibbon" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#0056FB" stop-opacity="0.22"/>
+          <stop offset="48%" stop-color="#00B1FC" stop-opacity="0.16"/>
+          <stop offset="100%" stop-color="#FBFCFD" stop-opacity="0.6"/>
+        </linearGradient>
+        <linearGradient id="bgRingStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FBFCFD" stop-opacity="0.88"/>
+          <stop offset="50%" stop-color="#00B1FC" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#0056FB" stop-opacity="0.24"/>
+        </linearGradient>
+
+        <!-- Pola matriks titik geometris halus -->
+        <pattern id="bgDotGrid" width="26" height="26" patternUnits="userSpaceOnUse">
+          <circle cx="3" cy="3" r="1.6" fill="#0056FB" fill-opacity="0.16"/>
+        </pattern>
+        <pattern id="bgDotCyan" width="22" height="22" patternUnits="userSpaceOnUse">
+          <circle cx="3" cy="3" r="1.4" fill="#00B1FC" fill-opacity="0.22"/>
+        </pattern>
+      </defs>
+
+      <!-- Blok matriks titik di sudut berlawanan -->
+      <rect x="1040" y="36" width="340" height="230" rx="24" fill="url(#bgDotGrid)"/>
+      <rect x="48" y="610" width="320" height="240" rx="24" fill="url(#bgDotCyan)"/>
+
+      <!-- Cincin orbital neumorphic (kiri atas & kanan bawah) -->
+      <g fill="none">
+        <circle cx="150" cy="145" r="230" stroke="url(#bgRingStroke)" stroke-width="28"/>
+        <circle cx="150" cy="145" r="158" stroke="url(#bgRingStroke)" stroke-width="14"/>
+        <circle cx="150" cy="145" r="92" stroke="#FBFCFD" stroke-opacity="0.65" stroke-width="2"/>
+
+        <circle cx="1310" cy="770" r="270" stroke="url(#bgRingStroke)" stroke-width="32"/>
+        <circle cx="1310" cy="770" r="185" stroke="url(#bgRingStroke)" stroke-width="16"/>
+        <circle cx="1310" cy="770" r="110" stroke="#00B1FC" stroke-opacity="0.2" stroke-width="2"/>
+      </g>
+
+      <!-- Lapisan gelombang organik mengalir dari kiri bawah ke kanan atas -->
+      <path d="M-120,640 C180,520 340,740 660,610 C980,480 1140,210 1560,260 L1560,960 L-120,960 Z"
+            fill="url(#bgWaveA)"/>
+      <path d="M-120,640 C180,520 340,740 660,610 C980,480 1140,210 1560,260"
+            fill="none" stroke="#FBFCFD" stroke-opacity="0.72" stroke-width="2.5"/>
+
+      <!-- Pita diagonal lembut berlapis di tengah kanvas -->
+      <path d="M-160,360 C160,180 480,430 820,270 C1120,130 1300,-40 1580,40 L1580,210 C1280,140 1100,320 800,450 C460,590 150,350 -160,510 Z"
+            fill="url(#bgRibbon)"/>
+      <path d="M-160,360 C160,180 480,430 820,270 C1120,130 1300,-40 1580,40"
+            fill="none" stroke="#FBFCFD" stroke-opacity="0.78" stroke-width="2"/>
+
+      <!-- Gelombang aksen biru sian di bagian bawah -->
+      <path d="M-80,790 C280,690 540,860 920,740 C1180,660 1350,540 1540,590 L1540,940 L-80,940 Z"
+            fill="url(#bgWaveB)"/>
+      <path d="M-80,790 C280,690 540,860 920,740 C1180,660 1350,540 1540,590"
+            fill="none" stroke="#FBFCFD" stroke-opacity="0.65" stroke-width="2"/>
+    </svg>
+  </div>
+
   <div class="blur-atas" aria-hidden="true"></div>
   <div class="blur-bawah" aria-hidden="true"></div>
 
