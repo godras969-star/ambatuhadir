@@ -3,543 +3,1839 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#E3EBF8">
+  <meta name="theme-color" content="#EEF3FA">
   <title>Ambatuhadir</title>
   <link rel="icon" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     /* ==========================================================
-       AMBATUHADIR - Neumorphism (biru)
-       Dasar terang kebiruan, bayangan timbul/tekan, aksen biru logo.
+       AMBATUHADIR — Refined Soft Neumorphism
+       Palet Utama : #0056FB (Biru Kobalt) · #00B1FC (Sian) · #FBFCFD (Putih)
+       Dasar Kanvas: #EEF3FA (Porcelain Mist) untuk kedalaman timbul & tekan alami
        ========================================================== */
     :root {
-      --navy: #0C193E; --biru: #1A76E5; --biru-tua: #164EC8; --cyan: #0EA4FC;
-      --biru-muda: #ACDBFB; --latar: #E1EDF9; --putih: #FFFFFF;
-      --ok: #0B8A4B; --warn: #B26A00; --err: #C62828;
-      --nm-bg: #E3EBF8; --nm-terang: #FFFFFF; --nm-gelap: #B3C3DF;
-      --teks2: #44557A; --garis: rgba(128, 152, 198, .30);
-      --timbul: 8px 8px 18px var(--nm-gelap), -8px -8px 18px var(--nm-terang);
-      --timbul-kecil: 4px 4px 10px var(--nm-gelap), -4px -4px 10px var(--nm-terang);
-      --tekan: inset 4px 4px 9px var(--nm-gelap), inset -4px -4px 9px var(--nm-terang);
-      --grad: linear-gradient(145deg, #2F93F5, #1659D6);
-      --fokus: 0 0 0 3px rgba(14, 164, 252, .55);
+      --primary: #0056FB;
+      --primary-deep: #003EC2;
+      --accent: #00B1FC;
+      --white: #FBFCFD;
+      --pure: #FFFFFF;
+
+      /* Permukaan & Bayangan Neumorphism */
+      --nm-bg: #EEF3FA;
+      --nm-surface: linear-gradient(145deg, #F7FAFE, #E6EDF7);
+      --nm-surface-flat: #EFF4FB;
+      --nm-inset-bg: #E9EFF8;
+      --nm-light: rgba(255, 255, 255, 0.96);
+      --nm-shadow: rgba(173, 189, 214, 0.58);
+      --nm-shadow-soft: rgba(173, 189, 214, 0.42);
+
+      /* Tipografi & Garis */
+      --ink: #0D1B3E;
+      --ink-muted: #526487;
+      --ink-subtle: #8293B2;
+      --line: rgba(130, 152, 192, 0.22);
+      --rim: rgba(255, 255, 255, 0.85);
+
+      /* Status Semantik */
+      --ok: #0A8754;
+      --ok-bg: #DCF6EA;
+      --warn: #B86B00;
+      --warn-bg: #FFF0D4;
+      --err: #D12C38;
+      --err-bg: #FDE2E4;
+      --info-bg: rgba(0, 86, 251, 0.10);
+
+      /* Elevasi Neumorphic */
+      --timbul: 10px 10px 22px var(--nm-shadow), -10px -10px 22px var(--nm-light);
+      --timbul-kecil: 5px 5px 12px var(--nm-shadow-soft), -5px -5px 12px var(--nm-light);
+      --tekan: inset 4px 4px 9px var(--nm-shadow), inset -4px -4px 9px var(--nm-light);
+      --tekan-halus: inset 2px 2px 6px var(--nm-shadow-soft), inset -2px -2px 6px var(--nm-light);
+
+      /* Gradien & Fokus */
+      --grad: linear-gradient(135deg, #0056FB 0%, #0084FC 58%, #00B1FC 100%);
+      --grad-soft: linear-gradient(135deg, rgba(0, 86, 251, 0.10), rgba(0, 177, 252, 0.12));
+      --shadow-cta: 0 8px 20px -4px rgba(0, 86, 251, 0.36), -4px -4px 10px var(--nm-light);
+      --fokus: 0 0 0 3px rgba(0, 177, 252, 0.34);
+
+      /* Safe Area & Layout */
       --atas: env(safe-area-inset-top, 0px);
       --bawah: env(safe-area-inset-bottom, 0px);
-      --tinggi-nav: 66px;
+      --tinggi-nav: 68px;
     }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html { background: var(--nm-bg); scroll-padding-top: calc(var(--atas) + 90px); }
-    body {
-      margin: 0; min-height: 100vh; min-height: 100dvh; color: var(--navy);
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: transparent; overflow-x: hidden;
-    }
-    /* Bulatan timbul dekoratif di latar (mengisi ruang kosong) */
-    body::before, body::after {
-      content: ""; position: fixed; z-index: -1; border-radius: 50%; pointer-events: none;
-      background: var(--nm-bg); box-shadow: var(--timbul);
-    }
-    body::before { width: 300px; height: 300px; top: -150px; left: -130px; border: 16px solid rgba(26, 118, 229, .13); }
-    body::after { width: 340px; height: 340px; right: -170px; bottom: -150px; border: 18px solid rgba(14, 164, 252, .12); }
 
-    .wadah { max-width: 1080px; margin: 0 auto; padding: calc(var(--atas) + 10px) 16px 28px; }
-    h2 { font-size: 1.08rem; margin: 0 0 12px; }
-    h3 { font-size: .95rem; margin: 16px 0 8px; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      background: var(--nm-bg);
+      scroll-padding-top: calc(var(--atas) + 92px);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      color: var(--ink);
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--nm-bg);
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Cahaya ambient halus di latar (bersih, modern, tidak ramai) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(60% 45% at 6% 0%, rgba(0, 177, 252, 0.09), transparent 70%),
+        radial-gradient(55% 45% at 96% 100%, rgba(0, 86, 251, 0.08), transparent 70%);
+    }
+
+    .wadah {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: calc(var(--atas) + 12px) 18px 34px;
+    }
+
+    h2 {
+      font-size: 1.12rem;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      margin: 0 0 12px;
+    }
+
+    h3 {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 18px 0 8px;
+    }
+
     .hidden { display: none !important; }
 
-    /* ---------- Kartu timbul ---------- */
+    /* ---------- Kartu Timbul (Soft Extruded Surface) ---------- */
     .kartu {
-      background: var(--nm-bg); border-radius: 24px; padding: 18px; margin-bottom: 20px;
-      box-shadow: var(--timbul); border: 1px solid rgba(255, 255, 255, .55);
+      background: var(--nm-surface);
+      border-radius: 26px;
+      padding: 20px 22px;
+      margin-bottom: 22px;
+      box-shadow: var(--timbul);
+      border: 1px solid var(--rim);
     }
 
-    /* ---------- Form: kolom masuk tertekan ---------- */
-    label { display: block; font-size: .86rem; font-weight: 700; color: var(--teks2); margin: 12px 0 6px 4px; }
-    input:not([type="checkbox"]), select, textarea {
-      width: 100%; font: inherit; padding: 12px 14px; color: var(--navy);
-      border: 0; border-radius: 16px; background: var(--nm-bg); box-shadow: var(--tekan);
+    /* ---------- Form: Kolom Masuk Tertekan (Inset Wells) ---------- */
+    label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+      margin: 14px 0 6px 4px;
     }
-    input::placeholder, textarea::placeholder { color: #6B7BA0; opacity: 1; }
-    input:not([type="checkbox"]):focus, select:focus, textarea:focus { outline: none; box-shadow: var(--tekan), var(--fokus); }
+
+    input:not([type="checkbox"]),
+    select,
+    textarea {
+      width: 100%;
+      font: inherit;
+      font-size: 0.95rem;
+      padding: 13px 16px;
+      color: var(--ink);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 16px;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan);
+      transition: box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--ink-subtle);
+      opacity: 1;
+    }
+
+    input:not([type="checkbox"]):focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      background: var(--white);
+      border-color: rgba(0, 177, 252, 0.45);
+      box-shadow: var(--tekan-halus), var(--fokus);
+    }
+
     select {
-      appearance: none; -webkit-appearance: none; padding-right: 40px; cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23164EC8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 14px center;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 42px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230056FB' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
     }
-    textarea { min-height: 84px; resize: vertical; }
-    .dua-kolom { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-    /* Kotak centang timbul */
-    label.cek { display: flex; align-items: center; gap: 10px; font-weight: 600; margin: 12px 0 0 2px; cursor: pointer; }
+    select option {
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .dua-kolom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Kotak Centang Neumorphic */
+    label.cek {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 12px 0 0 2px;
+      cursor: pointer;
+    }
+
     input[type="checkbox"] {
-      appearance: none; -webkit-appearance: none; flex: none; width: 24px; height: 24px; margin: 0;
-      border-radius: 8px; background: var(--nm-bg); box-shadow: var(--tekan); cursor: pointer;
-      display: grid; place-items: center;
+      appearance: none;
+      -webkit-appearance: none;
+      flex: none;
+      width: 22px;
+      height: 22px;
+      margin: 0;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan-halus);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.18s ease;
     }
+
     input[type="checkbox"]:checked {
-      background: var(--grad) center / cover; box-shadow: 2px 2px 6px rgba(22, 78, 200, .4);
+      background: var(--grad);
+      border-color: transparent;
+      box-shadow: 0 3px 8px rgba(0, 86, 251, 0.35);
     }
+
     input[type="checkbox"]:checked::after {
-      content: ""; width: 12px; height: 7px; border-left: 3px solid #fff; border-bottom: 3px solid #fff;
+      content: "";
+      width: 11px;
+      height: 6px;
+      border-left: 2.5px solid var(--white);
+      border-bottom: 2.5px solid var(--white);
       transform: rotate(-45deg) translate(1px, -1px);
     }
-    input[type="checkbox"]:focus-visible { outline: none; box-shadow: var(--tekan), var(--fokus); }
+
+    input[type="checkbox"]:focus-visible {
+      outline: none;
+      box-shadow: var(--tekan-halus), var(--fokus);
+    }
+
     .daftar-cek {
-      max-height: 190px; overflow-y: auto; border-radius: 16px; padding: 8px 14px;
-      margin-top: 4px; box-shadow: var(--tekan);
+      max-height: 196px;
+      overflow-y: auto;
+      border-radius: 18px;
+      padding: 10px 14px;
+      margin-top: 6px;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan);
+      border: 1px solid rgba(255, 255, 255, 0.5);
     }
 
     /* ---------- Tombol ---------- */
     button {
-      font: inherit; font-weight: 700; color: var(--putih); cursor: pointer; border: 0;
-      background: var(--grad); border-radius: 16px; padding: 11px 18px; margin: 12px 8px 0 0;
-      box-shadow: 5px 5px 12px rgba(22, 78, 200, .32), -4px -4px 10px var(--nm-terang);
-      transition: transform .15s ease, box-shadow .15s ease, filter .2s;
+      font: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--white);
+      cursor: pointer;
+      border: 0;
+      background: var(--grad);
+      border-radius: 16px;
+      padding: 12px 20px;
+      margin: 14px 8px 0 0;
+      box-shadow: var(--shadow-cta), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
     }
-    button:hover { filter: brightness(1.06); }
-    button:active { transform: translateY(1px); box-shadow: inset 3px 3px 8px rgba(8, 30, 100, .45), inset -2px -2px 6px rgba(255, 255, 255, .15); }
-    button:focus-visible { outline: none; box-shadow: var(--fokus), 5px 5px 12px rgba(22, 78, 200, .32); }
-    button:disabled { opacity: .65; cursor: wait; filter: none; }
+
+    button:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: inset 3px 3px 8px rgba(0, 42, 130, 0.45);
+    }
+
+    button:focus-visible {
+      outline: none;
+      box-shadow: var(--fokus), var(--shadow-cta);
+    }
+
+    button:disabled {
+      opacity: 0.62;
+      cursor: wait;
+      filter: none;
+      transform: none;
+    }
+
     button.sekunder {
-      background: var(--nm-bg); color: var(--biru-tua);
+      background: var(--nm-surface);
+      color: var(--primary);
+      border: 1px solid var(--rim);
       box-shadow: var(--timbul-kecil);
     }
-    button.sekunder:active { box-shadow: var(--tekan); }
-    button.sekunder:focus-visible { box-shadow: var(--fokus), var(--timbul-kecil); }
-    button.bahaya { background: linear-gradient(145deg, #E2504F, #BA2323); box-shadow: 5px 5px 12px rgba(186, 35, 35, .3), -4px -4px 10px var(--nm-terang); }
-    button.kecil { padding: 7px 13px; margin: 3px 6px 3px 0; font-size: .82rem; border-radius: 12px; }
-    button.tautan {
-      background: none; box-shadow: none; color: var(--biru-tua); padding: 6px 4px; margin: 10px 14px 0 0;
-      font-size: .9rem; border-radius: 8px;
+
+    button.sekunder:hover {
+      filter: none;
+      color: var(--primary-deep);
     }
-    button.tautan:active { box-shadow: none; transform: none; opacity: .7; }
-    button.tautan:disabled { opacity: .5; }
-    .pesan { min-height: 1.2em; margin: 10px 0 0; font-size: .9rem; }
-    .pesan.err { color: var(--err); font-weight: 600; }
-    .pesan.ok { color: var(--ok); font-weight: 600; }
-    .baris-aksi { display: flex; flex-wrap: wrap; align-items: center; }
+
+    button.sekunder:active {
+      box-shadow: var(--tekan);
+    }
+
+    button.sekunder:focus-visible {
+      box-shadow: var(--fokus), var(--timbul-kecil);
+    }
+
+    button.bahaya {
+      background: linear-gradient(135deg, #E63946, #C1121F);
+      color: var(--white);
+      box-shadow: 0 8px 18px -4px rgba(209, 44, 56, 0.35), -4px -4px 10px var(--nm-light);
+    }
+
+    button.kecil {
+      padding: 7px 14px;
+      margin: 3px 6px 3px 0;
+      font-size: 0.8rem;
+      border-radius: 12px;
+    }
+
+    button.tautan {
+      background: none;
+      box-shadow: none;
+      color: var(--primary);
+      padding: 6px 4px;
+      margin: 10px 14px 0 0;
+      font-size: 0.88rem;
+      border-radius: 8px;
+    }
+
+    button.tautan:hover {
+      color: var(--accent);
+      transform: none;
+      filter: none;
+    }
+
+    button.tautan:active {
+      box-shadow: none;
+      transform: none;
+      opacity: 0.7;
+    }
+
+    button.tautan:disabled {
+      opacity: 0.5;
+    }
+
+    .pesan {
+      min-height: 1.25em;
+      margin: 12px 0 0;
+      font-size: 0.88rem;
+    }
+
+    .pesan.err {
+      color: var(--err);
+      font-weight: 600;
+    }
+
+    .pesan.ok {
+      color: var(--ok);
+      font-weight: 600;
+    }
+
+    .baris-aksi {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
     .btn-info {
-      width: 38px; margin: 0; padding: 0; border-radius: 50%;
-      background: var(--nm-bg); color: var(--biru-tua); box-shadow: var(--timbul-kecil);
-      font-weight: 800; font-style: italic;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      padding: 0;
+      border-radius: 50%;
+      background: var(--nm-surface);
+      color: var(--primary);
+      border: 1px solid var(--rim);
+      box-shadow: var(--timbul-kecil);
+      font-weight: 800;
+      font-style: italic;
     }
-    .btn-info:active { box-shadow: var(--tekan); }
+
+    .btn-info:active {
+      box-shadow: var(--tekan);
+    }
+
     .box-info {
-      border-left: 4px solid var(--biru); border-radius: 14px; padding: 11px 14px;
-      margin-top: 12px; font-size: .88rem; box-shadow: var(--tekan);
+      background: var(--nm-inset-bg);
+      border-left: 4px solid var(--accent);
+      border-radius: 14px;
+      padding: 12px 15px;
+      margin-top: 12px;
+      font-size: 0.87rem;
+      color: var(--ink-muted);
+      box-shadow: var(--tekan-halus);
     }
-    .metode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-    .metode-item { display: flex; align-items: stretch; gap: 8px; }
-    .metode-item .btn-metode { flex: 1; margin: 0; padding: 12px 10px; font-size: .9rem; }
 
-    /* ---------- Tipografi pembantu ---------- */
-    .nama { font-weight: 800; font-size: 1.1rem; margin: 0; }
-    .sub { margin: 2px 0 10px; color: var(--teks2); font-size: .88rem; }
-    .hasil { border-radius: 16px; padding: 12px 14px; margin-top: 14px; word-break: break-all; box-shadow: var(--tekan); }
-    .hasil code { font-size: 1.15rem; font-weight: 700; }
+    .box-info strong {
+      color: var(--ink);
+    }
+
+    .metode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .metode-item {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .metode-item .btn-metode {
+      flex: 1;
+      margin: 0;
+      padding: 12px 12px;
+      font-size: 0.9rem;
+    }
+
+    /* ---------- Tipografi & Daftar Item ---------- */
+    .nama {
+      font-weight: 800;
+      font-size: 1.12rem;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .sub {
+      margin: 3px 0 12px;
+      color: var(--ink-muted);
+      font-size: 0.88rem;
+    }
+
+    .hasil {
+      background: var(--nm-inset-bg);
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-top: 14px;
+      word-break: break-all;
+      box-shadow: var(--tekan);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+    }
+
+    .hasil code {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 0.04em;
+    }
+
     .baris {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      padding: 10px 0; border-bottom: 1px solid var(--garis);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
     }
-    .baris:last-child { border-bottom: 0; }
-    .baris small { display: block; color: var(--teks2); }
-    .baris.sorot { border-radius: 16px; padding: 10px 14px; margin-bottom: 10px; border-bottom: 0; box-shadow: var(--tekan); }
-    .item-peng { padding: 12px 0; border-bottom: 1px solid var(--garis); }
-    .item-peng:last-child { border-bottom: 0; }
-    .item-peng .atas { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-    .item-peng small { display: block; color: var(--teks2); }
-    .item-peng .alasan { margin: 6px 0 0; font-size: .88rem; word-break: break-word; }
 
-    /* ---------- QR & kamera ---------- */
-    .qr { text-align: center; }
+    .baris > div:first-child {
+      flex: 1 1 160px;
+      min-width: 0;
+    }
+
+    .baris:last-child {
+      border-bottom: 0;
+    }
+
+    .baris small {
+      display: block;
+      color: var(--ink-muted);
+      margin-top: 2px;
+      font-size: 0.82rem;
+    }
+
+    .baris.sorot {
+      background: var(--nm-inset-bg);
+      border-radius: 18px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border-bottom: 0;
+      box-shadow: var(--tekan-halus);
+      border: 1px solid rgba(0, 177, 252, 0.22);
+    }
+
+    .item-peng {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .item-peng:last-child {
+      border-bottom: 0;
+    }
+
+    .item-peng .atas {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .item-peng small {
+      display: block;
+      color: var(--ink-muted);
+      margin-top: 2px;
+      font-size: 0.82rem;
+    }
+
+    .item-peng .alasan {
+      margin: 8px 0 0;
+      font-size: 0.87rem;
+      color: var(--ink);
+      word-break: break-word;
+    }
+
+    /* ---------- QR & Kamera ---------- */
+    .qr {
+      text-align: center;
+    }
+
     .qr img {
-      width: 100%; max-width: 260px; image-rendering: pixelated; background: #fff;
-      border-radius: 22px; border: 10px solid #fff; box-shadow: var(--timbul);
+      width: 100%;
+      max-width: 256px;
+      image-rendering: pixelated;
+      background: var(--pure);
+      border-radius: 24px;
+      border: 12px solid var(--pure);
+      box-shadow: var(--timbul);
     }
+
     .kamera {
-      position: relative; background: var(--navy); border-radius: 22px; overflow: hidden;
-      margin: 14px auto 0; max-width: 420px; box-shadow: var(--timbul);
+      position: relative;
+      background: #08132E;
+      border-radius: 24px;
+      overflow: hidden;
+      margin: 16px auto 0;
+      max-width: 420px;
+      box-shadow: var(--timbul);
+      border: 3px solid var(--white);
     }
-    .kamera video { width: 100%; display: block; }
-    .kamera video.cermin { transform: scaleX(-1); }
-    .bingkai { position: absolute; inset: 18% 18%; border: 3px solid var(--cyan); border-radius: 18px; pointer-events: none; }
 
-    /* ---------- Status & ringkasan ---------- */
-    .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 800; }
-    .st-Hadir, .st-DISETUJUI { background: #D2F3E1; color: var(--ok); }
-    .st-Terlambat, .st-MENUNGGU { background: #FFEBC8; color: var(--warn); }
-    .st-Izin { background: #D6E9FF; color: var(--biru-tua); }
-    .st-Alpha, .st-DITOLAK { background: #FAD7D4; color: var(--err); }
-    .st-Belum { background: #E6EBF4; color: #4A5470; }
-    .grid-stat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0; }
-    .stat { border-radius: 16px; padding: 10px 6px; text-align: center; box-shadow: var(--tekan); }
-    .stat strong { display: block; font-size: 1.15rem; }
-    .stat small { font-size: .76rem; color: var(--teks2); }
+    .kamera video {
+      width: 100%;
+      display: block;
+    }
 
-    .tabel-wrap { overflow-x: auto; margin-top: 12px; border-radius: 18px; padding: 4px 12px; box-shadow: var(--tekan); }
-    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
-    th, td { padding: 9px 8px; border-bottom: 1px solid var(--garis); text-align: left; white-space: nowrap; }
-    tbody tr:last-child td { border-bottom: 0; }
-    th { background: transparent; color: var(--teks2); font-size: .78rem; font-weight: 800; }
+    .kamera video.cermin {
+      transform: scaleX(-1);
+    }
 
-    /* ---------- Animasi proses ---------- */
+    .bingkai {
+      position: absolute;
+      inset: 18% 18%;
+      border: 3px solid var(--accent);
+      border-radius: 20px;
+      box-shadow: 0 0 0 9999px rgba(8, 19, 46, 0.32);
+      pointer-events: none;
+    }
+
+    /* ---------- Status Pill & Ringkasan ---------- */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .st-Hadir, .st-DISETUJUI {
+      background: var(--ok-bg);
+      color: var(--ok);
+    }
+
+    .st-Terlambat, .st-MENUNGGU {
+      background: var(--warn-bg);
+      color: var(--warn);
+    }
+
+    .st-Izin {
+      background: var(--info-bg);
+      color: var(--primary);
+    }
+
+    .st-Alpha, .st-DITOLAK {
+      background: var(--err-bg);
+      color: var(--err);
+    }
+
+    .st-Belum {
+      background: rgba(130, 147, 178, 0.16);
+      color: var(--ink-muted);
+    }
+
+    .grid-stat {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .stat {
+      background: var(--nm-inset-bg);
+      border-radius: 18px;
+      padding: 12px 8px;
+      text-align: center;
+      box-shadow: var(--tekan-halus);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat small {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+    }
+
+    .tabel-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+      border-radius: 18px;
+      padding: 6px 14px;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan-halus);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th {
+      background: transparent;
+      color: var(--ink-muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ---------- Animasi Proses ---------- */
     .spinner {
-      width: 58px; height: 58px; margin: 0 auto 16px; border-radius: 50%;
-      border: 6px solid rgba(26, 118, 229, .16); border-top-color: var(--biru);
-      box-shadow: var(--timbul-kecil); animation: putar .8s linear infinite;
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      border: 5px solid rgba(0, 86, 251, 0.14);
+      border-top-color: var(--primary);
+      border-right-color: var(--accent);
+      box-shadow: var(--timbul-kecil);
+      animation: putar 0.8s linear infinite;
     }
-    @keyframes putar { to { transform: rotate(360deg); } }
+
+    @keyframes putar {
+      to { transform: rotate(360deg); }
+    }
+
     .bar-proses {
-      position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 100; overflow: hidden;
-      opacity: 0; transition: opacity .25s; pointer-events: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.5px;
+      z-index: 100;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.25s;
+      pointer-events: none;
     }
-    .bar-proses.aktif { opacity: 1; }
+
+    .bar-proses.aktif {
+      opacity: 1;
+    }
+
     .bar-proses::before {
-      content: ""; position: absolute; top: 0; bottom: 0; width: 40%; border-radius: 4px;
-      background: linear-gradient(90deg, transparent, var(--cyan), var(--biru), transparent);
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 42%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
       animation: geser 1.1s ease-in-out infinite;
     }
-    @keyframes geser { from { left: -40%; } to { left: 100%; } }
-    .spin-kecil {
-      display: inline-block; width: 15px; height: 15px; margin-right: 8px; vertical-align: -3px; border-radius: 50%;
-      border: 2.5px solid rgba(26, 118, 229, .25); border-top-color: var(--biru); animation: putar .7s linear infinite;
+
+    @keyframes geser {
+      from { left: -42%; }
+      to { left: 100%; }
     }
-    button .spin-kecil { border-color: rgba(255, 255, 255, .4); border-top-color: var(--putih); }
-    button.sekunder .spin-kecil { border-color: rgba(26, 118, 229, .25); border-top-color: var(--biru); }
-    .pesan.proses { color: var(--biru-tua); display: flex; align-items: center; }
-    .pesan.proses .spin-kecil { flex: none; }
+
+    .spin-kecil {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 8px;
+      vertical-align: -3px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(0, 86, 251, 0.22);
+      border-top-color: var(--primary);
+      animation: putar 0.7s linear infinite;
+    }
+
+    button .spin-kecil {
+      border-color: rgba(255, 255, 255, 0.35);
+      border-top-color: var(--white);
+    }
+
+    button.sekunder .spin-kecil {
+      border-color: rgba(0, 86, 251, 0.22);
+      border-top-color: var(--primary);
+    }
+
+    .pesan.proses {
+      color: var(--primary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+
+    .pesan.proses .spin-kecil {
+      flex: none;
+    }
 
     /* ==========================================================
        HALAMAN MASUK / DAFTAR / VERIFIKASI / LUPA / GANTI PASSWORD
        ========================================================== */
-    .auth-brand { display: none; justify-content: center; margin: 0 0 22px; }
-    body:not(.dalam) .auth-brand { display: flex; }
-    .logo-ubin {
-      display: grid; place-items: center; padding: 22px 28px; border-radius: 38px;
-      background: var(--nm-bg); box-shadow: var(--timbul), inset 2px 2px 4px rgba(255, 255, 255, .8);
-      border: 1px solid rgba(255, 255, 255, .6);
+    .auth-brand {
+      display: none;
+      justify-content: center;
+      margin: 0 0 22px;
     }
-    .logo-ubin img { display: block; width: min(190px, 54vw); max-height: 118px; height: auto; object-fit: contain; }
 
-    body:not(.dalam) header, body:not(.dalam) .profil-bar, body:not(.dalam) .atribusi,
-    body:not(.dalam) .blur-atas, body:not(.dalam) .blur-bawah { display: none !important; }
-    body:not(.dalam) .wadah {
-      min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center;
-      padding: calc(var(--atas) + 26px) 24px calc(var(--bawah) + 30px);
+    body:not(.dalam) .auth-brand {
+      display: flex;
     }
-    .auth { width: 100%; max-width: 400px; margin: 0 auto; }
-    #vMuat { text-align: center; padding: 8px 0; }
-    .auth h2 { font-size: 1.7rem; font-weight: 800; text-align: center; margin: 0 0 4px; letter-spacing: -.01em; }
-    .auth > .sub, .auth form > .sub, .auth .sub.tengah { text-align: center; }
-    .auth .sub { margin: 0 0 18px; font-size: .95rem; }
-    .auth label { margin-top: 14px; }
-    .auth .pesan { text-align: center; justify-content: center; }
-    .sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; }
+
+    .logo-ubin {
+      display: grid;
+      place-items: center;
+      padding: 18px 26px;
+      border-radius: 32px;
+      background: var(--nm-surface);
+      box-shadow: var(--timbul);
+      border: 1px solid var(--rim);
+    }
+
+    .logo-ubin img {
+      display: block;
+      width: min(176px, 50vw);
+      max-height: 104px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .logo-fallback {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .logo-fallback-ik {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: var(--grad);
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(0, 86, 251, 0.32);
+    }
+
+    body:not(.dalam) header,
+    body:not(.dalam) .profil-bar,
+    body:not(.dalam) .atribusi,
+    body:not(.dalam) .blur-atas,
+    body:not(.dalam) .blur-bawah {
+      display: none !important;
+    }
+
+    body:not(.dalam) .wadah {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: calc(var(--atas) + 26px) 20px calc(var(--bawah) + 32px);
+    }
+
+    .auth {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      background: var(--nm-surface);
+      border-radius: 32px;
+      padding: 28px 26px;
+      box-shadow: var(--timbul);
+      border: 1px solid var(--rim);
+    }
+
+    #vMuat {
+      text-align: center;
+      padding: 36px 24px;
+    }
+
+    .auth h2 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      text-align: center;
+      margin: 0 0 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .auth > .sub,
+    .auth form > .sub,
+    .auth .sub.tengah {
+      text-align: center;
+    }
+
+    .auth .sub {
+      margin: 0 0 18px;
+      font-size: 0.92rem;
+    }
+
+    .auth label {
+      margin-top: 14px;
+    }
+
+    .auth .pesan {
+      text-align: center;
+      justify-content: center;
+    }
+
+    .sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+      padding: 0;
+    }
 
     .field {
-      position: relative; display: flex; align-items: center; gap: 4px; margin-top: 16px;
-      padding: 0 8px 0 16px; border-radius: 20px; background: var(--nm-bg); box-shadow: var(--tekan);
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+      padding: 0 8px 0 16px;
+      border-radius: 18px;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      transition: box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
     }
-    .field:focus-within { box-shadow: var(--tekan), var(--fokus); }
-    .field input:not([type="checkbox"]) { flex: 1; min-width: 0; background: transparent; box-shadow: none; padding: 16px 6px; border-radius: 0; }
-    .field input:not([type="checkbox"]):focus { box-shadow: none; }
-    .field .ik-in { flex: none; display: grid; place-items: center; width: 26px; color: var(--teks2); }
-    .field .ik-in svg, .mata svg { width: 22px; height: 22px; display: block; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .field:focus-within .ik-in { color: var(--biru); }
-    .mata { position: relative; flex: none; width: 40px; height: 40px; display: grid; place-items: center; margin: 0; padding: 0; color: var(--teks2); cursor: pointer; border-radius: 50%; }
-    .mata input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer; box-shadow: none; background: transparent; }
-    .mata input:checked { background: transparent; box-shadow: none; }
-    .mata input:checked::after { display: none; }
-    .mata .tutup { display: none; }
-    .mata input:checked ~ .buka { display: none; }
-    .mata input:checked ~ .tutup { display: block; color: var(--biru); }
-    .mata:focus-within { box-shadow: var(--fokus); }
 
-    .baris-lupa { display: flex; justify-content: flex-end; margin: 6px 4px 0; }
-    .baris-lupa button.tautan { margin: 0; font-weight: 700; }
+    .field:focus-within {
+      background: var(--white);
+      border-color: rgba(0, 177, 252, 0.45);
+      box-shadow: var(--tekan-halus), var(--fokus);
+    }
+
+    .field input:not([type="checkbox"]) {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      box-shadow: none;
+      border: 0;
+      padding: 15px 6px;
+      border-radius: 0;
+    }
+
+    .field input:not([type="checkbox"]):focus {
+      box-shadow: none;
+      background: transparent;
+    }
+
+    .field .ik-in {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 24px;
+      color: var(--ink-subtle);
+      transition: color 0.2s ease;
+    }
+
+    .field .ik-in svg,
+    .mata svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .field:focus-within .ik-in {
+      color: var(--primary);
+    }
+
+    .mata {
+      position: relative;
+      flex: none;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      margin: 0;
+      padding: 0;
+      color: var(--ink-subtle);
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    .mata input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      margin: 0;
+      cursor: pointer;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    .mata input:checked {
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .mata input:checked::after {
+      display: none;
+    }
+
+    .mata .tutup {
+      display: none;
+    }
+
+    .mata input:checked ~ .buka {
+      display: none;
+    }
+
+    .mata input:checked ~ .tutup {
+      display: block;
+      color: var(--primary);
+    }
+
+    .mata:focus-within {
+      box-shadow: var(--fokus);
+    }
+
+    .baris-lupa {
+      display: flex;
+      justify-content: flex-end;
+      margin: 8px 4px 0;
+    }
+
+    .baris-lupa button.tautan {
+      margin: 0;
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
     .btn-besar {
-      position: relative; width: 100%; display: flex; align-items: center; justify-content: center;
-      margin: 20px 0 0; padding: 17px 56px 17px 22px; font-size: 1.05rem; border-radius: 999px;
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0 0;
+      padding: 15px 52px 15px 22px;
+      font-size: 1rem;
+      border-radius: 999px;
     }
+
     .btn-besar::after {
-      content: ""; position: absolute; right: 10px; top: 50%; width: 38px; height: 38px; transform: translateY(-50%);
-      border-radius: 50%; background: rgba(255, 255, 255, .22) center / 19px no-repeat
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+      content: "";
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      width: 34px;
+      height: 34px;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.24) center / 18px no-repeat
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FBFCFD' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
     }
-    .btn-besar:disabled::after { display: none; }
-    .btn-besar.sekunder { color: var(--biru-tua); padding-right: 22px; }
-    .btn-besar.sekunder::after { display: none; }
-    .btn-lebar { width: 100%; margin: 14px 0 0; border-radius: 999px; padding: 14px 20px; display: block; text-align: center; }
+
+    .btn-besar:disabled::after {
+      display: none;
+    }
+
+    .btn-besar.sekunder {
+      color: var(--primary);
+      padding-right: 22px;
+    }
+
+    .btn-besar.sekunder::after {
+      display: none;
+    }
+
+    .btn-lebar {
+      width: 100%;
+      margin: 14px 0 0;
+      border-radius: 999px;
+      padding: 14px 20px;
+      display: block;
+      text-align: center;
+    }
+
     .pemisah {
-      display: flex; align-items: center; gap: 14px; margin: 26px 0 4px; color: var(--teks2);
-      font-size: .72rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 22px 0 2px;
+      color: var(--ink-subtle);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
     }
-    .pemisah::before, .pemisah::after { content: ""; flex: 1; height: 2px; border-radius: 2px; background: var(--garis); }
-    .auth-kaki { margin: 26px 0 0; text-align: center; font-size: .7rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--teks2); }
-    #vfKode, #lpKode { text-align: center; letter-spacing: .5em; font-size: 1.5rem; font-weight: 800; padding: 14px 10px 14px 20px; }
-    .auth .baris-aksi { justify-content: center; }
-    .auth .baris-aksi button.tautan { margin: 12px 8px 0; }
-    .auth button.sekunder:not(.btn-besar) { width: 100%; margin: 14px 0 0; border-radius: 999px; padding: 14px 20px; }
-    .auth button[type="submit"]:not(.btn-besar) { width: 100%; margin: 20px 0 0; border-radius: 999px; padding: 15px 20px; }
+
+    .pemisah::before,
+    .pemisah::after {
+      content: "";
+      flex: 1;
+      height: 1.5px;
+      border-radius: 2px;
+      background: var(--line);
+    }
+
+    .auth-kaki {
+      margin: 22px 0 0;
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-subtle);
+    }
+
+    #vfKode,
+    #lpKode {
+      text-align: center;
+      letter-spacing: 0.48em;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--primary);
+      padding: 14px 10px 14px 20px;
+    }
+
+    .auth .baris-aksi {
+      justify-content: center;
+    }
+
+    .auth .baris-aksi button.tautan {
+      margin: 12px 8px 0;
+    }
+
+    .auth button.sekunder:not(.btn-besar) {
+      width: 100%;
+      margin: 14px 0 0;
+      border-radius: 999px;
+      padding: 14px 20px;
+    }
+
+    .auth button[type="submit"]:not(.btn-besar) {
+      width: 100%;
+      margin: 20px 0 0;
+      border-radius: 999px;
+      padding: 14px 20px;
+    }
+
+    /* Penyesuaian spacing field dalam auth */
+    label + .field { margin-top: 0; }
+    .sr + .field { margin-top: 14px; }
+    .auth .mata { margin: 0; display: grid; font-size: 0; }
+    .auth label.sr { margin: -1px; }
+    .auth select { padding: 15px 42px 15px 16px; border-radius: 18px; }
+    .auth input:not([type="checkbox"]):not(.dalam-field) { border-radius: 18px; }
+    .field input:not([type="checkbox"]) { border-radius: 0; }
+    .auth textarea { border-radius: 18px; }
 
     /* ==========================================================
        HEADER, BLUR ATAS/BAWAH, NAVIGASI
        ========================================================== */
     header {
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      position: sticky; top: calc(var(--atas) + 10px); z-index: 60; padding: 8px 14px; border-radius: 24px;
-      background: var(--nm-bg); box-shadow: var(--timbul-kecil); border: 1px solid rgba(255, 255, 255, .55);
-      transition: transform .4s cubic-bezier(.4, 0, .2, 1), opacity .3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: calc(var(--atas) + 12px);
+      z-index: 60;
+      padding: 10px 16px;
+      border-radius: 24px;
+      background: var(--nm-surface);
+      box-shadow: var(--timbul-kecil);
+      border: 1px solid var(--rim);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
     }
-    header img { width: 138px; max-width: 42%; height: auto; display: block; }
-    body.header-turun header { transform: translateY(calc(-100% - 30px)); opacity: 0; pointer-events: none; }
 
-    /* Efek blur: tepi atas saat scroll, tepi bawah di belakang menu (HP) */
-    .blur-atas, .blur-bawah {
-      position: fixed; left: 0; right: 0; z-index: 55; pointer-events: none;
-      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-      transition: opacity .35s ease;
+    header img {
+      width: 136px;
+      max-width: 42%;
+      height: auto;
+      display: block;
     }
-    .blur-atas {
-      top: 0; height: calc(var(--atas) + 84px); opacity: 0;
-      background: linear-gradient(180deg, rgba(227, 235, 248, .82), rgba(227, 235, 248, 0));
-      -webkit-mask-image: linear-gradient(180deg, #000 40%, transparent);
-      mask-image: linear-gradient(180deg, #000 40%, transparent);
+
+    body.header-turun header {
+      transform: translateY(calc(-100% - 30px));
+      opacity: 0;
+      pointer-events: none;
     }
-    body.gulir .blur-atas { opacity: 1; }
+
+    /* Efek blur lembut saat scroll */
+    .blur-atas,
     .blur-bawah {
-      bottom: 0; height: calc(var(--tinggi-nav) + var(--bawah) + 40px); display: none;
-      background: linear-gradient(0deg, rgba(227, 235, 248, .85), rgba(227, 235, 248, 0));
+      position: fixed;
+      left: 0;
+      right: 0;
+      z-index: 55;
+      pointer-events: none;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      transition: opacity 0.35s ease;
+    }
+
+    .blur-atas {
+      top: 0;
+      height: calc(var(--atas) + 84px);
+      opacity: 0;
+      background: linear-gradient(180deg, rgba(238, 243, 250, 0.86), rgba(238, 243, 250, 0));
+      -webkit-mask-image: linear-gradient(180deg, #000 42%, transparent);
+      mask-image: linear-gradient(180deg, #000 42%, transparent);
+    }
+
+    body.gulir .blur-atas {
+      opacity: 1;
+    }
+
+    .blur-bawah {
+      bottom: 0;
+      height: calc(var(--tinggi-nav) + var(--bawah) + 40px);
+      display: none;
+      background: linear-gradient(0deg, rgba(238, 243, 250, 0.88), rgba(238, 243, 250, 0));
       -webkit-mask-image: linear-gradient(0deg, #000 45%, transparent);
       mask-image: linear-gradient(0deg, #000 45%, transparent);
     }
 
-    .hd-kanan { display: flex; align-items: center; gap: 10px; flex: none; }
+    .hd-kanan {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: none;
+    }
+
     .jam-kartu {
-      display: flex; flex-direction: column; align-items: flex-end; line-height: 1.15;
-      padding: 5px 14px; border-radius: 14px; box-shadow: var(--tekan);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1.2;
+      padding: 6px 14px;
+      border-radius: 15px;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan-halus);
+      border: 1px solid rgba(255, 255, 255, 0.55);
     }
-    .jam-kartu strong { font-size: 1.05rem; color: var(--biru-tua); font-variant-numeric: tabular-nums; }
-    .jam-kartu small { font-size: .7rem; font-weight: 700; color: var(--teks2); }
-    .cuaca-kartu { display: flex; align-items: center; gap: 8px; padding: 4px 14px 4px 10px; border-radius: 14px; box-shadow: var(--tekan); }
-    .cw-ik svg { width: 32px; height: 32px; display: block; }
-    .cw-teks { display: flex; flex-direction: column; line-height: 1.15; }
-    .cw-teks strong { font-size: 1.05rem; color: var(--biru-tua); }
-    .cw-teks small { font-size: .7rem; font-weight: 700; color: var(--teks2); white-space: nowrap; }
-    .cw-mini { font-size: .7rem; font-weight: 700; color: var(--teks2); align-items: center; gap: 3px; }
-    .cw-mini svg { width: 15px; height: 15px; display: block; }
-    button.ik-btn { width: 42px; height: 42px; padding: 0; margin: 0; display: grid; place-items: center; border-radius: 14px; }
-    button.ik-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-    button.ik-btn.keluar { color: var(--err); }
-    button.ik-btn.sandi { width: 58px; }
-    button.ik-btn.sandi svg { width: 38px; height: 26px; }
-    button.ik-btn svg .bintang { stroke-width: 1.1; }
+
+    .jam-kartu strong {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .jam-kartu small {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+    }
+
+    .cuaca-kartu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px 5px 10px;
+      border-radius: 15px;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan-halus);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+    }
+
+    .cw-ik svg {
+      width: 30px;
+      height: 30px;
+      display: block;
+    }
+
+    .cw-teks {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .cw-teks strong {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .cw-teks small {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+      white-space: nowrap;
+    }
+
+    .cw-mini {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+      align-items: center;
+      gap: 3px;
+    }
+
+    .cw-mini svg {
+      width: 15px;
+      height: 15px;
+      display: block;
+    }
+
+    button.ik-btn {
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+    }
+
+    button.ik-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    button.ik-btn.keluar {
+      color: var(--err);
+    }
+
+    button.ik-btn.sandi {
+      width: 56px;
+    }
+
+    button.ik-btn.sandi svg {
+      width: 36px;
+      height: 25px;
+    }
+
+    button.ik-btn svg .bintang {
+      stroke-width: 1.15;
+    }
+
     @media (max-width: 559px) {
-      .jam-kartu small, #hdTgl, .cuaca-kartu { display: none !important; }
-      .cw-mini:not(.hidden) { display: flex; }
-      .hd-kanan { gap: 8px; }
-      button.ik-btn.sandi { width: 52px; }
-      header { padding: 7px 10px 7px 14px; }
-    }
-    @media (min-width: 560px) { .cw-mini { display: none !important; } }
+      .jam-kartu small,
+      #hdTgl,
+      .cuaca-kartu {
+        display: none !important;
+      }
 
-    .profil-bar { display: none; align-items: center; gap: 14px; margin: 16px 4px 10px; }
-    body.dalam .profil-bar { display: flex; }
-    .profil-bar.hidden { display: none !important; }
+      .cw-mini:not(.hidden) {
+        display: flex;
+      }
+
+      .hd-kanan {
+        gap: 8px;
+      }
+
+      button.ik-btn.sandi {
+        width: 50px;
+      }
+
+      header {
+        padding: 8px 12px 8px 14px;
+      }
+    }
+
+    @media (min-width: 560px) {
+      .cw-mini {
+        display: none !important;
+      }
+    }
+
+    /* ---------- Bar Profil Pengguna ---------- */
+    .profil-bar {
+      display: none;
+      align-items: center;
+      gap: 14px;
+      margin: 18px 4px 12px;
+    }
+
+    body.dalam .profil-bar {
+      display: flex;
+    }
+
+    .profil-bar.hidden {
+      display: none !important;
+    }
+
     .avatar {
-      flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
-      font-weight: 800; font-size: 1.2rem; color: var(--putih); background: var(--grad);
-      box-shadow: 5px 5px 12px rgba(22, 78, 200, .32), -4px -4px 10px var(--nm-terang);
-    }
-    .profil-teks { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
-    .profil-teks strong { font-size: 1.05rem; max-width: 70vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .badge-peran {
-      display: inline-block; margin: 0; padding: 3px 12px; border-radius: 999px; box-shadow: var(--tekan);
-      color: var(--biru-tua); font-size: .74rem; font-weight: 800; max-width: 62vw;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      flex: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1.18rem;
+      color: var(--white);
+      background: var(--grad);
+      box-shadow: 0 6px 16px -2px rgba(0, 86, 251, 0.36), -4px -4px 10px var(--nm-light);
+      border: 2px solid var(--pure);
     }
 
-    .layout { display: block; }
-    .layout .isi { min-width: 0; }
-    .tabs { display: flex; gap: 6px; scrollbar-width: none; }
-    .tabs::-webkit-scrollbar { display: none; }
-    .tab {
-      display: flex; align-items: center; gap: 10px; flex: 1 0 auto; margin: 0; padding: 10px 12px;
-      background: transparent; box-shadow: none; color: var(--teks2); font-weight: 700; border-radius: 16px;
+    .profil-teks {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      min-width: 0;
     }
-    .tab:hover { filter: none; color: var(--biru-tua); }
-    .tab .ik svg { width: 22px; height: 22px; display: block; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .tab.aktif { background: var(--grad); color: var(--putih); box-shadow: 4px 4px 10px rgba(22, 78, 200, .32), -3px -3px 8px var(--nm-terang); }
-    .tab:active { box-shadow: var(--tekan); transform: none; }
-    .tab.aktif:active { box-shadow: inset 3px 3px 8px rgba(8, 30, 100, .45); }
-    .tab .ts { display: none; }
+
+    .profil-teks strong {
+      font-size: 1.06rem;
+      font-weight: 800;
+      color: var(--ink);
+      max-width: 70vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .badge-peran {
+      display: inline-block;
+      margin: 0;
+      padding: 3px 12px;
+      border-radius: 999px;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan-halus);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      color: var(--primary);
+      font-size: 0.74rem;
+      font-weight: 800;
+      max-width: 62vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ---------- Layout & Navigasi Tab ---------- */
+    .layout {
+      display: block;
+    }
+
+    .layout .isi {
+      min-width: 0;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      flex: 1 0 auto;
+      margin: 0;
+      padding: 11px 14px;
+      background: transparent;
+      box-shadow: none;
+      color: var(--ink-muted);
+      font-weight: 700;
+      border-radius: 16px;
+    }
+
+    .tab:hover {
+      filter: none;
+      transform: none;
+      color: var(--primary);
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    .tab .ik svg {
+      width: 21px;
+      height: 21px;
+      display: block;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .tab.aktif {
+      background: var(--grad);
+      color: var(--white);
+      box-shadow: var(--shadow-cta), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    }
+
+    .tab.aktif:hover {
+      color: var(--white);
+    }
+
+    .tab:active {
+      box-shadow: var(--tekan-halus);
+      transform: none;
+    }
+
+    .tab.aktif:active {
+      box-shadow: inset 3px 3px 8px rgba(0, 42, 130, 0.45);
+    }
+
+    .tab .ts {
+      display: none;
+    }
 
     @media (max-width: 859px) {
-      .wadah { padding-bottom: calc(var(--tinggi-nav) + var(--bawah) + 34px); }
-      body.dalam .blur-bawah { display: block; }
-      .tabs {
-        position: fixed; left: 12px; right: 12px; bottom: calc(10px + var(--bawah)); z-index: 60; margin: 0;
-        overflow-x: auto; padding: 7px; border-radius: 26px; background: var(--nm-bg);
-        box-shadow: var(--timbul); border: 1px solid rgba(255, 255, 255, .55);
+      .wadah {
+        padding-bottom: calc(var(--tinggi-nav) + var(--bawah) + 34px);
       }
-      .tab { flex: 1 0 64px; flex-direction: column; justify-content: center; gap: 2px; padding: 7px 4px; font-size: .68rem; }
-      .tab .tl { display: none; }
-      .tab .ts { display: inline; }
-      .kartu { padding: 16px; margin-bottom: 18px; box-shadow: 6px 6px 14px var(--nm-gelap), -6px -6px 14px var(--nm-terang); }
-      .profil-bar { margin: 14px 2px 6px; }
-      .salam { margin: 2px 2px 12px !important; }
-      .salam .nama { font-size: 1.15rem !important; }
-      .atribusi { margin-top: 0 !important; }
+
+      body.dalam .blur-bawah {
+        display: block;
+      }
+
+      .tabs {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: calc(10px + var(--bawah));
+        z-index: 60;
+        margin: 0;
+        overflow-x: auto;
+        padding: 7px;
+        border-radius: 26px;
+        background: var(--nm-surface);
+        box-shadow: var(--timbul);
+        border: 1px solid var(--rim);
+      }
+
+      .tab {
+        flex: 1 0 62px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 3px;
+        padding: 7px 4px;
+        font-size: 0.68rem;
+      }
+
+      .tab .tl {
+        display: none;
+      }
+
+      .tab .ts {
+        display: inline;
+      }
+
+      .kartu {
+        padding: 18px 16px;
+        margin-bottom: 18px;
+      }
+
+      .profil-bar {
+        margin: 14px 2px 8px;
+      }
+
+      .salam {
+        margin: 2px 2px 12px !important;
+      }
+
+      .salam .nama {
+        display: none !important;
+      }
+
+      .salam .sub {
+        margin: 0;
+        font-size: 0.88rem;
+      }
+
+      th, td {
+        padding: 9px 6px;
+      }
+
+      .tabel-wrap {
+        padding: 4px 10px;
+      }
+
+      .atribusi {
+        margin-top: 0 !important;
+      }
     }
+
     @media (min-width: 860px) {
-      .wadah { padding: calc(var(--atas) + 10px) 16px 36px; }
-      .layout { display: grid; grid-template-columns: 236px minmax(0, 1fr); gap: 26px; align-items: start; }
-      .tabs {
-        flex-direction: column; position: sticky; top: 96px; gap: 6px; padding: 12px; overflow: visible;
-        background: var(--nm-bg); border-radius: 24px; box-shadow: var(--timbul); border: 1px solid rgba(255, 255, 255, .55);
+      .wadah {
+        padding: calc(var(--atas) + 14px) 22px 40px;
       }
-      .tab { width: 100%; padding: 12px 14px; font-size: .92rem; text-align: left; flex: none; }
-      body.header-turun .tabs { top: 24px; }
-      .tabs, .tab { transition: top .4s cubic-bezier(.4, 0, .2, 1), background .2s, color .2s; }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 244px minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+      }
+
+      .tabs {
+        flex-direction: column;
+        position: sticky;
+        top: 98px;
+        gap: 7px;
+        padding: 14px;
+        overflow: visible;
+        background: var(--nm-surface);
+        border-radius: 26px;
+        box-shadow: var(--timbul);
+        border: 1px solid var(--rim);
+      }
+
+      .tab {
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 0.91rem;
+        text-align: left;
+        flex: none;
+      }
+
+      body.header-turun .tabs {
+        top: 24px;
+      }
+
+      .tabs,
+      .tab {
+        transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, color 0.2s, box-shadow 0.2s;
+      }
     }
 
-    /* ---------- Dashboard ---------- */
-    .salam { margin: 6px 4px 16px; }
-    .salam .nama { font-size: 1.4rem; }
-    .kartu-stat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 20px; }
-    @media (max-width: 700px) { .kartu-stat { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+    /* ---------- Dashboard & Kartu KPI ---------- */
+    .salam {
+      margin: 4px 4px 18px;
+    }
+
+    .salam .nama {
+      font-size: 1.42rem;
+      letter-spacing: -0.02em;
+    }
+
+    .kartu-stat {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    @media (max-width: 700px) {
+      .kartu-stat {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+    }
+
     .ks {
-      position: relative; background: var(--nm-bg); border-radius: 22px; padding: 16px; min-height: 100px;
-      box-shadow: var(--timbul-kecil); border: 1px solid rgba(255, 255, 255, .55);
+      position: relative;
+      background: var(--nm-surface);
+      border-radius: 24px;
+      padding: 18px 18px 16px;
+      min-height: 108px;
+      box-shadow: var(--timbul-kecil);
+      border: 1px solid var(--rim);
+      overflow: hidden;
     }
-    @media (min-width: 701px) { .ks { box-shadow: 6px 6px 14px var(--nm-gelap), -6px -6px 14px var(--nm-terang); } }
-    .ks small { font-size: .7rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--teks2); }
-    .ks strong { display: block; font-size: 1.9rem; margin-top: 6px; line-height: 1.1; color: var(--biru-tua); }
-    .ks strong.teks { font-size: 1.05rem; }
-    .ks .ikon {
-      position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; border-radius: 50%;
-      display: grid; place-items: center; box-shadow: var(--tekan);
-    }
-    .ks .ikon svg { width: 20px; height: 20px; stroke: var(--biru); fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-    .ks.peringatan small, .ks.peringatan strong { color: var(--err); }
-    .ks.peringatan .ikon svg { stroke: var(--err); }
-    .ks.aman small, .ks.aman strong { color: var(--ok); }
-    .ks.aman .ikon svg { stroke: var(--ok); }
-    .ks.klik { cursor: pointer; }
-    .ks.klik:active { box-shadow: var(--tekan); }
 
-    .atribusi { display: none; margin: 4px 0 0; text-align: center; font-size: .72rem; color: var(--teks2); }
-    .atribusi a { color: var(--biru-tua); font-weight: 700; }
-    body.dalam .atribusi { display: block; }
+    .ks::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 18px;
+      right: 18px;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+      background: var(--grad);
+      opacity: 0.75;
+    }
+
+    .ks small {
+      display: block;
+      line-height: 1.35;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    .ks strong {
+      display: block;
+      font-size: 1.95rem;
+      font-weight: 800;
+      margin-top: 8px;
+      line-height: 1.1;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ks strong.teks {
+      font-size: 1.05rem;
+      max-width: calc(100% - 46px);
+    }
+
+    .ks .ikon {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan-halus);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .ks .ikon svg {
+      width: 19px;
+      height: 19px;
+      stroke: var(--primary);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .ks.peringatan::before {
+      background: linear-gradient(90deg, #E63946, #FF758F);
+    }
+
+    .ks.peringatan small,
+    .ks.peringatan strong {
+      color: var(--err);
+    }
+
+    .ks.peringatan .ikon svg {
+      stroke: var(--err);
+    }
+
+    .ks.aman::before {
+      background: linear-gradient(90deg, #0A8754, #2EC4B6);
+    }
+
+    .ks.aman small,
+    .ks.aman strong {
+      color: var(--ok);
+    }
+
+    .ks.aman .ikon svg {
+      stroke: var(--ok);
+    }
+
+    .ks.klik {
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .ks.klik:hover {
+      transform: translateY(-2px);
+    }
+
+    .ks.klik:active {
+      box-shadow: var(--tekan);
+      transform: translateY(0);
+    }
+
+    /* ---------- Dialog Modal Pengganti Confirm / Prompt ---------- */
+    .modal-latar {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(13, 27, 62, 0.35);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-kotak {
+      width: 100%;
+      max-width: 400px;
+      background: var(--nm-surface);
+      border-radius: 28px;
+      padding: 24px 22px;
+      box-shadow: 0 20px 44px rgba(13, 27, 62, 0.25), -8px -8px 20px var(--nm-light);
+      border: 1px solid var(--rim);
+      animation: munculModal 0.2s ease-out;
+    }
+
+    @keyframes munculModal {
+      from { opacity: 0; transform: scale(0.95) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-kotak h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .modal-kotak p {
+      margin: 0 0 14px;
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+    }
+
+    .modal-aksi {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .modal-aksi button {
+      margin: 0;
+    }
+
+    /* ---------- Atribusi ---------- */
+    .atribusi {
+      display: none;
+      margin: 8px 0 0;
+      text-align: center;
+      font-size: 0.74rem;
+      color: var(--ink-subtle);
+    }
+
+    .atribusi a {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    body.dalam .atribusi {
+      display: block;
+    }
 
     @media (prefers-reduced-motion: reduce) {
-      * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
     }
-
-    /* ---------- Penyesuaian halaman masuk ---------- */
-    label + .field { margin-top: 0; }
-    .sr + .field { margin-top: 16px; }
-    .auth .mata { margin: 0; display: grid; font-size: 0; }
-    .auth label.sr { margin: -1px; }
-    .auth select { padding: 16px 44px 16px 18px; border-radius: 20px; }
-    .auth input:not([type="checkbox"]):not(.dalam-field) { border-radius: 20px; }
-    .field input:not([type="checkbox"]) { border-radius: 0; }
-    .auth textarea { border-radius: 20px; }
-
-    /* ---------- Rapikan ruang di HP ---------- */
-    .ks strong.teks { max-width: calc(100% - 46px); }
-    @media (max-width: 859px) {
-      .salam .nama { display: none !important; }
-      .salam { margin: 0 4px 14px !important; }
-      .salam .sub { margin: 0; font-size: .9rem; }
-      th, td { padding: 9px 6px; }
-      .tabel-wrap { padding: 4px 8px; }
-    }
-
-    .ks small { display: block; line-height: 1.35; }
-
-    /* ==========================================================
-       PALET BIRU DOMINAN: #0b2cb1 #1951fc #3781fc #cbe9fd #faf8f6
-       ========================================================== */
-    :root {
-      --navy: #faf8f6; --biru: #cbe9fd; --biru-tua: #cbe9fd; --biru-muda: #cbe9fd;
-      --nm-bg: #1951fc; --nm-terang: #4a8fff; --nm-gelap: #0a2aa8; --teks2: #cbe9fd;
-      --garis: rgba(203, 233, 253, .22); --grad: linear-gradient(145deg, #faf8f6, #cbe9fd);
-      --fokus: 0 0 0 3px rgba(250, 248, 246, .85);
-      --permukaan: linear-gradient(145deg, #1e5aff, #1548e8);
-    }
-    html { background: #1951fc; }
-    /* Latar baru: cahaya biru, garis diagonal, titik halus (tanpa bulatan) */
-    body::before, body::after {
-      inset: 0; width: auto; height: auto; top: 0; left: 0; right: 0; bottom: 0;
-      border: 0; border-radius: 0; box-shadow: none;
-    }
-    body::before {
-      background:
-        radial-gradient(70% 45% at 8% 0%, rgba(55, 129, 252, .8), transparent 70%),
-        radial-gradient(80% 50% at 100% 100%, rgba(11, 44, 177, .95), transparent 70%),
-        linear-gradient(118deg, transparent 38%, rgba(203, 233, 253, .07) 38%, rgba(203, 233, 253, .07) 50%, transparent 50%),
-        linear-gradient(180deg, #1951fc, #1646ea);
-    }
-    body::after {
-      background-image: radial-gradient(rgba(203, 233, 253, .2) 1.2px, transparent 1.7px); background-size: 24px 24px;
-      -webkit-mask-image: linear-gradient(160deg, #000, transparent 62%); mask-image: linear-gradient(160deg, #000, transparent 62%);
-    }
-    .kartu, .ks, header, .logo-ubin { background: var(--permukaan); border-color: rgba(203, 233, 253, .18); }
-    .logo-ubin { background: #faf8f6; border-color: rgba(255, 255, 255, .8); }
-    header img { background: #faf8f6; padding: 5px 12px; border-radius: 16px; box-sizing: content-box; }
-    @media (max-width: 859px) { .tabs { background: var(--permukaan); border-color: rgba(203, 233, 253, .18); } }
-    @media (min-width: 860px) { .tabs { background: var(--permukaan); border-color: rgba(203, 233, 253, .18); } }
-
-    input::placeholder, textarea::placeholder { color: rgba(203, 233, 253, .72); }
-    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23cbe9fd' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
-    select option { color: #0b2cb1; background: #faf8f6; }
-    input[type="checkbox"]:checked::after { border-color: #0b2cb1; }
-
-    button { color: #0b2cb1; box-shadow: 5px 5px 12px rgba(5, 18, 110, .5), -4px -4px 10px rgba(74, 143, 255, .55); }
-    button.sekunder { color: #cbe9fd; background: var(--permukaan); box-shadow: var(--timbul-kecil); }
-    button.sekunder:active { box-shadow: var(--tekan); }
-    button.bahaya { color: #fff; box-shadow: 5px 5px 12px rgba(5, 18, 110, .5), -4px -4px 10px rgba(74, 143, 255, .45); }
-    button.tautan { color: #cbe9fd; background: none; box-shadow: none; }
-    button .spin-kecil { border-color: rgba(11, 44, 177, .25); border-top-color: #0b2cb1; }
-    button.sekunder .spin-kecil, button.bahaya .spin-kecil { border-color: rgba(203, 233, 253, .3); border-top-color: #faf8f6; }
-    button:focus-visible { box-shadow: var(--fokus); }
-    .btn-besar::after {
-      background: rgba(11, 44, 177, .12) center / 19px no-repeat
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b2cb1' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
-    }
-    .tab { color: #cbe9fd; }
-    .tab.aktif { color: #0b2cb1; box-shadow: 4px 4px 10px rgba(5, 18, 110, .5), -3px -3px 8px rgba(74, 143, 255, .5); }
-    .avatar { color: #0b2cb1; box-shadow: 5px 5px 12px rgba(5, 18, 110, .5), -4px -4px 10px rgba(74, 143, 255, .55); }
-    button.ik-btn.keluar { color: #ffb4ae; }
-    .pesan.err { color: #ffc9c4; }
-    .pesan.ok { color: #b5f5d3; }
-    .ks strong { color: #faf8f6; }
-    .ks.peringatan small, .ks.peringatan strong { color: #ffc9c4; }
-    .ks.peringatan .ikon svg { stroke: #ffc9c4; }
-    .ks.aman small, .ks.aman strong { color: #b5f5d3; }
-    .ks.aman .ikon svg { stroke: #b5f5d3; }
-    .st-Izin { color: #164EC8; }
-    .kamera { background: #061a6b; }
-    .blur-atas { background: linear-gradient(180deg, rgba(25, 81, 252, .8), rgba(25, 81, 252, 0)); }
-    .blur-bawah { background: linear-gradient(0deg, rgba(22, 70, 234, .85), rgba(22, 70, 234, 0)); }
-    .bar-proses::before { background: linear-gradient(90deg, transparent, #faf8f6, #cbe9fd, transparent); }
-    .spinner { border-color: rgba(203, 233, 253, .22); border-top-color: #faf8f6; }
-    .spin-kecil { border-color: rgba(203, 233, 253, .3); border-top-color: #faf8f6; }
-    .field:focus-within .ik-in, .mata input:checked ~ .tutup { color: #faf8f6; }
-    .qr img { box-shadow: var(--timbul); }
-    .box-info { border-left-color: #cbe9fd; }
-    .baris { flex-wrap: wrap; }
-    .baris > div:first-child { flex: 1 1 150px; min-width: 0; }
   </style>
 </head>
 <body>
   <div class="bar-proses" id="barProses"></div>
   <div class="blur-atas" aria-hidden="true"></div>
   <div class="blur-bawah" aria-hidden="true"></div>
+
+  <!-- Modal Konfirmasi & Input Neumorphic (pengganti confirm/prompt) -->
+  <div class="modal-latar hidden" id="modalDialog" role="dialog" aria-modal="true" aria-labelledby="mdlJudul">
+    <div class="modal-kotak">
+      <h3 id="mdlJudul">Konfirmasi</h3>
+      <p id="mdlPesan"></p>
+      <input id="mdlInput" class="hidden" autocomplete="off">
+      <div class="modal-aksi">
+        <button type="button" class="sekunder" id="mdlBatal">Batal</button>
+        <button type="button" id="mdlOk">Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
   <div class="wadah">
     <header>
-      <img src="logo.png" alt="Logo Ambatuhadir">
+      <img src="logo.png" alt="Logo Ambatuhadir" onerror="this.outerHTML='<div class=\'logo-fallback\'><span class=\'logo-fallback-ik\'><svg width=\'20\' height=\'20\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2.4\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><rect x=\'3\' y=\'3\' width=\'7\' height=\'7\' rx=\'1\'/><rect x=\'14\' y=\'3\' width=\'7\' height=\'7\' rx=\'1\'/><rect x=\'3\' y=\'14\' width=\'7\' height=\'7\' rx=\'1\'/><path d=\'M14 14h3v3h-3zM20 14v0M17 20h4M20 17v3\'/></svg></span><span>Ambatuhadir</span></div>'">
       <div class="hd-kanan">
         <div class="cuaca-kartu hidden" id="hdCuaca"><span class="cw-ik" id="cwIkon"></span><div class="cw-teks"><strong id="cwSuhu">--°</strong><small id="cwKet"></small></div></div>
         <div class="jam-kartu"><strong id="hdJam">--:--</strong><small id="hdTgl"></small><span class="cw-mini hidden" id="cwMini"></span></div>
@@ -556,15 +1852,15 @@
       </div>
     </div>
 
-<!-- MERK (logo tengah, hanya di halaman sebelum masuk) -->
-    <div class="auth-brand"><div class="logo-ubin"><img src="logo.png" alt="Logo Ambatuhadir"></div></div>
+    <!-- MERK (logo tengah, hanya di halaman sebelum masuk) -->
+    <div class="auth-brand"><div class="logo-ubin"><img src="logo.png" alt="Logo Ambatuhadir" onerror="this.outerHTML='<div class=\'logo-fallback\'><span class=\'logo-fallback-ik\'><svg width=\'22\' height=\'22\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2.4\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><rect x=\'3\' y=\'3\' width=\'7\' height=\'7\' rx=\'1\'/><rect x=\'14\' y=\'3\' width=\'7\' height=\'7\' rx=\'1\'/><rect x=\'3\' y=\'14\' width=\'7\' height=\'7\' rx=\'1\'/><path d=\'M14 14h3v3h-3zM20 14v0M17 20h4M20 17v3\'/></svg></span><span>Ambatuhadir</span></div>'"></div></div>
 
     <!-- LOGIN -->
     <section class="auth view hidden" id="vMuat"><div class="spinner"></div><p class="sub" style="margin:0;">Memuat...</p></section>
 
     <section class="auth view hidden" id="vLogin">
       <h2>Selamat Datang Kembali</h2>
-      <p class="sub">Masuk untuk melanjutkan</p>
+      <p class="sub">Masuk untuk melanjutkan absensi</p>
       <form id="fLogin">
         <label class="sr" for="lUser">Username (NIM untuk mahasiswa)</label>
         <div class="field"><span class="ik-in"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><input id="lUser" placeholder="Username / NIM" autocomplete="username" autocapitalize="none" required></div>
@@ -581,7 +1877,7 @@
 
     <!-- GANTI PASSWORD -->
     <section class="auth view hidden" id="vGanti">
-      <h2>Ganti password</h2>
+      <h2>Ganti Password</h2>
       <p class="sub" id="infoGanti"></p>
       <form id="fGanti">
         <label for="gLama">Password lama</label>
@@ -620,7 +1916,7 @@
 
     <!-- VERIFIKASI KODE PENDAFTARAN -->
     <section class="auth view hidden" id="vVerif">
-      <h2>Masukkan kode verifikasi</h2>
+      <h2>Verifikasi Email</h2>
       <p class="sub" id="infoVerif"></p>
       <form id="fVerif">
         <label for="vfKode">Kode 6 angka</label>
@@ -634,7 +1930,7 @@
 
     <!-- LUPA PASSWORD -->
     <section class="auth view hidden" id="vLupa">
-      <h2>Lupa password</h2>
+      <h2>Lupa Password</h2>
       <form id="fLupa1">
         <p class="sub">Masukkan email yang kamu pakai saat mendaftar. Kode 6 angka akan dikirim ke email itu.</p>
         <label for="lpEmail">Email akun</label>
@@ -655,7 +1951,7 @@
       <p class="pesan" id="pLupa"></p>
     </section>
 
-        <!-- MODE MAHASISWA -->
+    <!-- MODE MAHASISWA -->
     <div class="view layout hidden" id="vMhs">
       <div class="tabs">
         <button class="tab aktif" data-tab="mhs" data-panel="mPanelDash">Dashboard</button>
@@ -666,115 +1962,115 @@
       </div>
       <div class="isi">
 
-      <div id="mPanelDash" class="panel-mhs">
-        <div class="salam">
-          <p class="nama">Halo, <span id="dNama"></span></p>
-          <p class="sub" id="dTgl"></p>
+        <div id="mPanelDash" class="panel-mhs">
+          <div class="salam">
+            <p class="nama">Halo, <span id="dNama"></span></p>
+            <p class="sub" id="dTgl"></p>
+          </div>
+          <div class="kartu-stat">
+            <div class="ks"><small>Kelas Dihadiri</small><strong id="dHadir">0</strong><span class="ikon" data-ik="topi"></span></div>
+            <div class="ks"><small>Total Kelas</small><strong id="dTotal">0</strong><span class="ikon" data-ik="kalender"></span></div>
+            <div class="ks"><small>Persentase</small><strong id="dPersen">0%</strong><span class="ikon" data-ik="persen"></span></div>
+            <div class="ks" id="dKartuPeringatan"><small>Peringatan</small><strong class="teks" id="dPeringatan">-</strong><span class="ikon" data-ik="segitiga"></span></div>
+          </div>
+          <section class="kartu">
+            <h2>Absensi Terbaru</h2>
+            <div class="tabel-wrap"><table><thead><tr><th>Tanggal</th><th>Mata Kuliah</th><th>Status</th><th>Metode</th></tr></thead><tbody id="tbDashRiwayat"></tbody></table></div>
+          </section>
+          <section class="kartu">
+            <h2>Ringkasan Mata Kuliah</h2>
+            <div class="tabel-wrap"><table><thead><tr><th>Mata Kuliah</th><th>Hadir</th><th>Total</th><th>Persen</th><th>Status</th></tr></thead><tbody id="tbDashMK"></tbody></table></div>
+          </section>
         </div>
-        <div class="kartu-stat">
-          <div class="ks"><small>Kelas Dihadiri</small><strong id="dHadir">0</strong><span class="ikon" data-ik="topi"></span></div>
-          <div class="ks"><small>Total Kelas</small><strong id="dTotal">0</strong><span class="ikon" data-ik="kalender"></span></div>
-          <div class="ks"><small>Persentase</small><strong id="dPersen">0%</strong><span class="ikon" data-ik="persen"></span></div>
-          <div class="ks" id="dKartuPeringatan"><small>Peringatan</small><strong class="teks" id="dPeringatan">-</strong><span class="ikon" data-ik="segitiga"></span></div>
+
+        <div id="mPanelQR" class="panel-mhs hidden">
+          <section class="kartu qr">
+            <p class="nama" id="mNama"></p>
+            <p class="sub" id="mNim"></p>
+            <img id="mQR" alt="QR Code pribadi">
+            <p class="pesan" id="pQRMhs"></p>
+            <p class="sub">Tunjukkan QR pribadi ini ke Dosen saat metode <strong>Dosen scan</strong>.</p>
+          </section>
+
+          <section class="kartu">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <h2 style="margin:0;">Mahasiswa scan (Pindai QR Sesi)</h2>
+              <button type="button" class="btn-info" id="btnInfoMhsScan" title="Penjelasan">i</button>
+            </div>
+            <div class="box-info hidden" id="infoMhsScan">
+              <strong>Mahasiswa scan:</strong> Dosen menampilkan QR sesi di layar atau proyektor. Kamu memindai QR tersebut memakai kamera HP sendiri. QR sesi berganti otomatis setiap 30 detik.
+            </div>
+            <button type="button" id="btnMulaiScanMhs">Nyalakan kamera untuk scan QR Sesi</button>
+            <button type="button" class="sekunder hidden" id="btnTukarKameraMhs">Ganti kamera (Depan/Belakang)</button>
+            <button type="button" class="sekunder hidden" id="btnStopScanMhs">Matikan kamera</button>
+            <div class="kamera hidden" id="areaKameraMhs">
+              <video id="videoMhs" playsinline muted></video>
+              <div class="bingkai"></div>
+            </div>
+            <p class="pesan" id="pScanMhs"></p>
+          </section>
         </div>
-        <section class="kartu">
-          <h2>Absensi Terbaru</h2>
-          <div class="tabel-wrap"><table><thead><tr><th>Tanggal</th><th>Mata Kuliah</th><th>Status</th><th>Metode</th></tr></thead><tbody id="tbDashRiwayat"></tbody></table></div>
-        </section>
-        <section class="kartu">
-          <h2>Ringkasan Mata Kuliah</h2>
-          <div class="tabel-wrap"><table><thead><tr><th>Mata Kuliah</th><th>Hadir</th><th>Total</th><th>Persen</th><th>Status</th></tr></thead><tbody id="tbDashMK"></tbody></table></div>
-        </section>
-      </div>
 
-      <div id="mPanelQR" class="panel-mhs hidden">
-        <section class="kartu qr">
-          <p class="nama" id="mNama"></p>
-          <p class="sub" id="mNim"></p>
-          <img id="mQR" alt="QR Code pribadi">
-          <p class="pesan" id="pQRMhs"></p>
-          <p class="sub">Tunjukkan QR pribadi ini ke Dosen saat metode <strong>Dosen scan</strong>.</p>
-        </section>
+        <div id="mPanelRiwayat" class="panel-mhs hidden">
+          <section class="kartu">
+            <h2>Total Kehadiran (<span id="mPersen">100</span>%)</h2>
+            <div class="grid-stat">
+              <div class="stat"><strong id="stHadir">0</strong><small>Hadir</small></div>
+              <div class="stat"><strong id="stTerlambat">0</strong><small>Terlambat</small></div>
+              <div class="stat"><strong id="stIzin">0</strong><small>Izin</small></div>
+              <div class="stat"><strong id="stAlpha">0</strong><small>Alpha</small></div>
+            </div>
+            <h3>Riwayat Absensi</h3>
+            <div id="listRiwayatMhs"></div>
+            <p class="pesan" id="pRiwayatMhs"></p>
+          </section>
+        </div>
 
-        <section class="kartu">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <h2 style="margin:0;">Mahasiswa scan (Pindai QR Sesi)</h2>
-            <button type="button" class="btn-info" id="btnInfoMhsScan" title="Penjelasan">i</button>
-          </div>
-          <div class="box-info hidden" id="infoMhsScan">
-            <strong>Mahasiswa scan:</strong> Dosen menampilkan QR sesi di layar atau proyektor. Kamu memindai QR tersebut memakai kamera HP sendiri. QR sesi berganti otomatis setiap 30 detik.
-          </div>
-          <button type="button" id="btnMulaiScanMhs">Nyalakan kamera untuk scan QR Sesi</button>
-          <button type="button" class="sekunder hidden" id="btnTukarKameraMhs">Ganti kamera (Depan/Belakang)</button>
-          <button type="button" class="sekunder hidden" id="btnStopScanMhs">Matikan kamera</button>
-          <div class="kamera hidden" id="areaKameraMhs">
-            <video id="videoMhs" playsinline muted></video>
-            <div class="bingkai"></div>
-          </div>
-          <p class="pesan" id="pScanMhs"></p>
-        </section>
-      </div>
+        <div id="mPanelJadwal" class="panel-mhs hidden">
+          <section class="kartu">
+            <h2>Jadwal Mata Kuliah</h2>
+            <div id="mJadwalIsi"></div>
+            <p class="pesan" id="pJadwalMhs"></p>
+          </section>
+        </div>
 
-      <div id="mPanelRiwayat" class="panel-mhs hidden">
-        <section class="kartu">
-          <h2>Total Kehadiran (<span id="mPersen">100</span>%)</h2>
-          <div class="grid-stat">
-            <div class="stat"><strong id="stHadir">0</strong><small>Hadir</small></div>
-            <div class="stat"><strong id="stTerlambat">0</strong><small>Terlambat</small></div>
-            <div class="stat"><strong id="stIzin">0</strong><small>Izin</small></div>
-            <div class="stat"><strong id="stAlpha">0</strong><small>Alpha</small></div>
-          </div>
-          <h3>Riwayat Absensi</h3>
-          <div id="listRiwayatMhs"></div>
-          <p class="pesan" id="pRiwayatMhs"></p>
-        </section>
-      </div>
+        <div id="mPanelPengajuan" class="panel-mhs hidden">
+          <section class="kartu">
+            <h2>Ajukan Izin</h2>
+            <p class="sub">Izin diajukan untuk pertemuan yang akan datang. Tidak bisa diajukan di hari pertemuan itu sendiri.</p>
+            <form id="fIzin">
+              <label for="izMK">Mata Kuliah</label>
+              <select id="izMK"></select>
+              <label for="izTgl">Tanggal Pertemuan</label>
+              <input id="izTgl" type="date" required>
+              <label for="izAlasan">Alasan</label>
+              <textarea id="izAlasan" maxlength="300" placeholder="Contoh: Sakit, ada surat dokter" required></textarea>
+              <button type="submit">Kirim Pengajuan Izin</button>
+            </form>
+            <p class="pesan" id="pIzin"></p>
+          </section>
 
-      <div id="mPanelJadwal" class="panel-mhs hidden">
-        <section class="kartu">
-          <h2>Jadwal Mata Kuliah</h2>
-          <div id="mJadwalIsi"></div>
-          <p class="pesan" id="pJadwalMhs"></p>
-        </section>
-      </div>
+          <section class="kartu">
+            <h2>Ajukan Koreksi Absensi</h2>
+            <p class="sub">Dipakai jika kamu hadir tetapi tercatat Alpha atau Terlambat. Hanya bisa untuk pertemuan yang sudah selesai.</p>
+            <form id="fKoreksi">
+              <label for="koSesi">Pertemuan</label>
+              <select id="koSesi"></select>
+              <label for="koTarget">Seharusnya tercatat</label>
+              <select id="koTarget"></select>
+              <label for="koAlasan">Alasan</label>
+              <textarea id="koAlasan" maxlength="300" placeholder="Contoh: Kamera HP error saat memindai QR" required></textarea>
+              <button type="submit">Kirim Pengajuan Koreksi</button>
+            </form>
+            <p class="pesan" id="pKoreksi"></p>
+          </section>
 
-      <div id="mPanelPengajuan" class="panel-mhs hidden">
-        <section class="kartu">
-          <h2>Ajukan Izin</h2>
-          <p class="sub">Izin diajukan untuk pertemuan yang akan datang. Tidak bisa diajukan di hari pertemuan itu sendiri.</p>
-          <form id="fIzin">
-            <label for="izMK">Mata Kuliah</label>
-            <select id="izMK"></select>
-            <label for="izTgl">Tanggal Pertemuan</label>
-            <input id="izTgl" type="date" required>
-            <label for="izAlasan">Alasan</label>
-            <textarea id="izAlasan" maxlength="300" placeholder="Contoh: Sakit, ada surat dokter" required></textarea>
-            <button type="submit">Kirim Pengajuan Izin</button>
-          </form>
-          <p class="pesan" id="pIzin"></p>
-        </section>
-
-        <section class="kartu">
-          <h2>Ajukan Koreksi Absensi</h2>
-          <p class="sub">Dipakai jika kamu hadir tetapi tercatat Alpha atau Terlambat. Hanya bisa untuk pertemuan yang sudah selesai.</p>
-          <form id="fKoreksi">
-            <label for="koSesi">Pertemuan</label>
-            <select id="koSesi"></select>
-            <label for="koTarget">Seharusnya tercatat</label>
-            <select id="koTarget"></select>
-            <label for="koAlasan">Alasan</label>
-            <textarea id="koAlasan" maxlength="300" placeholder="Contoh: Kamera HP error saat memindai QR" required></textarea>
-            <button type="submit">Kirim Pengajuan Koreksi</button>
-          </form>
-          <p class="pesan" id="pKoreksi"></p>
-        </section>
-
-        <section class="kartu">
-          <h2>Status Pengajuan</h2>
-          <div id="listPengMhs"></div>
-          <p class="pesan" id="pPengMhs"></p>
-        </section>
-      </div>
+          <section class="kartu">
+            <h2>Status Pengajuan</h2>
+            <div id="listPengMhs"></div>
+            <p class="pesan" id="pPengMhs"></p>
+          </section>
+        </div>
 
       </div>
     </div>
@@ -784,241 +2080,241 @@
       <div class="tabs" id="stafTabs"></div>
       <div class="isi">
 
-      <div id="sPanelDash" class="panel-staf">
-        <div class="salam">
-          <p class="nama">Halo, <span id="sdNama"></span></p>
-          <p class="sub" id="sdTgl"></p>
-        </div>
-        <div class="kartu-stat">
-          <div class="ks"><small>Mata Kuliah</small><strong id="sdMK">0</strong><span class="ikon" data-ik="buku"></span></div>
-          <div class="ks"><small>Kuliah Hari Ini</small><strong id="sdHariIni">0</strong><span class="ikon" data-ik="kalender"></span></div>
-          <div class="ks"><small>Mahasiswa</small><strong id="sdMhs">0</strong><span class="ikon" data-ik="topi"></span></div>
-          <div class="ks klik" id="sdKartuMenunggu"><small>Menunggu Keputusan</small><strong id="sdMenunggu">0</strong><span class="ikon" data-ik="segitiga"></span></div>
-        </div>
-        <section class="kartu">
-          <h2>Kuliah Hari Ini</h2>
-          <div id="sdListHariIni"></div>
-        </section>
-      </div>
-
-      <!-- TAB 1: SESI ABSENSI (DOSEN & ADMIN CADANGAN) -->
-      <div id="sPanelSesi" class="panel-staf hidden">
-        <section class="kartu">
-          <h2>Sesi Perkuliahan</h2>
-          <label for="selMK">Pilih Mata Kuliah</label>
-          <select id="selMK"></select>
-          <p class="sub" id="infoPengampu"></p>
-
-          <!-- Jika belum ada sesi aktif -->
-          <div id="boxBukaSesi" class="hidden">
-            <p class="sub">Pertemuan berikutnya: <strong id="txtPertemuanBerikut">1</strong></p>
-            <label for="inpBatas">Batas toleransi terlambat (menit)</label>
-            <input id="inpBatas" type="number" min="0" max="180" value="15">
-            <button type="button" id="btnBukaSesi">Buka Sesi Absensi</button>
+        <div id="sPanelDash" class="panel-staf">
+          <div class="salam">
+            <p class="nama">Halo, <span id="sdNama"></span></p>
+            <p class="sub" id="sdTgl"></p>
           </div>
-
-          <!-- Jika sesi sedang aktif -->
-          <div id="boxSesiAktif" class="hidden">
-            <div class="hasil">
-              <strong id="judulSesiAktif"></strong>
-              <div class="sub" id="metaSesiAktif"></div>
-            </div>
-
-            <h3>Pilih Metode Absensi</h3>
-            <div class="metode-grid">
-              <div class="metode-item">
-                <button type="button" class="btn-metode" id="btnModeDosenScan">Dosen scan</button>
-                <button type="button" class="btn-info" data-info="infoDosenScan" title="Penjelasan">i</button>
-              </div>
-              <div class="metode-item">
-                <button type="button" class="btn-metode sekunder" id="btnModeMhsScan">Mahasiswa scan</button>
-                <button type="button" class="btn-info" data-info="infoMhsScanStaf" title="Penjelasan">i</button>
-              </div>
-            </div>
-
-            <div class="box-info hidden" id="infoDosenScan">
-              <strong>Dosen scan:</strong> Mahasiswa membuka QR pribadi di HP masing-masing, lalu kamu memindainya satu per satu memakai kamera perangkat ini.
-            </div>
-            <div class="box-info hidden" id="infoMhsScanStaf">
-              <strong>Mahasiswa scan:</strong> Tampilkan QR sesi di layar atau proyektor agar mahasiswa memindai dengan HP sendiri. QR sesi berganti otomatis setiap 30 detik.
-            </div>
-
-            <!-- Area Dosen Scan -->
-            <div id="areaDosenScan" class="hidden" style="margin-top:12px;">
-              <button type="button" id="btnMulaiScanStaf">Nyalakan kamera pemindai</button>
-              <button type="button" class="sekunder hidden" id="btnTukarKameraStaf">Ganti kamera (Depan/Belakang)</button>
-              <button type="button" class="sekunder hidden" id="btnStopScanStaf">Matikan kamera</button>
-              <div class="kamera hidden" id="areaKameraStaf">
-                <video id="videoStaf" playsinline muted></video>
-                <div class="bingkai"></div>
-              </div>
-              <p class="pesan" id="pScanStaf"></p>
-            </div>
-
-            <!-- Area Mahasiswa Scan (QR Sesi 30 Detik) -->
-            <div id="areaQRSesi" class="qr hidden" style="margin-top:14px;">
-              <img id="imgQRSesi" alt="QR Sesi">
-              <p class="pesan" id="pQRSesi"></p>
-              <p class="sub">QR berganti otomatis dalam <strong id="hitungMundurQR">30</strong> detik</p>
-            </div>
-
-            <h3>Daftar Hadir Sesi Berjalan (<span id="ringkasHadirSesi">0/0</span>)</h3>
-            <div id="listHadirSesi"></div>
-
-            <button type="button" class="bahaya" id="btnTutupSesi" style="margin-top:14px;">Tutup Sesi (Otomatis Alpha yang Belum Hadir)</button>
+          <div class="kartu-stat">
+            <div class="ks"><small>Mata Kuliah</small><strong id="sdMK">0</strong><span class="ikon" data-ik="buku"></span></div>
+            <div class="ks"><small>Kuliah Hari Ini</small><strong id="sdHariIni">0</strong><span class="ikon" data-ik="kalender"></span></div>
+            <div class="ks"><small>Mahasiswa</small><strong id="sdMhs">0</strong><span class="ikon" data-ik="topi"></span></div>
+            <div class="ks klik" id="sdKartuMenunggu"><small>Menunggu Keputusan</small><strong id="sdMenunggu">0</strong><span class="ikon" data-ik="segitiga"></span></div>
           </div>
-          <p class="pesan" id="pSesi"></p>
-        </section>
-      </div>
+          <section class="kartu">
+            <h2>Kuliah Hari Ini</h2>
+            <div id="sdListHariIni"></div>
+          </section>
+        </div>
 
-      <!-- TAB 2: REKAP & EXCEL -->
-      <div id="sPanelRekap" class="panel-staf hidden">
-        <section class="kartu">
-          <h2>Rekap Absensi & Unduh Excel</h2>
-          <label for="selMKRekap">Mata Kuliah</label>
-          <select id="selMKRekap"></select>
-          <button type="button" id="btnUnduhExcel">Unduh Excel (.xlsx)</button>
-          <div class="tabel-wrap" id="wadahTabelRekap"></div>
-          <p class="pesan" id="pRekap"></p>
-        </section>
-      </div>
+        <!-- TAB 1: SESI ABSENSI (DOSEN & ADMIN CADANGAN) -->
+        <div id="sPanelSesi" class="panel-staf hidden">
+          <section class="kartu">
+            <h2>Sesi Perkuliahan</h2>
+            <label for="selMK">Pilih Mata Kuliah</label>
+            <select id="selMK"></select>
+            <p class="sub" id="infoPengampu"></p>
 
-      <!-- TAB: JADWAL -->
-      <div id="sPanelJadwal" class="panel-staf hidden">
-        <section class="kartu">
-          <h2>Jadwal Mata Kuliah</h2>
-          <div id="sJadwalIsi"></div>
-          <p class="pesan" id="pJadwalStaf"></p>
-        </section>
-      </div>
+            <!-- Jika belum ada sesi aktif -->
+            <div id="boxBukaSesi" class="hidden">
+              <p class="sub">Pertemuan berikutnya: <strong id="txtPertemuanBerikut">1</strong></p>
+              <label for="inpBatas">Batas toleransi terlambat (menit)</label>
+              <input id="inpBatas" type="number" min="0" max="180" value="15">
+              <button type="button" id="btnBukaSesi">Buka Sesi Absensi</button>
+            </div>
 
-      <!-- TAB: IZIN & KOREKSI -->
-      <div id="sPanelPengajuan" class="panel-staf hidden">
-        <section class="kartu">
-          <h2>Pengajuan Izin & Koreksi</h2>
-          <label for="selFilterPeng">Tampilkan</label>
-          <select id="selFilterPeng">
-            <option value="MENUNGGU">Menunggu keputusan</option>
-            <option value="SEMUA">Semua pengajuan</option>
-          </select>
-          <div id="listPengStaf"></div>
-          <p class="pesan" id="pPengStaf"></p>
-        </section>
+            <!-- Jika sesi sedang aktif -->
+            <div id="boxSesiAktif" class="hidden">
+              <div class="hasil">
+                <strong id="judulSesiAktif"></strong>
+                <div class="sub" id="metaSesiAktif"></div>
+              </div>
 
-        <section class="kartu">
-          <h2>Koreksi Langsung</h2>
-          <p class="sub">Ubah status absensi mahasiswa tanpa menunggu pengajuan. Hanya untuk pertemuan yang sudah selesai.</p>
-          <label for="klMK">Mata Kuliah</label>
-          <select id="klMK"></select>
-          <label for="klSesi">Pertemuan</label>
-          <select id="klSesi"></select>
-          <label for="klMhs">Mahasiswa</label>
-          <select id="klMhs"></select>
-          <label for="klStatus">Ubah menjadi</label>
-          <select id="klStatus">
-            <option value="Hadir">Hadir</option>
-            <option value="Terlambat">Terlambat</option>
-            <option value="Izin">Izin</option>
-            <option value="Alpha">Alpha</option>
-          </select>
-          <button type="button" id="btnKoreksiLangsung">Simpan Koreksi</button>
-          <p class="pesan" id="pKL"></p>
-        </section>
-      </div>
+              <h3>Pilih Metode Absensi</h3>
+              <div class="metode-grid">
+                <div class="metode-item">
+                  <button type="button" class="btn-metode" id="btnModeDosenScan">Dosen scan</button>
+                  <button type="button" class="btn-info" data-info="infoDosenScan" title="Penjelasan">i</button>
+                </div>
+                <div class="metode-item">
+                  <button type="button" class="btn-metode sekunder" id="btnModeMhsScan">Mahasiswa scan</button>
+                  <button type="button" class="btn-info" data-info="infoMhsScanStaf" title="Penjelasan">i</button>
+                </div>
+              </div>
 
-      <!-- TAB (KHUSUS ADMIN): KELAS -->
-      <div id="sPanelKelas" class="panel-staf hidden">
-        <section class="kartu">
-          <h2>Tambah Kelas</h2>
-          <form id="fKelas">
-            <label for="klKodeBaru">Kode / Nomor Kelas</label>
-            <input id="klKodeBaru" maxlength="20" autocomplete="off" placeholder="Contoh: 17.1B.01" required>
-            <button type="submit">Tambah Kelas</button>
-          </form>
-          <p class="pesan" id="pKelas"></p>
-        </section>
-        <section class="kartu">
-          <h2>Daftar Kelas</h2>
-          <div id="listKelas"></div>
-        </section>
-      </div>
+              <div class="box-info hidden" id="infoDosenScan">
+                <strong>Dosen scan:</strong> Mahasiswa membuka QR pribadi di HP masing-masing, lalu kamu memindainya satu per satu memakai kamera perangkat ini.
+              </div>
+              <div class="box-info hidden" id="infoMhsScanStaf">
+                <strong>Mahasiswa scan:</strong> Tampilkan QR sesi di layar atau proyektor agar mahasiswa memindai dengan HP sendiri. QR sesi berganti otomatis setiap 30 detik.
+              </div>
 
-      <!-- TAB 3 (KHUSUS ADMIN): MATA KULIAH -->
-      <div id="sPanelMK" class="panel-staf hidden">
-        <section class="kartu">
-          <h2>Kelola Mata Kuliah</h2>
-          <form id="fMK">
-            <label for="mkKode">Kode Mata Kuliah</label>
-            <input id="mkKode" placeholder="Contoh: IF101" required>
-            <label for="mkNama">Nama Mata Kuliah</label>
-            <input id="mkNama" placeholder="Contoh: Logika & Algoritma" required>
-            <label for="mkDosen">Dosen Pengampu</label>
-            <select id="mkDosen" required></select>
-            <label for="mkHari">Hari Kuliah</label>
-            <select id="mkHari">
-              <option value="">(Belum dijadwalkan)</option>
-              <option value="1">Senin</option>
-              <option value="2">Selasa</option>
-              <option value="3">Rabu</option>
-              <option value="4">Kamis</option>
-              <option value="5">Jumat</option>
-              <option value="6">Sabtu</option>
-              <option value="7">Minggu</option>
+              <!-- Area Dosen Scan -->
+              <div id="areaDosenScan" class="hidden" style="margin-top:12px;">
+                <button type="button" id="btnMulaiScanStaf">Nyalakan kamera pemindai</button>
+                <button type="button" class="sekunder hidden" id="btnTukarKameraStaf">Ganti kamera (Depan/Belakang)</button>
+                <button type="button" class="sekunder hidden" id="btnStopScanStaf">Matikan kamera</button>
+                <div class="kamera hidden" id="areaKameraStaf">
+                  <video id="videoStaf" playsinline muted></video>
+                  <div class="bingkai"></div>
+                </div>
+                <p class="pesan" id="pScanStaf"></p>
+              </div>
+
+              <!-- Area Mahasiswa Scan (QR Sesi 30 Detik) -->
+              <div id="areaQRSesi" class="qr hidden" style="margin-top:16px;">
+                <img id="imgQRSesi" alt="QR Sesi">
+                <p class="pesan" id="pQRSesi"></p>
+                <p class="sub">QR berganti otomatis dalam <strong id="hitungMundurQR">30</strong> detik</p>
+              </div>
+
+              <h3>Daftar Hadir Sesi Berjalan (<span id="ringkasHadirSesi">0/0</span>)</h3>
+              <div id="listHadirSesi"></div>
+
+              <button type="button" class="bahaya" id="btnTutupSesi" style="margin-top:16px;">Tutup Sesi (Otomatis Alpha yang Belum Hadir)</button>
+            </div>
+            <p class="pesan" id="pSesi"></p>
+          </section>
+        </div>
+
+        <!-- TAB 2: REKAP & EXCEL -->
+        <div id="sPanelRekap" class="panel-staf hidden">
+          <section class="kartu">
+            <h2>Rekap Absensi & Unduh Excel</h2>
+            <label for="selMKRekap">Mata Kuliah</label>
+            <select id="selMKRekap"></select>
+            <button type="button" id="btnUnduhExcel">Unduh Excel (.xlsx)</button>
+            <div class="tabel-wrap" id="wadahTabelRekap"></div>
+            <p class="pesan" id="pRekap"></p>
+          </section>
+        </div>
+
+        <!-- TAB: JADWAL -->
+        <div id="sPanelJadwal" class="panel-staf hidden">
+          <section class="kartu">
+            <h2>Jadwal Mata Kuliah</h2>
+            <div id="sJadwalIsi"></div>
+            <p class="pesan" id="pJadwalStaf"></p>
+          </section>
+        </div>
+
+        <!-- TAB: IZIN & KOREKSI -->
+        <div id="sPanelPengajuan" class="panel-staf hidden">
+          <section class="kartu">
+            <h2>Pengajuan Izin & Koreksi</h2>
+            <label for="selFilterPeng">Tampilkan</label>
+            <select id="selFilterPeng">
+              <option value="MENUNGGU">Menunggu keputusan</option>
+              <option value="SEMUA">Semua pengajuan</option>
             </select>
-            <div class="dua-kolom">
-              <div>
-                <label for="mkJamMulai">Jam Mulai</label>
-                <input id="mkJamMulai" type="time">
+            <div id="listPengStaf"></div>
+            <p class="pesan" id="pPengStaf"></p>
+          </section>
+
+          <section class="kartu">
+            <h2>Koreksi Langsung</h2>
+            <p class="sub">Ubah status absensi mahasiswa tanpa menunggu pengajuan. Hanya untuk pertemuan yang sudah selesai.</p>
+            <label for="klMK">Mata Kuliah</label>
+            <select id="klMK"></select>
+            <label for="klSesi">Pertemuan</label>
+            <select id="klSesi"></select>
+            <label for="klMhs">Mahasiswa</label>
+            <select id="klMhs"></select>
+            <label for="klStatus">Ubah menjadi</label>
+            <select id="klStatus">
+              <option value="Hadir">Hadir</option>
+              <option value="Terlambat">Terlambat</option>
+              <option value="Izin">Izin</option>
+              <option value="Alpha">Alpha</option>
+            </select>
+            <button type="button" id="btnKoreksiLangsung">Simpan Koreksi</button>
+            <p class="pesan" id="pKL"></p>
+          </section>
+        </div>
+
+        <!-- TAB (KHUSUS ADMIN): KELAS -->
+        <div id="sPanelKelas" class="panel-staf hidden">
+          <section class="kartu">
+            <h2>Tambah Kelas</h2>
+            <form id="fKelas">
+              <label for="klKodeBaru">Kode / Nomor Kelas</label>
+              <input id="klKodeBaru" maxlength="20" autocomplete="off" placeholder="Contoh: 17.1B.01" required>
+              <button type="submit">Tambah Kelas</button>
+            </form>
+            <p class="pesan" id="pKelas"></p>
+          </section>
+          <section class="kartu">
+            <h2>Daftar Kelas</h2>
+            <div id="listKelas"></div>
+          </section>
+        </div>
+
+        <!-- TAB 3 (KHUSUS ADMIN): MATA KULIAH -->
+        <div id="sPanelMK" class="panel-staf hidden">
+          <section class="kartu">
+            <h2>Kelola Mata Kuliah</h2>
+            <form id="fMK">
+              <label for="mkKode">Kode Mata Kuliah</label>
+              <input id="mkKode" placeholder="Contoh: IF101" required>
+              <label for="mkNama">Nama Mata Kuliah</label>
+              <input id="mkNama" placeholder="Contoh: Logika & Algoritma" required>
+              <label for="mkDosen">Dosen Pengampu</label>
+              <select id="mkDosen" required></select>
+              <label for="mkHari">Hari Kuliah</label>
+              <select id="mkHari">
+                <option value="">(Belum dijadwalkan)</option>
+                <option value="1">Senin</option>
+                <option value="2">Selasa</option>
+                <option value="3">Rabu</option>
+                <option value="4">Kamis</option>
+                <option value="5">Jumat</option>
+                <option value="6">Sabtu</option>
+                <option value="7">Minggu</option>
+              </select>
+              <div class="dua-kolom">
+                <div>
+                  <label for="mkJamMulai">Jam Mulai</label>
+                  <input id="mkJamMulai" type="time">
+                </div>
+                <div>
+                  <label for="mkJamSelesai">Jam Selesai</label>
+                  <input id="mkJamSelesai" type="time">
+                </div>
               </div>
-              <div>
-                <label for="mkJamSelesai">Jam Selesai</label>
-                <input id="mkJamSelesai" type="time">
-              </div>
+              <label for="mkRuang">Ruangan</label>
+              <input id="mkRuang" maxlength="40" placeholder="Contoh: Lab 2">
+              <label>Kelas (peserta = semua mahasiswa kelas yang dipilih)</label>
+              <div class="daftar-cek" id="boxKelasMK"></div>
+              <button type="submit">Simpan Mata Kuliah</button>
+            </form>
+            <p class="pesan" id="pMK"></p>
+          </section>
+
+          <section class="kartu">
+            <h2>Daftar Mata Kuliah</h2>
+            <div id="listMKAdmin"></div>
+          </section>
+        </div>
+
+        <!-- TAB 4 (KHUSUS ADMIN): AKUN DOSEN & MAHASISWA -->
+        <div id="sPanelAkun" class="panel-staf hidden">
+          <section class="kartu">
+            <h2>Tambah Akun Dosen</h2>
+            <p class="sub">Akun mahasiswa dibuat sendiri oleh mahasiswa lewat halaman Daftar.</p>
+            <form id="fTambahUser">
+              <label for="uUser">Username Dosen</label>
+              <input id="uUser" autocomplete="off" required>
+              <label for="uNama">Nama Lengkap</label>
+              <input id="uNama" autocomplete="off" required>
+              <label for="uEmail">Email (opsional, dipakai untuk Lupa password)</label>
+              <input id="uEmail" type="email" autocomplete="off" maxlength="100">
+              <button type="submit">Tambah Akun</button>
+            </form>
+            <p class="pesan" id="pTambahUser"></p>
+            <div class="hasil hidden" id="hasilUser">
+              <div id="hasilUserInfo"></div>
+              <button type="button" class="kecil" id="btnSalinPw">Salin password</button>
             </div>
-            <label for="mkRuang">Ruangan</label>
-            <input id="mkRuang" maxlength="40" placeholder="Contoh: Lab 2">
-            <label>Kelas (peserta = semua mahasiswa kelas yang dipilih)</label>
-            <div class="daftar-cek" id="boxKelasMK"></div>
-            <button type="submit">Simpan Mata Kuliah</button>
-          </form>
-          <p class="pesan" id="pMK"></p>
-        </section>
+          </section>
 
-        <section class="kartu">
-          <h2>Daftar Mata Kuliah</h2>
-          <div id="listMKAdmin"></div>
-        </section>
-      </div>
-
-      <!-- TAB 4 (KHUSUS ADMIN): AKUN DOSEN & MAHASISWA -->
-      <div id="sPanelAkun" class="panel-staf hidden">
-        <section class="kartu">
-          <h2>Tambah Akun Dosen</h2>
-          <p class="sub">Akun mahasiswa dibuat sendiri oleh mahasiswa lewat halaman Daftar.</p>
-          <form id="fTambahUser">
-            <label for="uUser">Username Dosen</label>
-            <input id="uUser" autocomplete="off" required>
-            <label for="uNama">Nama Lengkap</label>
-            <input id="uNama" autocomplete="off" required>
-            <label for="uEmail">Email (opsional, dipakai untuk Lupa password)</label>
-            <input id="uEmail" type="email" autocomplete="off" maxlength="100">
-            <button type="submit">Tambah Akun</button>
-          </form>
-          <p class="pesan" id="pTambahUser"></p>
-          <div class="hasil hidden" id="hasilUser">
-            <div id="hasilUserInfo"></div>
-            <button type="button" class="kecil" id="btnSalinPw">Salin password</button>
-          </div>
-        </section>
-
-        <section class="kartu">
-          <h2>Daftar Dosen</h2>
-          <div id="listDosen"></div>
-          <h2 style="margin-top:16px;">Daftar Mahasiswa</h2>
-          <div id="listMhs"></div>
-          <p class="pesan" id="pListUser"></p>
-        </section>
-      </div>
+          <section class="kartu">
+            <h2>Daftar Dosen</h2>
+            <div id="listDosen"></div>
+            <h2 style="margin-top:20px;">Daftar Mahasiswa</h2>
+            <div id="listMhs"></div>
+            <p class="pesan" id="pListUser"></p>
+          </section>
+        </div>
 
       </div>
     </div>
@@ -1026,6 +2322,10 @@
   </div>
 
   <script src="config.js"></script>
+  <script>
+    // Pastikan CONFIG tersedia walau config.js belum dimuat saat pratinjau lokal
+    window.CONFIG = window.CONFIG || { URL_API: '' };
+  </script>
   <!-- Pembuat QR tertanam (Kazuhiko Arase, lisensi MIT) agar QR tidak bergantung pada CDN -->
   <script>
 (function(){
@@ -1661,7 +2961,7 @@ this.modules = new Array(this.moduleCount);
 for (var row = 0; row < this.moduleCount; row++) {
 this.modules[row] = new Array(this.moduleCount);
 for (var col = 0; col < this.moduleCount; col++) {
-this.modules[row][col] = null;//(col + row) % 3;
+this.modules[row][col] = null;
 }
 }
 this.setupPositionProbePattern(0, 0);
@@ -1963,6 +3263,56 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
 
     try { token = sessionStorage.getItem('token') || ''; } catch (e) {}
 
+    // ---------- Modal Dialog Neumorphic (Pengganti confirm() & prompt()) ----------
+    function bukaModal({ judul, pesanTeks, pakaiInput = false, nilaiAwal = '', placeholder = '', teksOk = 'Ya, Lanjutkan', bahaya = false }) {
+      return new Promise((resolve) => {
+        const latar = el('modalDialog');
+        const inp = el('mdlInput');
+        const btnOk = el('mdlOk');
+        const btnBatal = el('mdlBatal');
+
+        el('mdlJudul').textContent = judul || 'Konfirmasi';
+        el('mdlPesan').textContent = pesanTeks || '';
+        btnOk.textContent = teksOk;
+        btnOk.className = bahaya ? 'bahaya' : '';
+
+        if (pakaiInput) {
+          inp.classList.remove('hidden');
+          inp.value = nilaiAwal;
+          inp.placeholder = placeholder;
+        } else {
+          inp.classList.add('hidden');
+          inp.value = '';
+        }
+
+        latar.classList.remove('hidden');
+        if (pakaiInput) inp.focus();
+        else btnOk.focus();
+
+        const tutup = (hasil) => {
+          latar.classList.add('hidden');
+          btnOk.removeEventListener('click', onOk);
+          btnBatal.removeEventListener('click', onBatal);
+          latar.removeEventListener('click', onLatar);
+          document.removeEventListener('keydown', onKey);
+          resolve(hasil);
+        };
+
+        const onOk = () => tutup(pakaiInput ? inp.value : true);
+        const onBatal = () => tutup(pakaiInput ? null : false);
+        const onLatar = (e) => { if (e.target === latar) onBatal(); };
+        const onKey = (e) => {
+          if (e.key === 'Escape') onBatal();
+          if (e.key === 'Enter' && pakaiInput) { e.preventDefault(); onOk(); }
+        };
+
+        btnOk.addEventListener('click', onOk);
+        btnBatal.addEventListener('click', onBatal);
+        latar.addEventListener('click', onLatar);
+        document.addEventListener('keydown', onKey);
+      });
+    }
+
     const IKON = {
       dash: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
       qr: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v0M17 20h4M20 17v3"/></svg>',
@@ -2026,7 +3376,6 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       const p = el(id);
       p.textContent = '';
       p.className = 'pesan' + (tipe ? ' ' + tipe : '');
-      // Teks berakhiran "..." = sedang diproses: tampilkan spinner berputar.
       if (teks && !tipe && /\.\.\.$/.test(teks)) {
         const s = document.createElement('span');
         s.className = 'spin-kecil';
@@ -2045,6 +3394,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     async function api(aksi, data) {
       barProses(1);
       try {
+        if (!CONFIG.URL_API) throw new Error('URL_API belum dikonfigurasi');
         const res = await fetch(CONFIG.URL_API, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2167,7 +3517,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         const g = kanvas.getContext('2d');
         g.fillStyle = '#FFFFFF';
         g.fillRect(0, 0, kanvas.width, kanvas.height);
-        g.fillStyle = '#000000';
+        g.fillStyle = '#0D1B3E';
         for (let r = 0; r < n; r++) {
           for (let c = 0; c < n; c++) {
             if (modul[r][c]) g.fillRect((c + tepi) * s, (r + tepi) * s, s, s);
@@ -2365,7 +3715,13 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
 
     el('btnTutupSesi').addEventListener('click', async () => {
       if (!sesiAktifSaatIni) return;
-      if (!confirm('Tutup sesi ini? Semua peserta yang belum absen otomatis tercatat Alpha.')) return;
+      const yakin = await bukaModal({
+        judul: 'Tutup Sesi Perkuliahan',
+        pesanTeks: 'Tutup sesi ini? Semua peserta yang belum melakukan absensi akan otomatis tercatat Alpha.',
+        teksOk: 'Ya, Tutup Sesi',
+        bahaya: true
+      });
+      if (!yakin) return;
       pesan('pSesi', 'Menutup sesi...');
       const j = await api('tutup_sesi', { kodeMK: sesiAktifSaatIni.kodeMK });
       if (!j.ok) { pesan('pSesi', j.pesan, 'err'); return; }
@@ -2392,7 +3748,6 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         videoEl.srcObject = streamKamera;
         await videoEl.play();
 
-        // Cek apakah kamera yang aktif adalah kamera depan ('user') / webcam laptop
         const track = streamKamera.getVideoTracks()[0];
         const settings = track && track.getSettings ? track.getSettings() : {};
         const labelKamera = (track && track.label ? track.label : '').toLowerCase();
@@ -2721,7 +4076,13 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         bUbah.className = 'sekunder kecil';
         bUbah.textContent = 'Ubah';
         bUbah.addEventListener('click', async () => {
-          const baru = prompt('Kode kelas baru untuk ' + k.kode + ':', k.kode);
+          const baru = await bukaModal({
+            judul: 'Ubah Kode Kelas',
+            pesanTeks: 'Masukkan kode kelas baru untuk ' + k.kode + ':',
+            pakaiInput: true,
+            nilaiAwal: k.kode,
+            teksOk: 'Simpan'
+          });
           if (baru === null || !baru.trim() || baru.trim().toUpperCase() === k.kode) return;
           pesan('pKelas', 'Menyimpan...');
           const j = await api('simpan_kelas', { lama: k.kode, kode: baru });
@@ -2733,7 +4094,13 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         bHapus.className = 'sekunder kecil';
         bHapus.textContent = 'Hapus';
         bHapus.addEventListener('click', async () => {
-          if (!confirm('Hapus kelas ' + k.kode + '?')) return;
+          const yakin = await bukaModal({
+            judul: 'Hapus Kelas',
+            pesanTeks: 'Yakin ingin menghapus kelas ' + k.kode + '?',
+            teksOk: 'Ya, Hapus',
+            bahaya: true
+          });
+          if (!yakin) return;
           pesan('pKelas', 'Menghapus...');
           const j = await api('hapus_kelas', { kode: k.kode });
           if (!j.ok) { pesan('pKelas', j.pesan, 'err'); return; }
@@ -2891,7 +4258,12 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
           bReset.className = 'sekunder kecil';
           bReset.textContent = 'Reset PW';
           bReset.addEventListener('click', async () => {
-            if (!confirm('Reset password ' + u.nama + '?')) return;
+            const yakin = await bukaModal({
+              judul: 'Reset Password',
+              pesanTeks: 'Reset password untuk akun ' + u.nama + '?',
+              teksOk: 'Ya, Reset'
+            });
+            if (!yakin) return;
             const j = await api('reset_password', { username: u.username });
             if (!j.ok) { pesan('pListUser', j.pesan, 'err'); return; }
             tampilHasilUser('Password direset untuk', j.username, j.passwordDefault);
@@ -2913,7 +4285,13 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
           bHapus.addEventListener('click', async () => {
             const peringatan = boxId === 'listMhs'
               ? ' Semua data absensi dan pengajuannya ikut terhapus.' : '';
-            if (!confirm('Hapus akun ' + u.nama + ' (' + u.username + ') secara permanen?' + peringatan + ' Tindakan ini tidak bisa dibatalkan.')) return;
+            const yakin = await bukaModal({
+              judul: 'Hapus Akun Permanen',
+              pesanTeks: 'Hapus akun ' + u.nama + ' (' + u.username + ') secara permanen?' + peringatan + ' Tindakan ini tidak bisa dibatalkan.',
+              teksOk: 'Hapus Permanen',
+              bahaya: true
+            });
+            if (!yakin) return;
             const j = await api('hapus_pengguna', { username: u.username });
             if (!j.ok) { pesan('pListUser', j.pesan, 'err'); return; }
             pesan('pListUser', 'Akun ' + u.username + ' dihapus.', 'ok');
@@ -3187,11 +4565,23 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     async function prosesPengajuan(id, keputusan) {
       let catatan = '';
       if (keputusan === 'TOLAK') {
-        const c = prompt('Alasan penolakan (boleh dikosongkan):');
+        const c = await bukaModal({
+          judul: 'Tolak Pengajuan',
+          pesanTeks: 'Masukkan alasan penolakan (boleh dikosongkan):',
+          pakaiInput: true,
+          placeholder: 'Contoh: Bukti kurang lengkap',
+          teksOk: 'Tolak Pengajuan',
+          bahaya: true
+        });
         if (c === null) return;
         catatan = c;
-      } else if (!confirm('Setujui pengajuan ini?')) {
-        return;
+      } else {
+        const yakin = await bukaModal({
+          judul: 'Setujui Pengajuan',
+          pesanTeks: 'Setujui pengajuan izin / koreksi mahasiswa ini?',
+          teksOk: 'Ya, Setujui'
+        });
+        if (!yakin) return;
       }
       pesan('pPengStaf', 'Memproses...');
       const j = await api('proses_pengajuan', { id: id, keputusan: keputusan, catatan: catatan });
@@ -3271,7 +4661,12 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     el('btnKoreksiLangsung').addEventListener('click', async () => {
       if (!el('klSesi').value || !el('klMhs').value) { pesan('pKL', 'Pilih pertemuan dan mahasiswa dulu.', 'err'); return; }
       const nama = el('klMhs').options[el('klMhs').selectedIndex].textContent;
-      if (!confirm('Ubah absensi ' + nama.split(' — ')[0] + ' menjadi ' + el('klStatus').value + '?')) return;
+      const yakin = await bukaModal({
+        judul: 'Konfirmasi Koreksi Absensi',
+        pesanTeks: 'Ubah status absensi ' + nama.split(' — ')[0] + ' menjadi ' + el('klStatus').value + '?',
+        teksOk: 'Ya, Simpan'
+      });
+      if (!yakin) return;
       pesan('pKL', 'Menyimpan...');
       const idSesi = el('klSesi').value;
       const j = await api('koreksi_langsung', {
@@ -3346,13 +4741,13 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
 
     const LOKASI_CUACA = { nama: 'Depok', lat: -6.4025, lon: 106.7942 };
     const CW = {
-      awan: '<path d="M10 25h13a5 5 0 0 0 .8-9.9A7 7 0 0 0 10.3 13.6 5.7 5.7 0 0 0 10 25z" fill="#9DB7E3"/>',
+      awan: '<path d="M10 25h13a5 5 0 0 0 .8-9.9A7 7 0 0 0 10.3 13.6 5.7 5.7 0 0 0 10 25z" fill="#8EAAD9"/>',
       matahari: '<circle cx="16" cy="16" r="6" fill="#FFB020"/><g stroke="#FFB020" stroke-width="2" stroke-linecap="round"><path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.8 6.8l2.1 2.1M23.1 23.1l2.1 2.1M6.8 25.2l2.1-2.1M23.1 8.9l2.1-2.1"/></g>',
-      bulan: '<path d="M22.5 22A10 10 0 0 1 11 9.5 10 10 0 1 0 22.5 22z" fill="#7C9AE0"/>',
+      bulan: '<path d="M22.5 22A10 10 0 0 1 11 9.5 10 10 0 1 0 22.5 22z" fill="#0056FB"/>',
       kecil: '<g transform="translate(-1 -3) scale(.6)"><circle cx="16" cy="16" r="6" fill="#FFB020"/><g stroke="#FFB020" stroke-width="2.4" stroke-linecap="round"><path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.8 6.8l2.1 2.1M23.1 23.1l2.1 2.1M6.8 25.2l2.1-2.1M23.1 8.9l2.1-2.1"/></g></g>',
-      hujan: '<g stroke="#2F7BEA" stroke-width="2" stroke-linecap="round"><path d="M11 24.5l-1.3 3M16 24.5l-1.3 3M21 24.5l-1.3 3"/></g>',
-      petir: '<path d="M17.5 20l-4.5 6.5h3.2L15 31l5-7h-3.3z" fill="#FFC83D"/>',
-      kabut: '<g stroke="#9DB7E3" stroke-width="2.2" stroke-linecap="round"><path d="M7 14h18M5 19h20M8 24h16"/></g>'
+      hujan: '<g stroke="#00B1FC" stroke-width="2" stroke-linecap="round"><path d="M11 24.5l-1.3 3M16 24.5l-1.3 3M21 24.5l-1.3 3"/></g>',
+      petir: '<path d="M17.5 20l-4.5 6.5h3.2L15 31l5-7h-3.3z" fill="#FFB020"/>',
+      kabut: '<g stroke="#8EAAD9" stroke-width="2.2" stroke-linecap="round"><path d="M7 14h18M5 19h20M8 24h16"/></g>'
     };
     function ikonCuaca(kode, siang) {
       let isi;
@@ -3412,7 +4807,6 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       if (timerKirim) { clearInterval(timerKirim); timerKirim = null; }
     }
 
-    // Tombol "Kirim ulang" dikunci 60 detik setelah kode dikirim.
     function mulaiJedaKirim(tombol) {
       hentikanTimerKirim();
       let sisa = 60;
@@ -3604,7 +4998,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     async function akhiriKarenaDiam() {
       const lama = token;
       token = '';
-      try { await fetch(CONFIG.URL_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ aksi: 'logout', token: lama }) }); } catch (e) {}
+      try { if (CONFIG.URL_API) await fetch(CONFIG.URL_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ aksi: 'logout', token: lama }) }); } catch (e) {}
       keluarLokal('Sesi berakhir karena tidak ada aktivitas. Silakan masuk lagi.');
     }
     let terakhirTandai = 0;
@@ -3621,7 +5015,6 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     });
     setInterval(() => {
       if (!token) return;
-      // Kamera menyala atau QR sesi sedang tampil dihitung sebagai aktivitas.
       if (streamKamera || timerQRSesi) tandaiAktif();
       else if (terlaluLama()) akhiriKarenaDiam();
     }, 30000);
@@ -3635,7 +5028,6 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     } else {
       tampil('vLogin');
     }
-
   </script>
 </body>
 </html>
