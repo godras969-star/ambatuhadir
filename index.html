@@ -252,6 +252,47 @@
     .pesan.proses { color: var(--biru-tua); display: flex; align-items: center; }
     .pesan.proses .spin-kecil { flex: none; }
     .hidden { display: none !important; }
+
+    /* ===== Tema biru dominan + isi sisi kanan header ===== */
+    html { background: #1458D6; }
+    body { background: transparent; }
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1;
+      background: linear-gradient(160deg, #0A3597 0%, #1458D6 38%, #1A76E5 68%, #0EA4FC 100%);
+    }
+    header {
+      background: rgba(255, 255, 255, .97); border-radius: 18px; padding: 8px 14px;
+      margin-top: 10px; top: 8px; box-shadow: 0 6px 20px rgba(6, 28, 90, .28);
+    }
+    body.header-turun header { transform: translateY(-150%); }
+    body:not(.dalam) header {
+      width: fit-content; max-width: 90%; margin: 28px auto 0; padding: 14px 26px;
+      border-radius: 22px; background: var(--putih); box-shadow: 0 10px 30px rgba(6, 28, 90, .3);
+    }
+    body:not(.dalam) .hd-kanan { display: none; }
+    @media (min-width: 860px) { .tabs { top: 92px; } }
+
+    .hd-kanan { display: flex; align-items: center; gap: 8px; flex: none; }
+    .jam-kartu {
+      display: flex; flex-direction: column; align-items: flex-end; line-height: 1.15;
+      padding: 4px 12px; border-radius: 12px; background: var(--latar);
+    }
+    .jam-kartu strong { font-size: 1.05rem; color: var(--biru-tua); font-variant-numeric: tabular-nums; }
+    .jam-kartu small { font-size: .7rem; font-weight: 600; color: #4A5A7A; }
+    button.ik-btn { width: 40px; height: 40px; padding: 0; margin: 0; display: grid; place-items: center; border-radius: 12px; }
+    button.ik-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+    button.ik-btn.keluar { color: var(--err); border-color: var(--err); }
+    @media (max-width: 559px) { .jam-kartu small { display: none; } .hd-kanan { gap: 6px; } }
+
+    .tabs { background: linear-gradient(180deg, #0B3C9E, #1458D6); border: 0; box-shadow: 0 6px 20px rgba(6, 28, 90, .3); }
+    .tab { color: rgba(255, 255, 255, .85); }
+    .tab:hover { background: rgba(255, 255, 255, .14); }
+    .tab.aktif { background: var(--putih); color: var(--biru-tua); box-shadow: 0 3px 10px rgba(6, 28, 90, .25); }
+    .profil-teks strong, .salam .nama, .salam .sub { color: var(--putih); }
+    .salam .sub { opacity: .88; }
+    .avatar { background: var(--putih); color: var(--biru-tua); box-shadow: 0 4px 12px rgba(6, 28, 90, .3); }
+    .bar-proses::before { background: linear-gradient(90deg, transparent, var(--putih), #BFE6FF, transparent); }
+    .profil-bar { margin: 12px 4px 14px; }
   </style>
 </head>
 <body>
@@ -259,6 +300,11 @@
   <div class="wadah">
     <header>
       <img src="logo.png" alt="Logo Ambatuhadir">
+      <div class="hd-kanan">
+        <div class="jam-kartu"><strong id="hdJam">--:--</strong><small id="hdTgl"></small></div>
+        <button type="button" class="ik-btn sekunder" id="hdGanti" title="Ganti password" aria-label="Ganti password"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
+        <button type="button" class="ik-btn sekunder keluar" id="hdKeluar" title="Keluar" aria-label="Keluar"><svg viewBox="0 0 24 24"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3"/><path d="M16 8l4 4-4 4"/><path d="M20 12H9"/></svg></button>
+      </div>
     </header>
 
     <div class="profil-bar hidden" id="headerBadge">
@@ -2905,6 +2951,18 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
     el('btnKeluarStaf').addEventListener('click', keluar);
     el('btnGantiMhs').addEventListener('click', () => bukaGanti(false));
     el('btnGantiStaf').addEventListener('click', () => bukaGanti(false));
+    el('hdGanti').addEventListener('click', () => bukaGanti(false));
+    el('hdKeluar').addEventListener('click', keluar);
+
+    // ---------- Jam & tanggal di header ----------
+
+    function perbaruiJam() {
+      const n = new Date();
+      el('hdJam').textContent = String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0');
+      el('hdTgl').textContent = n.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    }
+    perbaruiJam();
+    setInterval(perbaruiJam, 15000);
     el('btnBatalGanti').addEventListener('click', muat);
 
     // ---------- Header (logo) menyembunyikan diri saat scroll ke bawah ----------
