@@ -457,6 +457,80 @@
     }
 
     .ks small { display: block; line-height: 1.35; }
+
+    /* ==========================================================
+       PALET BIRU DOMINAN: #0b2cb1 #1951fc #3781fc #cbe9fd #faf8f6
+       ========================================================== */
+    :root {
+      --navy: #faf8f6; --biru: #cbe9fd; --biru-tua: #cbe9fd; --biru-muda: #cbe9fd;
+      --nm-bg: #1951fc; --nm-terang: #4a8fff; --nm-gelap: #0a2aa8; --teks2: #cbe9fd;
+      --garis: rgba(203, 233, 253, .22); --grad: linear-gradient(145deg, #faf8f6, #cbe9fd);
+      --fokus: 0 0 0 3px rgba(250, 248, 246, .85);
+      --permukaan: linear-gradient(145deg, #1e5aff, #1548e8);
+    }
+    html { background: #1951fc; }
+    /* Latar baru: cahaya biru, garis diagonal, titik halus (tanpa bulatan) */
+    body::before, body::after {
+      inset: 0; width: auto; height: auto; top: 0; left: 0; right: 0; bottom: 0;
+      border: 0; border-radius: 0; box-shadow: none;
+    }
+    body::before {
+      background:
+        radial-gradient(70% 45% at 8% 0%, rgba(55, 129, 252, .8), transparent 70%),
+        radial-gradient(80% 50% at 100% 100%, rgba(11, 44, 177, .95), transparent 70%),
+        linear-gradient(118deg, transparent 38%, rgba(203, 233, 253, .07) 38%, rgba(203, 233, 253, .07) 50%, transparent 50%),
+        linear-gradient(180deg, #1951fc, #1646ea);
+    }
+    body::after {
+      background-image: radial-gradient(rgba(203, 233, 253, .2) 1.2px, transparent 1.7px); background-size: 24px 24px;
+      -webkit-mask-image: linear-gradient(160deg, #000, transparent 62%); mask-image: linear-gradient(160deg, #000, transparent 62%);
+    }
+    .kartu, .ks, header, .logo-ubin { background: var(--permukaan); border-color: rgba(203, 233, 253, .18); }
+    .logo-ubin { background: #faf8f6; border-color: rgba(255, 255, 255, .8); }
+    header img { background: #faf8f6; padding: 5px 12px; border-radius: 16px; box-sizing: content-box; }
+    @media (max-width: 859px) { .tabs { background: var(--permukaan); border-color: rgba(203, 233, 253, .18); } }
+    @media (min-width: 860px) { .tabs { background: var(--permukaan); border-color: rgba(203, 233, 253, .18); } }
+
+    input::placeholder, textarea::placeholder { color: rgba(203, 233, 253, .72); }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23cbe9fd' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); }
+    select option { color: #0b2cb1; background: #faf8f6; }
+    input[type="checkbox"]:checked::after { border-color: #0b2cb1; }
+
+    button { color: #0b2cb1; box-shadow: 5px 5px 12px rgba(5, 18, 110, .5), -4px -4px 10px rgba(74, 143, 255, .55); }
+    button.sekunder { color: #cbe9fd; background: var(--permukaan); box-shadow: var(--timbul-kecil); }
+    button.sekunder:active { box-shadow: var(--tekan); }
+    button.bahaya { color: #fff; box-shadow: 5px 5px 12px rgba(5, 18, 110, .5), -4px -4px 10px rgba(74, 143, 255, .45); }
+    button.tautan { color: #cbe9fd; background: none; box-shadow: none; }
+    button .spin-kecil { border-color: rgba(11, 44, 177, .25); border-top-color: #0b2cb1; }
+    button.sekunder .spin-kecil, button.bahaya .spin-kecil { border-color: rgba(203, 233, 253, .3); border-top-color: #faf8f6; }
+    button:focus-visible { box-shadow: var(--fokus); }
+    .btn-besar::after {
+      background: rgba(11, 44, 177, .12) center / 19px no-repeat
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b2cb1' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+    }
+    .tab { color: #cbe9fd; }
+    .tab.aktif { color: #0b2cb1; box-shadow: 4px 4px 10px rgba(5, 18, 110, .5), -3px -3px 8px rgba(74, 143, 255, .5); }
+    .avatar { color: #0b2cb1; box-shadow: 5px 5px 12px rgba(5, 18, 110, .5), -4px -4px 10px rgba(74, 143, 255, .55); }
+    button.ik-btn.keluar { color: #ffb4ae; }
+    .pesan.err { color: #ffc9c4; }
+    .pesan.ok { color: #b5f5d3; }
+    .ks strong { color: #faf8f6; }
+    .ks.peringatan small, .ks.peringatan strong { color: #ffc9c4; }
+    .ks.peringatan .ikon svg { stroke: #ffc9c4; }
+    .ks.aman small, .ks.aman strong { color: #b5f5d3; }
+    .ks.aman .ikon svg { stroke: #b5f5d3; }
+    .st-Izin { color: #164EC8; }
+    .kamera { background: #061a6b; }
+    .blur-atas { background: linear-gradient(180deg, rgba(25, 81, 252, .8), rgba(25, 81, 252, 0)); }
+    .blur-bawah { background: linear-gradient(0deg, rgba(22, 70, 234, .85), rgba(22, 70, 234, 0)); }
+    .bar-proses::before { background: linear-gradient(90deg, transparent, #faf8f6, #cbe9fd, transparent); }
+    .spinner { border-color: rgba(203, 233, 253, .22); border-top-color: #faf8f6; }
+    .spin-kecil { border-color: rgba(203, 233, 253, .3); border-top-color: #faf8f6; }
+    .field:focus-within .ik-in, .mata input:checked ~ .tutup { color: #faf8f6; }
+    .qr img { box-shadow: var(--timbul); }
+    .box-info { border-left-color: #cbe9fd; }
+    .baris { flex-wrap: wrap; }
+    .baris > div:first-child { flex: 1 1 150px; min-width: 0; }
   </style>
 </head>
 <body>
@@ -2833,7 +2907,20 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
             if (j.ok) muatDataStaf();
           });
 
-          aksiBox.append(bReset, bStatus);
+          const bHapus = document.createElement('button');
+          bHapus.className = 'bahaya kecil';
+          bHapus.textContent = 'Hapus Akun';
+          bHapus.addEventListener('click', async () => {
+            const peringatan = boxId === 'listMhs'
+              ? ' Semua data absensi dan pengajuannya ikut terhapus.' : '';
+            if (!confirm('Hapus akun ' + u.nama + ' (' + u.username + ') secara permanen?' + peringatan + ' Tindakan ini tidak bisa dibatalkan.')) return;
+            const j = await api('hapus_pengguna', { username: u.username });
+            if (!j.ok) { pesan('pListUser', j.pesan, 'err'); return; }
+            pesan('pListUser', 'Akun ' + u.username + ' dihapus.', 'ok');
+            muatDataStaf();
+          });
+
+          aksiBox.append(bReset, bStatus, bHapus);
           baris.append(info, aksiBox);
           box.appendChild(baris);
         });
