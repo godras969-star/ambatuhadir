@@ -2199,6 +2199,76 @@
       display: block;
     }
 
+
+    /* Daftar mata kuliah berkelompok per mata kuliah */
+    .mode-mk {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 14px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: var(--info-bg);
+      border: 1px solid rgba(0, 177, 252, 0.28);
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--primary-deep);
+    }
+
+    .mode-mk.hidden { display: none; }
+
+    .cari-mk { margin-bottom: 10px; }
+
+    .grup-mk {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--nm-inset-bg);
+      box-shadow: var(--tekan-halus);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .grup-mk > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grup-mk > summary::-webkit-details-marker { display: none; }
+
+    .grup-mk > summary > .gm-info { flex: 1 1 auto; min-width: 0; }
+
+    .grup-mk > summary small {
+      display: block;
+      color: var(--ink-muted);
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    .grup-mk > summary::after {
+      content: "";
+      flex: none;
+      width: 9px;
+      height: 9px;
+      margin: 0 4px 3px 4px;
+      border-right: 2px solid var(--ink-muted);
+      border-bottom: 2px solid var(--ink-muted);
+      transform: rotate(45deg);
+      transition: transform 0.25s ease;
+    }
+
+    .grup-mk[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
+
+    .grup-mk .gm-isi { padding: 0 16px 8px; }
+
+    .grup-mk .gm-isi .baris { padding: 10px 0; }
+
+    .grup-mk .gm-aksi { padding: 2px 16px 14px; }
+
     @media (prefers-reduced-motion: reduce) {
       * {
         animation-duration: 0.01ms !important;
@@ -2748,6 +2818,7 @@
         <div id="sPanelMK" class="panel-staf hidden">
           <section class="kartu">
             <h2>Kelola Mata Kuliah</h2>
+            <div class="mode-mk hidden" id="mkMode"><span id="mkModeTeks"></span><button type="button" class="tautan" id="mkBatal">Batal</button></div>
             <form id="fMK">
               <label for="mkKode">Kode Mata Kuliah</label>
               <input id="mkKode" placeholder="Contoh: IF101" required>
@@ -2787,6 +2858,8 @@
 
           <section class="kartu">
             <h2>Daftar Mata Kuliah</h2>
+            <input id="cariMK" type="search" class="cari-mk" placeholder="Cari kode, nama, kelas, atau dosen..." autocomplete="off">
+            <p class="sub" id="infoMK"></p>
             <div id="listMKAdmin"></div>
           </section>
         </div>
@@ -4078,7 +4151,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
           cacheMK.slice().sort((a, b) => hariIni(b) - hariIni(a)).forEach((m) => {
             const opt = document.createElement('option');
             opt.value = m.kode;
-            opt.textContent = (hariIni(m) ? '★ Hari ini • ' : '') + m.kode + ' — ' + m.nama + ' (' + m.peserta.length + ' mhs)';
+            opt.textContent = (hariIni(m) ? '★ Hari ini • ' : '') + labelMK(m) + ' (' + m.peserta.length + ' mhs)';
             sel.appendChild(opt);
           });
           if (lama && cacheMK.some((m) => m.kode === lama)) sel.value = lama;
@@ -4193,7 +4266,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
       sesiAktifSaatIni = sesi;
       el('boxBukaSesi').classList.add('hidden');
       el('boxSesiAktif').classList.remove('hidden');
-      el('judulSesiAktif').textContent = sesi.kodeMK + ' — ' + sesi.namaMK + ' (Pertemuan ' + sesi.pertemuan + ')';
+      el('judulSesiAktif').textContent = labelSesi(sesi) + ' (Pertemuan ' + sesi.pertemuan + ')';
       const mkSesi = cacheMK.find((m) => String(m.kode).toUpperCase() === String(sesi.kodeMK).toUpperCase());
       const jam = mkSesi && mkSesi.jamMulai ? ' • Jam kuliah ' + mkSesi.jamMulai + '–' + mkSesi.jamSelesai : '';
       el('metaSesiAktif').textContent = fmtTgl(sesi.tanggal) + jam + ' • Toleransi terlambat ' + sesi.batasTerlambat + ' menit';
@@ -4671,7 +4744,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
           const info = document.createElement('div');
           info.className = 'sm-info';
           const nm = document.createElement('strong');
-          nm.textContent = s.kodeMK + ' — ' + s.namaMK;
+          nm.textContent = kodeDasar(s.kodeMK) + ' — ' + s.namaMK;
           const sm = document.createElement('small');
           sm.textContent = 'Pertemuan ' + s.pertemuan + ' • Toleransi terlambat ' + s.batasTerlambat + ' menit';
           info.append(nm, sm);
@@ -4867,49 +4940,180 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         boxK.appendChild(lbl);
       });
 
+      if (mkEditId) resetFormMK();
+      renderDaftarMK();
+    }
+
+    // ---- Form MK: mode tambah / edit / tambah kelas lain ----
+    let mkEditId = '';
+
+    function setBacaSaja(ro) {
+      el('mkKode').readOnly = ro;
+      el('mkNama').readOnly = ro;
+    }
+
+    function resetFormMK() {
+      mkEditId = '';
+      el('fMK').reset();
+      setBacaSaja(false);
+      el('mkMode').classList.add('hidden');
+      el('boxKelasMK').querySelectorAll('input').forEach((cb) => { cb.disabled = false; cb.checked = false; });
+    }
+
+    function isiFormMK(m, mode) {
+      // mode: 'edit' = ubah penawaran ini; 'kelas' = tambah kelas lain untuk mata kuliah yang sama
+      const dasar = kodeDasar(m.kode);
+      const terpakai = cacheMK.filter((x) => kodeDasar(x.kode) === dasar && (mode === 'kelas' || x.kode !== m.kode))
+        .reduce((a, x) => a.concat(x.kelas || []), []);
+      mkEditId = mode === 'edit' ? m.kode : '';
+      el('mkKode').value = dasar;
+      el('mkNama').value = m.nama;
+      el('mkDosen').value = m.dosenUsername;
+      setBacaSaja(true);
+      if (mode === 'edit') {
+        el('mkHari').value = m.hari ? String(m.hari) : '';
+        el('mkJamMulai').value = m.jamMulai || '';
+        el('mkJamSelesai').value = m.jamSelesai || '';
+        el('mkRuang').value = m.ruangan || '';
+      } else {
+        el('mkHari').value = '';
+        el('mkJamMulai').value = '';
+        el('mkJamSelesai').value = '';
+        el('mkRuang').value = '';
+      }
+      el('boxKelasMK').querySelectorAll('input').forEach((cb) => {
+        cb.disabled = terpakai.indexOf(cb.value) >= 0;
+        cb.checked = mode === 'edit' && (m.kelas || []).indexOf(cb.value) >= 0;
+      });
+      el('mkModeTeks').textContent = mode === 'edit'
+        ? 'Mengedit: ' + labelMK(m)
+        : 'Menambah kelas lain untuk ' + dasar + ' — ' + m.nama + '. Pilih kelas, hari, jam, dan ruangan yang baru.';
+      el('mkMode').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    el('mkBatal').addEventListener('click', resetFormMK);
+
+    function renderDaftarMK() {
       const listMK = el('listMKAdmin');
       listMK.textContent = '';
+      const q = (el('cariMK').value || '').trim().toLowerCase();
+      const cocok = (m) => !q || [kodeDasar(m.kode), m.nama, m.dosenNama, (m.kelas || []).join(' '), teksJadwal(m)].join(' ').toLowerCase().indexOf(q) >= 0;
+
+      // Kelompokkan per mata kuliah (kode dasar)
+      const grup = [];
+      const peta = {};
       cacheMK.forEach((m) => {
-        const baris = document.createElement('div');
-        baris.className = 'baris';
-        const info = document.createElement('div');
+        const d = kodeDasar(m.kode).toUpperCase();
+        if (!peta[d]) { peta[d] = { dasar: kodeDasar(m.kode), nama: m.nama, isi: [] }; grup.push(peta[d]); }
+        peta[d].isi.push(m);
+      });
+      grup.sort((x, y) => x.dasar.localeCompare(y.dasar, 'id', { numeric: true }));
+
+      const tampilGrup = grup.filter((g) => g.isi.some(cocok));
+      el('infoMK').textContent = cacheMK.length === 0 ? '' :
+        grup.length + ' mata kuliah • ' + cacheMK.length + ' kelas' + (q ? ' • ' + tampilGrup.length + ' cocok dengan pencarian' : '');
+      if (cacheMK.length === 0) {
+        const kosong = document.createElement('p');
+        kosong.className = 'sub';
+        kosong.textContent = 'Belum ada mata kuliah.';
+        listMK.appendChild(kosong);
+        return;
+      }
+      if (tampilGrup.length === 0) {
+        const kosong = document.createElement('p');
+        kosong.className = 'sub';
+        kosong.textContent = 'Tidak ada yang cocok.';
+        listMK.appendChild(kosong);
+        return;
+      }
+
+      tampilGrup.forEach((g) => {
+        const isi = g.isi.filter(cocok);
+        const semuaPeserta = g.isi.reduce((n, m) => n + m.peserta.length, 0);
+        const det = document.createElement('details');
+        det.className = 'grup-mk';
+        det.open = !!q || tampilGrup.length <= 4;
+
+        const sum = document.createElement('summary');
+        const gi = document.createElement('div');
+        gi.className = 'gm-info';
         const st = document.createElement('strong');
-        st.textContent = m.kode + ' — ' + m.nama;
+        st.textContent = g.dasar + ' — ' + g.nama;
         const sm = document.createElement('small');
-        sm.textContent = 'Dosen: ' + m.dosenNama + ' • Kelas: ' + ((m.kelas && m.kelas.length) ? m.kelas.join(', ') : '(belum diatur)') + ' • ' + m.peserta.length + ' mahasiswa • ' + teksJadwal(m);
-        info.append(st, sm);
-        const btnEdit = document.createElement('button');
-        btnEdit.className = 'sekunder kecil';
-        btnEdit.textContent = 'Edit';
-        btnEdit.addEventListener('click', () => {
-          el('mkKode').value = m.kode;
-          el('mkNama').value = m.nama;
-          el('mkDosen').value = m.dosenUsername;
-          el('mkHari').value = m.hari ? String(m.hari) : '';
-          el('mkJamMulai').value = m.jamMulai || '';
-          el('mkJamSelesai').value = m.jamSelesai || '';
-          el('mkRuang').value = m.ruangan || '';
-          el('boxKelasMK').querySelectorAll('input').forEach((cb) => {
-            cb.checked = (m.kelas || []).includes(cb.value);
+        sm.textContent = g.isi.length + ' kelas • ' + semuaPeserta + ' mahasiswa';
+        gi.append(st, sm);
+        sum.appendChild(gi);
+        det.appendChild(sum);
+
+        const box = document.createElement('div');
+        box.className = 'gm-isi';
+        isi.forEach((m) => {
+          const baris = document.createElement('div');
+          baris.className = 'baris';
+          const info = document.createElement('div');
+          const nm = document.createElement('strong');
+          nm.textContent = 'Kelas ' + ((m.kelas && m.kelas.length) ? m.kelas.join(', ') : '(belum diatur)');
+          const kt = document.createElement('small');
+          kt.textContent = teksJadwal(m) + ' • ' + m.peserta.length + ' mahasiswa';
+          const dsn = document.createElement('small');
+          dsn.textContent = 'Dosen: ' + m.dosenNama;
+          info.append(nm, kt, dsn);
+
+          const aksi = document.createElement('div');
+          const bEdit = document.createElement('button');
+          bEdit.className = 'sekunder kecil';
+          bEdit.textContent = 'Edit';
+          bEdit.addEventListener('click', () => isiFormMK(m, 'edit'));
+          const bHapus = document.createElement('button');
+          bHapus.className = 'sekunder kecil';
+          bHapus.textContent = 'Hapus';
+          bHapus.addEventListener('click', async () => {
+            const yakin = await bukaModal({
+              judul: 'Hapus Mata Kuliah',
+              pesanTeks: 'Hapus ' + labelMK(m) + '? Semua sesi, rekap absensi, dan pengajuan izin/koreksi mata kuliah kelas ini ikut terhapus dan tidak bisa dikembalikan.',
+              teksOk: 'Ya, Hapus',
+              bahaya: true
+            });
+            if (!yakin) return;
+            pesan('pMK', 'Menghapus...');
+            const j = await api('hapus_mk', { kode: m.kode });
+            if (!j.ok) { pesan('pMK', j.pesan, 'err'); return; }
+            if (mkEditId === m.kode) resetFormMK();
+            pesan('pMK', 'Mata kuliah ' + labelMK(m) + ' dihapus.', 'ok');
+            await muatDataStaf();
           });
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          aksi.append(bEdit, bHapus);
+          baris.append(info, aksi);
+          box.appendChild(baris);
         });
-        baris.append(info, btnEdit);
-        listMK.appendChild(baris);
+        det.appendChild(box);
+
+        const aksiGrup = document.createElement('div');
+        aksiGrup.className = 'gm-aksi';
+        const bTambah = document.createElement('button');
+        bTambah.className = 'sekunder kecil';
+        bTambah.textContent = '+ Kelas lain';
+        bTambah.addEventListener('click', () => isiFormMK(g.isi[0], 'kelas'));
+        aksiGrup.appendChild(bTambah);
+        det.appendChild(aksiGrup);
+        listMK.appendChild(det);
       });
     }
+
+    el('cariMK').addEventListener('input', renderDaftarMK);
 
     el('fMK').addEventListener('submit', async (e) => {
       e.preventDefault();
       const kelas = Array.from(el('boxKelasMK').querySelectorAll('input:checked')).map((c) => c.value);
       pesan('pMK', 'Menyimpan mata kuliah...');
       const j = await api('simpan_mk', {
-        kode: el('mkKode').value, nama: el('mkNama').value, dosen: el('mkDosen').value, kelas: kelas,
+        id: mkEditId, kode: el('mkKode').value, nama: el('mkNama').value, dosen: el('mkDosen').value, kelas: kelas,
         hari: el('mkHari').value, jamMulai: el('mkJamMulai').value, jamSelesai: el('mkJamSelesai').value, ruangan: el('mkRuang').value
       });
       if (!j.ok) { pesan('pMK', j.pesan, 'err'); return; }
-      pesan('pMK', 'Mata kuliah ' + j.kode + ' tersimpan (' + j.jumlahPeserta + ' peserta).', 'ok');
-      el('fMK').reset();
+      pesan('pMK', 'Mata kuliah ' + kodeDasar(j.kode) + ' tersimpan (' + j.jumlahPeserta + ' peserta).', 'ok');
+      resetFormMK();
       await muatDataStaf();
     });
 
@@ -5019,6 +5223,21 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
 
     const NAMA_HARI = ['', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
 
+    function kodeDasar(id) {
+      return String(id || '').replace(/\s*\(.*$/, '').trim();
+    }
+
+    // Label mata kuliah: kode dasar — nama • kelas (kelas membedakan penawaran dengan kode sama)
+    function labelMK(m) {
+      const k = (m.kelas && m.kelas.length) ? ' • ' + m.kelas.join(', ') : '';
+      return kodeDasar(m.kode) + ' — ' + m.nama + k;
+    }
+
+    function labelSesi(sesi) {
+      const m = (typeof cacheMK !== 'undefined' ? cacheMK : []).find((x) => String(x.kode).toUpperCase() === String(sesi.kodeMK).toUpperCase());
+      return m ? labelMK(m) : kodeDasar(sesi.kodeMK) + ' — ' + sesi.namaMK;
+    }
+
     function teksJadwal(m) {
       if (!m.hari) return 'Belum dijadwalkan';
       return NAMA_HARI[m.hari] + ', ' + m.jamMulai + '–' + m.jamSelesai + (m.ruangan ? ' • ' + m.ruangan : '');
@@ -5057,7 +5276,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         baris.className = 'baris' + (sorot ? ' sorot' : '');
         const kiri = document.createElement('div');
         const nm = document.createElement('strong');
-        nm.textContent = m.kode + ' — ' + m.nama;
+        nm.textContent = labelMK(m);
         const sm = document.createElement('small');
         sm.textContent = teksJadwal(m);
         const sd = document.createElement('small');
@@ -5108,7 +5327,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         j.mkIzin.forEach((m) => {
           const o = document.createElement('option');
           o.value = m.kode;
-          o.textContent = m.kode + ' — ' + m.nama + ' (' + NAMA_HARI[m.hari] + ' ' + m.jamMulai + ')';
+          o.textContent = labelMK(m) + ' (' + NAMA_HARI[m.hari] + ' ' + m.jamMulai + ')';
           selIz.appendChild(o);
         });
       }
@@ -5126,7 +5345,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         j.koreksi.forEach((k) => {
           const o = document.createElement('option');
           o.value = k.idSesi;
-          o.textContent = k.kodeMK + ' — ' + k.namaMK + ', Pertemuan ' + k.pertemuan + ' (' + fmtTgl(k.tanggal) + ') • tercatat ' + k.status;
+          o.textContent = kodeDasar(k.kodeMK) + ' — ' + k.namaMK + ', Pertemuan ' + k.pertemuan + ' (' + fmtTgl(k.tanggal) + ') • tercatat ' + k.status;
           selKo.appendChild(o);
         });
       }
@@ -5313,7 +5532,7 @@ matriks:function(teks){const q=new QRCode(-1,0);q.addData(String(teks));q.make()
         cacheMK.forEach((m) => {
           const o = document.createElement('option');
           o.value = m.kode;
-          o.textContent = m.kode + ' — ' + m.nama;
+          o.textContent = labelMK(m);
           sel.appendChild(o);
         });
         if (lama && cacheMK.some((m) => m.kode === lama)) sel.value = lama;
