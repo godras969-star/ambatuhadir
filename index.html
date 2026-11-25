@@ -267,21 +267,15 @@
       background-position: right 15px center;
     }
 
-    /* Isian otomatis Chrome: tahan warna bawaan agar tidak jadi kotak di dalam kolom */
+    /* Isian otomatis Chrome: tunda perubahan latar bawaan Chrome (tidak dicat ulang),
+       sehingga latar kolom tetap latar aslinya, terang/gelap */
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
     input:-webkit-autofill:active {
       -webkit-text-fill-color: var(--ink);
       caret-color: var(--ink);
-      -webkit-box-shadow: 0 0 0 1000px var(--nm-inset-bg) inset !important;
-      box-shadow: 0 0 0 1000px var(--nm-inset-bg) inset !important;
       transition: background-color 600000s 0s, color 600000s 0s;
-    }
-
-    input:-webkit-autofill:focus {
-      -webkit-box-shadow: 0 0 0 1000px var(--fokus-bg) inset !important;
-      box-shadow: 0 0 0 1000px var(--fokus-bg) inset !important;
     }
 
     select option {
@@ -2059,11 +2053,6 @@
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235C9DFF' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
       }
 
-      /* Logo bertulisan navy: balik terang-gelapnya, tanpa alas/latar */
-      :root:not([data-tema]) header img,
-      :root:not([data-tema]) .logo-ubin img {
-      filter: invert(1) hue-rotate(180deg) brightness(1.08) saturate(1.1);
-      }
     }
 
     /* Mode gelap manual (tombol) */
@@ -2120,10 +2109,6 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235C9DFF' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     }
 
-    :root[data-tema="gelap"] header img,
-    :root[data-tema="gelap"] .logo-ubin img {
-    filter: invert(1) hue-rotate(180deg) brightness(1.08) saturate(1.1);
-    }
 
     /* Transisi halus saat tema diganti */
     :root.ganti-tema *,
