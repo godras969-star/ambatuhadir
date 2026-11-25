@@ -252,7 +252,7 @@
     select:focus,
     textarea:focus {
       outline: none;
-      background: var(--fokus-bg);
+      background-color: var(--fokus-bg);
       border-color: rgba(0, 177, 252, 0.45);
       box-shadow: var(--tekan-halus), var(--fokus);
     }
@@ -265,6 +265,23 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230056FB' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 15px center;
+    }
+
+    /* Isian otomatis Chrome: tahan warna bawaan agar tidak jadi kotak di dalam kolom */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      -webkit-text-fill-color: var(--ink);
+      caret-color: var(--ink);
+      -webkit-box-shadow: 0 0 0 1000px var(--nm-inset-bg) inset !important;
+      box-shadow: 0 0 0 1000px var(--nm-inset-bg) inset !important;
+      transition: background-color 600000s 0s, color 600000s 0s;
+    }
+
+    input:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px var(--fokus-bg) inset !important;
+      box-shadow: 0 0 0 1000px var(--fokus-bg) inset !important;
     }
 
     select option {
@@ -1243,7 +1260,7 @@
       background: var(--nm-surface);
       box-shadow: var(--timbul-kecil);
       border: 1px solid var(--rim);
-      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease;
     }
 
     header img {
@@ -2269,12 +2286,6 @@
 
     .grup-mk .gm-aksi { padding: 2px 16px 14px; }
 
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
   </style>
 </head>
 <body>
@@ -2437,7 +2448,7 @@
       <p class="pesan" id="pLogin"></p>
       <div class="pemisah">atau</div>
       <button type="button" class="sekunder btn-besar" id="btnKeDaftar">Buat Akun Baru</button>
-      <button type="button" class="tautan hidden" id="btnPasang" style="margin:12px auto 0;display:block;">Pasang di layar utama HP</button>
+      <button type="button" class="tautan hidden" id="btnPasang" style="margin:12px auto 0;display:block;">Pasang di layar utama</button>
       <p class="auth-kaki">Absensi QR Code</p>
     </section>
 
